@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Innoaktiv</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Official Innoaktiv palette */
+      --red: #FF2130;        /* Sterk rød – navbar, primary buttons */
+      --red-dark: #820A12;   /* Mørkerød – footer, box headers, titles */
+      --light-red: #FF8474;  /* Lys rød – accents / hover */
+      --bg: #FFF9F0;         /* Bakgrunn beige */
+      --pink: #FFD9CA;       /* Bakgrunnsrød – description boxes */
+      --bg-blue: #F0FBFD;    /* Bakgrunnsblå – editor description */
+      --white: #FFFFFF;
+      --text: #200505;       /* Font mørk rød */
+      --text-light: #6E524E;
+      /* Typography */
+      --font-sans: 'Open Sans', 'Segoe UI', Tahoma, Arial, sans-serif; /* brødtekst, titler, menyer */
+      --font-serif: 'Times New Roman', Times, Georgia, serif;          /* variasjon / kontrast */
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: 16px;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Pages ── */
+    .page { display: none; flex-direction: column; min-height: 100vh; }
+    .page.active { display: flex; }
+
+    /* ── Navbar ── */
+    .navbar {
+      background: var(--red);
+      color: white;
+      height: 54px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .nb-left { display: flex; align-items: center; gap: 11px; }
+    /* University of Bergen logo (black line art rendered white on the coloured bars) */
+    .brand-logo { object-fit: contain; display: block; }
+    .nb-logo-img { width: 40px; height: 40px; }
+    .footer-logo-img { width: 58px; height: 58px; margin: 0 auto 11px; }
+    .nb-logo {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.55);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nb-brand { font-weight: bold; font-size: 13px; letter-spacing: 1.8px; }
+    .nb-right { display: flex; gap: 14px; align-items: center; }
+    .nb-btn {
+      background: none; border: none; color: white;
+      font-size: 22px; cursor: pointer; padding: 2px; line-height: 1;
+    }
+    /* Help button: filled dark-red circle with white question mark */
+    .nb-help {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--text); color: white;
+      border: none; cursor: pointer; padding: 0;
+      font-size: 17px; font-weight: bold; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nb-help:hover { background: #000; }
+    /* Home button: white house silhouette, no background */
+    .nb-home {
+      background: none; border: none; cursor: pointer; padding: 2px;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 0;
+    }
+    .nb-home svg { width: 24px; height: 24px; fill: white; display: block; }
+    .nb-home:hover svg { fill: rgba(255,255,255,0.8); }
+    .nb-back {
+      background: none; border: none; color: white;
+      cursor: pointer; display: flex; align-items: center; gap: 8px;
+    }
+    .nb-back svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .nb-crumb { font-size: 12px; color: rgba(255,255,255,0.88); letter-spacing: 0.3px; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb { padding: 7px 18px; font-size: 12px; color: var(--text-light); }
+    .breadcrumb a { color: var(--text-light); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    /* ── Landing page ── */
+    .landing-body { flex: 1; }
+    .landing-title {
+      text-align: center;
+      color: var(--red-dark);
+      font-family: var(--font-sans);
+      font-size: 30px;
+      font-weight: bold;
+      padding: 26px 20px 22px;
+      line-height: 1.3;
+    }
+
+    .tool-cards {
+      display: flex;
+      gap: 18px;
+      padding: 0 22px 44px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* ── Double-diamond panel (INNOV102 landing, 4 cards) ── */
+    .dd-panel {
+      background: #FBF3E4;
+      border-radius: 14px;
+      padding: 26px 26px 22px;
+      max-width: 1140px;
+      margin: 0 auto 44px;
+    }
+    .tool-cards-4 { display: flex; gap: 18px; }
+    .dd-card {
+      flex: 1 1 0; min-width: 0; position: relative;
+      text-align: left; cursor: pointer; font-family: inherit;
+      background: #fff; border: none; border-top: 6px solid var(--red-dark);
+      border-radius: 14px; padding: 20px 20px 48px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column;
+      transition: box-shadow .15s, transform .1s;
+    }
+    .dd-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.15); transform: translateY(-2px); }
+    .dd-ic { color: var(--red-dark); margin-bottom: 12px; display: block; line-height: 0; }
+    .dd-ic svg { width: 26px; height: 26px; }
+    .dd-ic img { width: 26px; height: 26px; object-fit: contain; display: block; }
+    .dd-t { font-size: 21px; font-weight: bold; color: var(--red-dark); line-height: 1.15; }
+    .dd-sub { font-size: 16px; color: var(--red); margin: 1px 0 10px; }
+    .dd-d { font-size: 13px; color: var(--text-light); line-height: 1.55; }
+    .dd-arrow { position: absolute; right: 18px; bottom: 14px; color: var(--red-dark); font-size: 22px; line-height: 1; }
+    .double-diamond { margin-top: 10px; }
+    .double-diamond svg { width: 100%; height: auto; display: block; }
+    .dd-caption { text-align: center; font-style: italic; color: #9a8b76; font-size: 13px; margin-top: 8px; }
+
+    /* ── INNOV101 landing cards (hover -> pink) ── */
+    .i101-cards { display: flex; gap: 20px; max-width: 1040px; margin: 6px auto 44px; padding: 0 22px; align-items: stretch; }
+    .i101-card {
+      flex: 1 1 0; min-width: 0; position: relative; cursor: pointer; text-align: left; font-family: inherit;
+      background: #fff; border: none; border-top: 6px solid var(--red-dark); border-radius: 14px;
+      padding: 22px 22px 54px; box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column;
+      transition: background .15s, box-shadow .15s, transform .1s;
+    }
+    .i101-card:hover { background: var(--pink); box-shadow: 0 7px 22px rgba(0,0,0,0.15); transform: translateY(-3px); }
+    .i101-ic { color: var(--red-dark); line-height: 0; margin-bottom: 12px; }
+    .i101-ic svg { width: 26px; height: 26px; }
+    .i101-t { font-size: 21px; font-weight: bold; color: var(--red-dark); margin-bottom: 6px; }
+    .i101-d { font-size: 13px; color: var(--text-light); line-height: 1.5; margin-bottom: 16px; }
+    .i101-prev { margin-top: auto; }
+    .i101-prev svg { width: 100%; height: auto; display: block; }
+    .i101-arrow { position: absolute; right: 22px; bottom: 16px; color: var(--red); font-size: 22px; line-height: 1; }
+    @media (max-width: 820px) { .i101-cards { flex-wrap: wrap; } .i101-card { flex: 1 1 45%; } }
+
+    @media (max-width: 900px) {
+      .tool-cards-4 { flex-wrap: wrap; }
+      .dd-card { flex: 1 1 44%; }
+      .double-diamond { display: none; }
+    }
+
+    .tool-card {
+      flex: 1;
+      background: var(--white);
+      border: 1.5px solid #ddd;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .tc-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+    .tc-title { font-family: var(--font-sans); font-size: 24px; font-weight: bold; line-height: 1.25; }
+    .tc-icon { color: var(--red); margin-left: 6px; flex-shrink: 0; display: flex; }
+    .tc-icon svg { width: 26px; height: 26px; }
+    .tc-desc { font-size: 12px; color: var(--text-light); margin-bottom: 13px; line-height: 1.45; }
+    .tc-preview {
+      flex: 1;
+      background: #f8f8f8;
+      border: 1px solid #eee;
+      min-height: 120px;
+      margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .btn-lag {
+      background: var(--red); color: white; border: none;
+      padding: 11px 14px; font-size: 13px; font-weight: bold;
+      letter-spacing: 0.8px; cursor: pointer; width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .btn-lag:hover { background: var(--red-dark); }
+
+    /* ── Tool page header ── */
+    .tool-hd { text-align: center; padding: 26px 20px 6px; }
+    .tool-hd h1 { font-family: var(--font-sans); font-size: 32px; font-weight: bold; letter-spacing: 1.5px; }
+    .tool-hd-sub { margin-top: 5px; }
+    .tool-hd-sub input {
+      font-size: 14px; font-style: italic; color: #999;
+      border: none; background: transparent; text-align: center;
+      width: 100%; max-width: 280px; cursor: text;
+      border-bottom: 1px dashed transparent;
+      font-family: inherit;
+    }
+    .tool-hd-sub input:hover { border-bottom-color: #ccc; }
+    .tool-hd-sub input:focus { outline: none; border-bottom-color: var(--red); color: #555; }
+
+    /* ── Canvas grid (3×3 for Sprikende) ── */
+    .canvas-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      padding: 12px 24px 48px;
+      max-width: 1700px;
+      margin: 0 auto;
+      flex: 1;
+    }
+
+    /* ── Sprikende header (beige, breadcrumb + title + download) ── */
+    .sp-header {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+      max-width: 1080px; margin: 0 auto; width: 100%; padding: 22px 40px 4px;
+    }
+    .sp-head-left { flex: 1; min-width: 0; }
+    .sp-crumb { font-size: 13px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red-dark); margin-bottom: 12px; }
+    .sp-crumb a { color: var(--red-dark); text-decoration: none; }
+    .sp-crumb a:hover { text-decoration: underline; }
+    .sp-title { font-family: var(--font-sans); font-size: 30px; font-weight: bold; color: var(--red); line-height: 1.1; display: flex; align-items: center; gap: 12px; }
+    .sp-help { width: 24px; height: 24px; font-size: 13px; }
+    .sp-sub { margin-top: 9px; max-width: 460px; border-bottom: 2px dashed #c2b8ac; padding-bottom: 5px; }
+    .sp-sub input { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 18px; color: #8a8078; }
+    .sp-sub input:focus { outline: none; color: #555; }
+    .sp-download {
+      display: flex; align-items: center; gap: 9px; flex-shrink: 0;
+      background: var(--red-dark); color: #fff; border: none; border-radius: 9px;
+      padding: 12px 20px; font-size: 14px; font-weight: bold; cursor: pointer;
+      font-family: inherit; white-space: nowrap; box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    }
+    .sp-download:hover { background: #5e080f; }
+    .sp-download svg { width: 18px; height: 18px; }
+
+    /* ── Lerret boxes (shared by Sprikende + Samlende via .lerret-grid) ── */
+    .lerret-grid .cbox, .lerret-grid .sbbox { border: none; border-radius: 12px; overflow: hidden; background: transparent; box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
+    .lerret-grid .cbox-hd { background: var(--red-dark); font-size: 13.5px; padding: 9px 12px; align-items: center; }
+    .lerret-grid { align-items: start; }
+    .lerret-grid .cbox-img { flex: none; height: 180px; min-height: 180px; max-height: 180px; background: var(--pink); flex-direction: column; gap: 12px; color: var(--red-dark); position: relative; overflow: hidden; }
+    /* Drawing fills the fixed zone absolutely so it can never make the box taller */
+    .lerret-grid .cbox-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .sp-ph { display: flex; flex-direction: column; align-items: center; gap: 13px; color: var(--red-dark); }
+    .sp-ph svg { width: 30px; height: 30px; color: #d3ccc2; }
+    .sp-ph-t { font-size: 15px; font-weight: bold; color: var(--red-dark); }
+    .lerret-grid .cbox-desc { background: #fff; min-height: 78px; padding: 15px 17px; font-size: 13px; color: #999; font-style: italic; line-height: 1.5; }
+    .lerret-grid .cbox-hd { font-size: 15px; padding: 11px 14px; }
+
+    /* Hide header controls in the PDF export, keep the title + boxes */
+    .pdf-mode .sp-crumb, .pdf-mode .sp-help, .pdf-mode .sp-download { display: none !important; }
+
+    /* ── Storyboard grid (3×2 + download) ── */
+    .sb-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 12px 24px 48px;
+      max-width: 1300px;
+      margin: 0 auto;
+      flex: 1;
+    }
+
+    /* ── PDF export mode: deterministic box heights so nothing stretches/clips ── */
+    /* PDF export: capture the boxes exactly as on screen (fixed heights already
+       prevent stretching). Just stop the grid filling the page and drop the
+       shadows (html2canvas renders them muddy). */
+    .pdf-mode { min-height: 0; }
+    .pdf-mode .canvas-grid, .pdf-mode .sb-grid { flex: none; align-content: start; }
+    .pdf-mode .cbox, .pdf-mode .sbbox { box-shadow: none; }
+    .pdf-mode .sp-header { padding-top: 10px; }
+
+    /* Embedded design pages (Plakat) shown in an iframe */
+    .embed-page { height: 100vh; }
+    .embed-frame { flex: 1 1 auto; width: 100%; min-height: 0; border: 0; display: block; background: var(--bg); }
+
+    /* ── Lean Canvas (native) ── */
+    .lc-canvas { max-width: 1500px; width: 100%; align-self: center; padding: 6px 40px 44px; }
+    .lc-cols { display: flex; margin: 4px 0 14px; }
+    .lc-cols span { flex: 1; font-size: 17px; font-weight: bold; letter-spacing: 4px; color: #a7988f; padding: 4px 0; }
+    .lc-cols span:first-child { text-align: right; padding-right: 26px; border-right: 2px solid #dccfc0; }
+    .lc-cols span:last-child { text-align: left; padding-left: 26px; }
+    .lc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 16px; }
+    .lc-box { grid-column: span 2; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); padding: 16px 16px 28px; position: relative; display: flex; flex-direction: column; min-height: 300px; }
+    .lc-box.lc-wide { grid-column: span 5; min-height: 170px; }
+    .lc-title { font-size: 14.5px; font-weight: bold; color: var(--red-dark); letter-spacing: 0.4px; padding-right: 26px; }
+    .lc-desc { font-size: 12.5px; color: #8a8a8a; line-height: 1.5; margin: 8px 0 8px; }
+    .lc-ta { flex: 1; width: 100%; border: none; outline: none; resize: none; font-family: inherit; font-size: 14px; color: var(--text); background: transparent; cursor: text; }
+    .lc-ta::placeholder { color: #c8c0b6; font-style: italic; }
+    .lc-box, .lc-maltall-box { cursor: text; }
+    .lc-help { position: absolute; top: 14px; right: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--red-dark); color: #fff; border: none; cursor: pointer; font-size: 12px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; font-family: inherit; }
+    .lc-help:hover { background: #5e080f; }
+    /* Lean Canvas title help circle is burgundy (not near-black) */
+    #page-lean-canvas .sp-help { background: var(--red-dark); }
+    /* Lean Canvas download button is the strong red (matches the design) */
+    .lc-download { background: var(--red); }
+    .lc-download:hover { background: #d4141f; }
+    .lc-count { position: absolute; bottom: 9px; right: 14px; font-size: 12px; color: #b3aaa0; }
+    .lc-box .lc-count { display: none; }  /* box counters appear only when you start writing */
+    .lc-maltall { margin-top: 22px; margin-bottom: 56px; max-width: 1500px; width: 100%; align-self: center; padding: 0 40px; }
+    .lc-maltall-inner { width: 100%; }
+    .lc-maltall-box { width: 100%; }
+    .lc-maltall-inner { border-left: 6px solid var(--red-dark); padding-left: 16px; }
+    .lc-maltall-label { font-size: 15px; font-weight: bold; color: var(--red-dark); letter-spacing: 1px; margin-bottom: 8px; }
+    .lc-maltall-box { position: relative; background: #fff; border: 1px solid #e6ded3; border-radius: 10px; padding: 16px 16px 30px; min-height: 190px; display: flex; }
+    .lc-maltall-box textarea { flex: 1; border: none; outline: none; resize: vertical; font-family: inherit; font-size: 14px; color: var(--text); background: transparent; }
+    @media (max-width: 1100px) {
+      .lc-grid { grid-template-columns: repeat(2, 1fr); }
+      .lc-box { grid-column: span 1; min-height: 240px; }
+      .lc-box.lc-wide { grid-column: span 2; }
+      .lc-cols { display: none; }
+    }
+    /* Hide help circles in the Lean Canvas PDF */
+    .pdf-mode .lc-help { display: none !important; }
+
+    /* Lean Canvas: header, grid and Måltall share identical width + side air */
+    #page-lean-canvas .sp-header,
+    #page-lean-canvas .lc-canvas,
+    #page-lean-canvas .lc-maltall {
+      max-width: 1600px; width: 100%; align-self: center;
+      margin-left: 0; margin-right: 0;
+      padding-left: 8%; padding-right: 8%;
+    }
+
+    /* ── Canvas box ── */
+    .cbox { background: var(--white); border: 1px solid #ddd; display: flex; flex-direction: column; }
+    .cbox, .sbbox { page-break-inside: avoid; break-inside: avoid; }
+
+    .cbox-hd {
+      background: var(--red-dark); color: white;
+      padding: 7px 10px; font-size: 12px; font-weight: bold; letter-spacing: 0.2px;
+      display: flex; gap: 5px;
+    }
+    .cbox-num { flex-shrink: 0; }
+    .cbox-title { flex: 1; outline: none; }
+    .cbox-title:focus { outline: 2px solid #F7C948; outline-offset: 1px; border-radius: 2px; }
+    /* Placeholder shown only while empty — disappears as soon as you type */
+    .cbox-title:empty:before, #ed-hd-title:empty:before {
+      content: attr(data-ph); color: rgba(255,255,255,0.6); cursor: text;
+    }
+
+    .cbox-img {
+      flex: 1; min-height: 135px;
+      background: #f7f7f7;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; overflow: hidden;
+    }
+    .cbox-img:hover .upload-hint { opacity: 1; }
+    .upload-hint {
+      position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.55); color: white; font-size: 11px;
+      padding: 3px 9px; border-radius: 3px; white-space: nowrap;
+      opacity: 0; transition: opacity 0.15s; pointer-events: none;
+    }
+    .placeholder-num { font-size: 54px; color: #D5D5D5; font-weight: bold; line-height: 1; }
+    .cbox-img img { width: 100%; height: 100%; object-fit: cover; }
+    .cbox-img input[type=file] { display: none; }
+
+    .cbox-desc {
+      background: var(--pink); padding: 8px 10px;
+      min-height: 54px; font-size: 11.5px; color: #999; line-height: 1.45;
+    }
+    .cbox-desc[contenteditable="true"]:focus {
+      outline: 1.5px solid var(--red); color: #444;
+    }
+
+    /* ── Storyboard box (taller image, no desc) ── */
+    .sbbox { background: var(--white); border: 1px solid #ddd; display: flex; flex-direction: column; }
+    .sbbox .cbox-img { min-height: 195px; }
+
+    /* ── Download box ── */
+    .dbox {
+      background: var(--white); border: 1px solid #ddd;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 22px 16px; text-align: center; gap: 12px;
+    }
+    .dbox h3 { font-size: 13px; font-weight: bold; }
+    .dbox p { font-size: 12px; color: var(--text-light); line-height: 1.65; }
+    .btn-dl {
+      background: #efefef; border: 1px solid #ccc;
+      padding: 9px 20px; font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      font-family: inherit;
+    }
+    .btn-dl:hover { background: #e3e3e3; }
+
+    /* ── Footer ── */
+    .footer {
+      background: var(--red-dark); color: white;
+      text-align: center; padding: 28px 20px;
+      margin-top: auto; flex-shrink: 0;
+    }
+    .footer-logo {
+      width: 50px; height: 50px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      margin: 0 auto 11px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .footer-name { font-weight: bold; letter-spacing: 2px; font-size: 13px; margin-bottom: 9px; }
+    .footer-credits { font-size: 11.5px; font-style: italic; opacity: 0.92; line-height: 1.7; }
+
+    /* ── Home page ── */
+    .home-body { flex: 1; padding: 52px 44px 44px; max-width: 1060px; margin: 0 auto; width: 100%; }
+    .home-title { font-family: var(--font-sans); font-size: 40px; font-weight: bold; color: var(--text); margin-bottom: 8px; line-height: 1.15; }
+    .home-subtitle { font-size: 15px; color: #9a8b85; margin-bottom: 40px; }
+
+    /* ── Home course rows (full-width list items) ── */
+    .course-rows { display: flex; flex-direction: column; gap: 24px; max-width: 1040px; }
+    .course-row {
+      display: flex; align-items: stretch; width: 100%; cursor: pointer;
+      font-family: inherit; text-align: left; border: none; padding: 0;
+      background: #fff; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      transition: background .15s, box-shadow .15s, transform .1s;
+      min-height: 104px;
+    }
+    .course-row:hover { background: var(--pink); box-shadow: 0 6px 18px rgba(0,0,0,0.14); transform: translateY(-1px); }
+    .cr-bar { flex: 0 0 11px; align-self: stretch; }
+    .cr-101 .cr-bar { background: var(--red-dark); }
+    .cr-102 .cr-bar { background: var(--red); }
+    .cr-text { flex: 1; padding: 22px 32px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+    .cr-code { font-size: 23px; font-weight: bold; letter-spacing: 0.5px; }
+    .cr-101 .cr-code { color: var(--red-dark); }
+    .cr-102 .cr-code { color: var(--red); }
+    .cr-title { font-size: 17px; color: var(--text); }
+    .cr-cta { display: flex; align-items: center; gap: 11px; padding: 0 38px; font-size: 13px; font-weight: bold; letter-spacing: 1px; white-space: nowrap; }
+    .cr-101 .cr-cta { color: var(--red-dark); }
+    .cr-102 .cr-cta { color: var(--red); }
+    .cr-arrow { font-size: 18px; }
+    @media (max-width: 620px) {
+      .cr-cta span { display: none; }
+      .cr-cta { padding: 0 20px; }
+      .cr-cta .cr-arrow { display: inline; font-size: 20px; }
+    }
+
+    .course-cards { display: flex; gap: 22px; }
+
+    .course-card {
+      flex: 1;
+      background: var(--pink);
+      border-radius: 12px;
+      padding: 28px 28px 24px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      transition: box-shadow 0.15s, transform 0.1s;
+      min-height: 220px;
+      border: none;
+      text-align: left;
+      font-family: inherit;
+    }
+    .course-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.13); transform: translateY(-2px); }
+
+    .cc-badge {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      padding: 5px 12px;
+      border-radius: 5px;
+      margin-bottom: 18px;
+      width: fit-content;
+    }
+    .cc-title {
+      font-family: var(--font-sans);
+      font-size: 30px;
+      font-weight: bold;
+      color: var(--red-dark);
+      line-height: 1.2;
+      flex: 1;
+      margin-bottom: 24px;
+    }
+    .cc-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cc-link {
+      font-size: 13px;
+      font-weight: bold;
+      letter-spacing: 1.8px;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+    .cc-arrow-btn {
+      width: 40px; height: 40px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: bold;
+      flex-shrink: 0;
+    }
+    .cc-arrow-filled { background: var(--red); color: white; }
+    .cc-arrow-outline { background: white; color: var(--text); border: 1px solid #ddd; }
+
+    /* ── Help Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 40px 36px 32px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    }
+    .modal h2 {
+      font-size: 18px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      color: var(--text);
+    }
+    .modal p {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .modal p strong { font-weight: bold; }
+    .modal-ok {
+      display: block;
+      margin: 28px auto 0;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 48px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .modal-ok:hover { background: var(--red-dark); }
+
+    /* ── Drawing / editing modal (matches sketch: light blurred backdrop) ── */
+    .editor-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(255,249,240,0.55);
+      -webkit-backdrop-filter: blur(7px);
+      backdrop-filter: blur(7px);
+      z-index: 1100;
+      flex-direction: column;
+    }
+    .editor-overlay.open { display: flex; }
+
+    /* Crisp top bar with breadcrumb + help */
+    .editor-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 18px; flex-shrink: 0;
+      background: var(--bg);
+    }
+    .editor-back {
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; gap: 9px;
+      color: var(--text); font-size: 12.5px; letter-spacing: 0.3px;
+      font-family: inherit;
+    }
+    .editor-back svg { width: 18px; height: 18px; }
+
+    .editor-wrap {
+      flex: 1; position: relative; overflow: auto;
+      padding: 6px 18px 28px;
+    }
+    /* Tools pinned to the far left, vertically centred */
+    .editor-tools {
+      position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+      background: white; border-radius: 10px;
+      padding: 8px 6px; display: flex; flex-direction: column; gap: 4px;
+      box-shadow: 0 4px 22px rgba(0,0,0,0.16); z-index: 2;
+    }
+    .etool {
+      position: relative;
+      background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 9px 6px; border-radius: 8px; font-size: 10px;
+      color: #333; width: 56px; font-family: inherit;
+    }
+    .etool svg { width: 20px; height: 20px; }
+    .etool:hover { background: #f1f1f1; }
+    .etool.active { background: var(--pink); color: var(--red); }
+
+    /* Card absolutely centred in the viewport; side controls float to its right */
+    .editor-cardcol {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .editor-card {
+      background: white; border-radius: 6px;
+      overflow: hidden; box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+      display: flex; flex-direction: column;
+      width: 520px; max-width: 56vw;
+    }
+    .editor-hd {
+      background: var(--red-dark); color: white;
+      padding: 9px 12px; font-size: 13px; font-weight: bold;
+      display: flex; justify-content: center; gap: 5px;
+    }
+    #ed-hd-title { outline: none; }
+    #ed-hd-title:focus { outline: 2px solid #F7C948; outline-offset: 1px; border-radius: 2px; }
+    .editor-canvas-wrap { position: relative; background: white; flex: 1; }
+    #ed-canvas {
+      display: block; width: 100%; height: auto;
+      touch-action: none; cursor: crosshair; background: white;
+    }
+    .editor-desc {
+      background: var(--bg-blue); padding: 12px;
+      font-size: 12px; color: #444; min-height: 48px;
+      outline: none; text-align: center;
+    }
+    .editor-desc:empty:before { content: attr(data-placeholder); color: #999; }
+
+    /* X at top, Lagre at bottom — floated to the right of the card */
+    .editor-side {
+      position: absolute; left: calc(100% + 16px); top: 0; height: 100%;
+      display: flex; flex-direction: column; justify-content: space-between;
+      align-items: center; padding: 2px 0;
+    }
+    .editor-x {
+      background: none; border: none; cursor: pointer;
+      font-size: 22px; color: #333; line-height: 1; font-family: inherit;
+    }
+    .editor-x:hover { color: #000; }
+    .editor-save {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      background: none; border: none; cursor: pointer;
+      font-size: 12px; color: #333; font-family: inherit;
+    }
+    .editor-save svg { width: 22px; height: 22px; }
+    .editor-save:hover { color: #000; }
+
+    .etool-shape { position: relative; }
+    .shape-menu {
+      display: none; position: absolute; left: calc(100% + 6px); top: 0;
+      flex-direction: column; gap: 4px; z-index: 3;
+      background: white; border-radius: 8px; padding: 5px;
+      box-shadow: 0 4px 22px rgba(0,0,0,0.18);
+    }
+    .shape-menu.open { display: flex; }
+    .shape-menu button {
+      background: #f4f4f4; border: 1.5px solid #ddd; border-radius: 6px;
+      cursor: pointer; padding: 5px; width: 40px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shape-menu button svg { width: 18px; height: 18px; }
+    .shape-menu button.active { border-color: var(--red); background: var(--pink); }
+
+    @media (max-width: 640px) {
+      .editor-wrap { display: flex; flex-direction: column; align-items: center; }
+      .editor-tools {
+        position: static; transform: none; margin: 0 auto 10px;
+        flex-direction: row; flex-wrap: wrap; justify-content: center;
+      }
+      .editor-cardcol { position: static; transform: none; margin: 0 auto; }
+      .editor-card { max-width: 92vw; width: 92vw; }
+      .editor-side {
+        position: static; height: auto; flex-direction: row;
+        justify-content: space-between; width: 92vw; margin-top: 10px;
+      }
+      .shape-menu { position: static; left: auto; box-shadow: none; padding: 4px 0; }
+    }
+
+    @media (max-width: 620px) {
+      .tool-cards { flex-direction: column; }
+      .canvas-grid, .sb-grid { grid-template-columns: 1fr; }
+      .course-cards { flex-direction: column; }
+      .home-title { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════ HOME ════════════════════ -->
+<div class="page active" id="page-home">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+      <span class="nb-brand">INNOAKTIV</span>
+    </div>
+    <div class="nb-right">
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+
+  <div class="home-body">
+    <h1 class="home-title">Velkommen til Innoaktivsiden!</h1>
+    <p class="home-subtitle">Her finner du interaktive oppgaver til INNOV-emnene.</p>
+
+    <div class="course-rows">
+      <button class="course-row cr-101" onclick="showPage('page-innov101')">
+        <span class="cr-bar"></span>
+        <span class="cr-text">
+          <span class="cr-code">INNOV101/641</span>
+          <span class="cr-title">Introduksjon til innovasjonsmetoder</span>
+        </span>
+        <span class="cr-cta">TIL OPPGAVER <span class="cr-arrow">→</span></span>
+      </button>
+      <button class="course-row cr-102" onclick="showPage('page-innov102')">
+        <span class="cr-bar"></span>
+        <span class="cr-text">
+          <span class="cr-code">INNOV102/642</span>
+          <span class="cr-title">Introduksjon til designtenking</span>
+        </span>
+        <span class="cr-cta">TIL OPPGAVER <span class="cr-arrow">→</span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ INNOV101 PLACEHOLDER ════════════════════ -->
+<div class="page" id="page-innov101">
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-back" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span class="nb-crumb">HJEM &lt; INNOV101/641</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+  <div class="breadcrumb">
+    <a href="#" onclick="showPage('page-home')">HJEM</a> &gt; INNOV101/641
+  </div>
+
+  <div class="landing-body">
+    <h1 class="landing-title">INNOV101/641: Introduksjon til innovasjonsmetoder</h1>
+
+    <div class="i101-cards">
+
+      <!-- Lean Canvas  ->  page-lean-canvas -->
+      <button class="i101-card" onclick="showPage('page-lean-canvas')">
+        <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg></span>
+        <span class="i101-t">Lean Canvas</span>
+        <span class="i101-d">Fyll ut forretningsmodellen i ni ruter.</span>
+        <span class="i101-prev">
+          <svg viewBox="0 0 200 84" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="#C15B52" stroke-width="1.3">
+              <rect x="2" y="4" width="36" height="40" rx="3"/>
+              <rect x="42" y="4" width="36" height="40" rx="3"/>
+              <rect x="82" y="4" width="36" height="40" rx="3"/>
+              <rect x="122" y="4" width="36" height="40" rx="3"/>
+              <rect x="162" y="4" width="36" height="40" rx="3"/>
+              <rect x="2" y="50" width="76" height="30" rx="3"/>
+              <rect x="82" y="50" width="116" height="30" rx="3"/>
+            </g>
+            <g stroke="#820A12" stroke-width="2.5" stroke-linecap="round">
+              <line x1="5" y1="6" x2="35" y2="6"/>
+              <line x1="45" y1="6" x2="75" y2="6"/>
+              <line x1="85" y1="6" x2="115" y2="6"/>
+              <line x1="125" y1="6" x2="155" y2="6"/>
+              <line x1="165" y1="6" x2="195" y2="6"/>
+              <line x1="5" y1="52" x2="75" y2="52"/>
+              <line x1="85" y1="52" x2="195" y2="52"/>
+            </g>
+          </svg>
+        </span>
+        <span class="i101-arrow">→</span>
+      </button>
+
+      <!-- Storyboard  ->  page-innov101-storyboard -->
+      <button class="i101-card" onclick="showPage('page-innov101-storyboard')">
+        <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="7" width="5.5" height="10" rx="1"/><rect x="9.25" y="7" width="5.5" height="10" rx="1"/><rect x="16.5" y="7" width="5.5" height="10" rx="1"/></svg></span>
+        <span class="i101-t">Storyboard</span>
+        <span class="i101-d">Visualiser brukerreisen steg for steg.</span>
+        <span class="i101-prev">
+          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C15B52" stroke-width="1.5">
+            <rect x="2" y="2" width="62" height="34" rx="2"/>
+            <rect x="69" y="2" width="62" height="34" rx="2"/>
+            <rect x="136" y="2" width="62" height="34" rx="2"/>
+            <rect x="2" y="42" width="62" height="34" rx="2"/>
+            <rect x="69" y="42" width="62" height="34" rx="2"/>
+            <rect x="136" y="42" width="62" height="34" rx="2"/>
+          </svg>
+        </span>
+        <span class="i101-arrow">→</span>
+      </button>
+
+      <!-- Plakat (kanal)  ->  page-plakat -->
+      <button class="i101-card" onclick="showPage('page-plakat')">
+        <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="8.5" y1="8" x2="15.5" y2="8"/></svg></span>
+        <span class="i101-t">Plakat (kanal)</span>
+        <span class="i101-d">Velg størrelse og lag en plakat.</span>
+        <span class="i101-prev">
+          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg">
+            <!-- left dashed placeholder -->
+            <rect x="10" y="16" width="48" height="44" rx="2" fill="none" stroke="#C15B52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <!-- 'new size' dashed preview, offset down-right (shows through the outline square) -->
+            <rect x="112" y="30" width="54" height="36" rx="2" fill="none" stroke="#C15B52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <!-- selected square: outline only, no fill -->
+            <rect x="80" y="12" width="52" height="52" rx="1" fill="none" stroke="#820A12" stroke-width="2"/>
+            <!-- filled corner handles -->
+            <g fill="#820A12">
+              <rect x="76" y="8" width="8" height="8"/>
+              <rect x="128" y="8" width="8" height="8"/>
+              <rect x="76" y="60" width="8" height="8"/>
+              <rect x="128" y="60" width="8" height="8"/>
+            </g>
+          </svg>
+        </span>
+        <span class="i101-arrow">→</span>
+      </button>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ INNOV102 LANDING ════════════════════ -->
+<div class="page" id="page-innov102">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+      <span class="nb-brand">INNOAKTIV</span>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+
+  <div class="breadcrumb">
+    <a href="#" onclick="showPage('page-home')">HJEM</a> &gt; INNOV102/642
+  </div>
+
+  <div class="landing-body">
+    <h1 class="landing-title">INNOV102/642: Introduksjon til designtenking</h1>
+
+    <div class="dd-panel">
+      <div class="tool-cards-4">
+
+      <!-- 1. Sprikende lerret Problem  ->  page-sprikende (8 bokser) -->
+      <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET PROBLEM')">
+        <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
+        <span class="dd-t">Sprikende lerret</span>
+        <span class="dd-sub">Problem</span>
+        <span class="dd-d">8 bokser med problemer<br>Utforsk og kartlegg problemer bredt</span>
+        <span class="dd-arrow">→</span>
+      </button>
+
+      <!-- 2. Samlende lerret Problem  ->  page-storyboard (6 bokser) -->
+      <button class="dd-card" onclick="openLerret('page-storyboard','SAMLENDE LERRET PROBLEM')">
+        <span class="dd-ic"><img src="logo2-icon.png" alt="" width="26" height="26"></span>
+        <span class="dd-t">Samlende lerret</span>
+        <span class="dd-sub">Problem</span>
+        <span class="dd-d">6 ruter tittel/illustrasjon<br>Snevre inn til én problemdefinisjon</span>
+        <span class="dd-arrow">→</span>
+      </button>
+
+      <!-- 3. Sprikende lerret Løsning  ->  page-sprikende (8 bokser) -->
+      <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET LØSNING')">
+        <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
+        <span class="dd-t">Sprikende lerret</span>
+        <span class="dd-sub">Løsning</span>
+        <span class="dd-d">8 bokser med problemer<br>Idémyldre mange mulige løsninger</span>
+        <span class="dd-arrow">→</span>
+      </button>
+
+      <!-- 4. Samlende lerret Løsning  ->  page-samlende-losning (6 bokser) -->
+      <button class="dd-card" onclick="openLerret('page-samlende-losning','SAMLENDE LERRET LØSNING')">
+        <span class="dd-ic"><img src="logo2-icon.png" alt="" width="26" height="26"></span>
+        <span class="dd-t">Samlende lerret</span>
+        <span class="dd-sub">Løsning</span>
+        <span class="dd-d">6 ruter tittel/illustrasjon<br>Velg og konkretiser beste løsning</span>
+        <span class="dd-arrow">→</span>
+      </button>
+
+      </div><!-- /tool-cards-4 -->
+
+      <div class="double-diamond">
+        <svg viewBox="0 0 1000 330" xmlns="http://www.w3.org/2000/svg" font-family="'Open Sans', Arial, sans-serif">
+          <!-- dashed connectors from each card down to its phase dot -->
+          <g stroke="#C4B49B" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round">
+            <line x1="125" y1="6" x2="125" y2="137"/>
+            <line x1="375" y1="6" x2="375" y2="130"/>
+            <line x1="625" y1="6" x2="625" y2="130"/>
+            <line x1="875" y1="6" x2="875" y2="137"/>
+          </g>
+          <!-- faint diamond outline (lower edges complete the diamonds) -->
+          <g fill="none" stroke="#D8CBB4" stroke-width="1.5" stroke-linejoin="round">
+            <path d="M25 190 L250 310 L500 190"/>
+            <path d="M500 190 L750 310 L975 190"/>
+          </g>
+          <!-- bold process line (upper zig-zag) -->
+          <path d="M25 190 L250 70 L500 190 L750 70 L975 190" fill="none" stroke="#820A12" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <!-- phase dots -->
+          <circle cx="125" cy="137" r="8" fill="#BE564E"/>
+          <circle cx="375" cy="130" r="8" fill="#BE564E"/>
+          <circle cx="625" cy="130" r="8" fill="#820A12"/>
+          <circle cx="875" cy="137" r="8" fill="#820A12"/>
+          <!-- phase labels -->
+          <g font-size="12.5" font-weight="bold" text-anchor="middle" letter-spacing="0.8">
+            <text x="125" y="113" fill="#BE564E">OPPDAGE</text>
+            <text x="375" y="106" fill="#BE564E">DEFINERE</text>
+            <text x="625" y="106" fill="#820A12">IDÉGENERERE</text>
+            <text x="875" y="113" fill="#820A12">PROTOTYPE</text>
+          </g>
+          <!-- nodes -->
+          <g fill="#fff" stroke="#820A12" stroke-width="2.5">
+            <circle cx="25" cy="190" r="9"/>
+            <circle cx="500" cy="190" r="9"/>
+            <circle cx="975" cy="190" r="9"/>
+          </g>
+          <!-- node labels -->
+          <g fill="#200505" font-size="15" font-weight="600">
+            <text x="14" y="216" text-anchor="start">Problem</text>
+            <text x="500" y="216" text-anchor="middle">Problemdefinisjon</text>
+            <text x="986" y="216" text-anchor="end">Løsning</text>
+          </g>
+        </svg>
+        <div class="dd-caption">Dobbeltdiamanten – rammeverk for designtenkning</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ SPRIKENDE LERRET ════════════════════ -->
+<div class="page" id="page-sprikende">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-back" onclick="showPage('page-innov102')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span class="nb-crumb">INNOV102 &lt; SPRIKENDE LERRET</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+
+  <div class="sp-header">
+    <div class="sp-head-left">
+      <h1 class="sp-title">Sprikende lerret
+        <button class="nb-help sp-help" title="Hjelp" onclick="openModal()">?</button>
+      </h1>
+      <div class="sp-sub">
+        <input type="text" id="sp-title" value="Din egen tittel"
+          onfocus="if(this.value==='Din egen tittel')this.value=''"
+          onblur="if(!this.value.trim())this.value='Din egen tittel'">
+      </div>
+    </div>
+    <button class="sp-download" onclick="downloadPDF('sp')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
+      Last ned som PDF
+    </button>
+  </div>
+
+  <div class="canvas-grid lerret-grid" id="sp-grid"></div>
+
+  <div class="footer">
+    <div class="footer-name">SPRIKENDE LERRET | INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ SAMLENDE LERRET / STORYBOARD ════════════════════ -->
+<div class="page" id="page-storyboard">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-back" onclick="showPage('page-innov102')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span class="nb-crumb">INNOV102 &lt; SAMLENDE LERRET</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+
+  <div class="sp-header">
+    <div class="sp-head-left">
+      <h1 class="sp-title">Samlende lerret
+        <button class="nb-help sp-help" title="Hjelp" onclick="openModal()">?</button>
+      </h1>
+      <div class="sp-sub">
+        <input type="text" id="sb-title" value="Din egen tittel"
+          onfocus="if(this.value==='Din egen tittel')this.value=''"
+          onblur="if(!this.value.trim())this.value='Din egen tittel'">
+      </div>
+    </div>
+    <button class="sp-download" onclick="downloadPDF('sb')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
+      Last ned som PDF
+    </button>
+  </div>
+
+  <div class="sb-grid lerret-grid" id="sb-grid"></div>
+
+  <div class="footer">
+    <div class="footer-name">SAMLENDE LERRET | INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ SAMLENDE LERRET LØSNING ════════════════════ -->
+<div class="page" id="page-samlende-losning">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-back" onclick="showPage('page-innov102')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span class="nb-crumb">INNOV102 &lt; SAMLENDE LERRET LØSNING</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+
+  <div class="tool-hd">
+    <h1>SAMLENDE LERRET</h1>
+    <div class="tool-hd-sub">
+      <input type="text" id="sl-title" value="(Din egen tittel)"
+        onfocus="if(this.value==='(Din egen tittel)')this.value=''"
+        onblur="if(!this.value.trim())this.value='(Din egen tittel)'">
+    </div>
+  </div>
+
+  <div class="sb-grid" id="sl-grid"></div>
+
+  <div class="footer">
+    <div class="footer-name">SAMLENDE LERRET | INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ INNOV101 STORYBOARD ════════════════════ -->
+<div class="page" id="page-innov101-storyboard">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-back" onclick="showPage('page-innov101')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span class="nb-crumb">INNOV101 &lt; STORYBOARD</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+
+  <div class="tool-hd">
+    <h1>STORYBOARD</h1>
+    <div class="tool-hd-sub">
+      <input type="text" id="sb101-title" value="(Din egen tittel)"
+        onfocus="if(this.value==='(Din egen tittel)')this.value=''"
+        onblur="if(!this.value.trim())this.value='(Din egen tittel)'">
+    </div>
+  </div>
+
+  <div class="sb-grid" id="sb101-grid"></div>
+
+  <div class="footer">
+    <div class="footer-name">STORYBOARD | INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ LEAN CANVAS (embedded design) ════════════════════ -->
+<div class="page" id="page-lean-canvas">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-back" onclick="showPage('page-innov101')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span class="nb-crumb">INNOV101 &lt; LEAN CANVAS</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+
+  <div class="sp-header lc-header">
+    <div class="sp-head-left">
+      <div class="sp-crumb"><a href="#" onclick="showPage('page-innov101')">INNOV101</a> &rsaquo; LEAN CANVAS</div>
+      <h1 class="sp-title">Lean canvas
+        <button class="nb-help sp-help" title="Hjelp" onclick="openModal()">?</button>
+      </h1>
+      <div class="sp-sub">
+        <input type="text" id="lc-title" value="Din egen tittel"
+          onfocus="if(this.value==='Din egen tittel')this.value=''"
+          onblur="if(!this.value.trim())this.value='Din egen tittel'">
+      </div>
+    </div>
+    <button class="sp-download lc-download" onclick="downloadPDF('lc')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
+      Last ned som PDF
+    </button>
+  </div>
+
+  <div class="lc-canvas">
+    <div class="lc-cols"><span>PRODUKT</span><span>MARKED</span></div>
+    <div class="lc-grid">
+
+      <div class="lc-box">
+        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <div class="lc-title">1. PROBLEM</div>
+        <div class="lc-desc">Situasjoner/behov som oppleves lite hensiktsmessige, tidskrevende eller problematiske</div>
+        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 40 ord</div>
+      </div>
+
+      <div class="lc-box">
+        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <div class="lc-title">2. LØSNING</div>
+        <div class="lc-desc">Hva består løsningen av, og hvilke funksjoner har systemet eller tjenesten?</div>
+        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 40 ord</div>
+      </div>
+
+      <div class="lc-box">
+        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <div class="lc-title">3. VERDIFORSLAG</div>
+        <div class="lc-desc">Slagord. PR. Kommunikasjon</div>
+        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 40 ord</div>
+      </div>
+
+      <div class="lc-box">
+        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <div class="lc-title">4. KANAL</div>
+        <div class="lc-desc">Hvordan når man brukerne?</div>
+        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 40 ord</div>
+      </div>
+
+      <div class="lc-box">
+        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <div class="lc-title">5. BRUKER</div>
+        <div class="lc-desc">Hvem har problemet og vil verdsette løsningen?</div>
+        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 40 ord</div>
+      </div>
+
+      <div class="lc-box lc-wide">
+        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <div class="lc-title">6. KOSTNADER</div>
+        <div class="lc-desc">De viktigste kostnadene knyttet til utvikling, drift og videreføring av tjenesten</div>
+        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 40 ord</div>
+      </div>
+
+      <div class="lc-box lc-wide">
+        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <div class="lc-title">7. INNTEKTER</div>
+        <div class="lc-desc">Redegjør for hvilke verdier eller inntekter løsningen genererer</div>
+        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 40 ord</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="lc-maltall">
+    <div class="lc-maltall-inner">
+      <div class="lc-maltall-label">MÅLTALL</div>
+      <div class="lc-maltall-box">
+        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <textarea class="lc-ta" data-limit="300" placeholder="Fyll inn måltall her..." oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 300 ord</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-name">LEAN CANVAS | INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ PLAKAT (kanal) (embedded design) ════════════════════ -->
+<div class="page embed-page" id="page-plakat">
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-back" onclick="showPage('page-innov101')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span class="nb-crumb">INNOV101 &lt; PLAKAT (KANAL)</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+  <iframe class="embed-frame" src="plakat.html" title="Fra idé til plakat"></iframe>
+</div>
+
+
+<!-- ════════════════════ HELP MODAL ════════════════════ -->
+<div class="modal-overlay" id="help-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <h2>Velkommen til Innoaktiv siden !</h2>
+    <p>Denne siden er ditt digitale verktøy (<strong>Innoaktiv</strong>) hvor du finner interaktive oppgaver til INNOV-emnene på UIB.</p>
+    <p>NB: Dette er en prototype under utvikling. Dersom du oppdager feil eller mangler, vennligst send en tilbakemelding til: hanna.hassel@uib.no.</p>
+    <button class="modal-ok" onclick="document.getElementById('help-modal').classList.remove('open')">OK</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════ DRAWING / EDITING MODAL ════════════════════ -->
+<div class="editor-overlay" id="editor">
+
+  <!-- Crisp top bar -->
+  <div class="editor-topbar">
+    <button class="editor-back" onclick="closeEditor()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <span id="ed-crumb">INNOV102 &lt; SPRIKENDE LERRET</span>
+    </button>
+    <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+  </div>
+
+  <div class="editor-wrap">
+
+    <!-- Tool strip -->
+    <div class="editor-tools">
+      <button class="etool" id="t-draw" title="Tegn" onclick="setTool('draw')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        Tegn
+      </button>
+      <button class="etool" id="t-color" title="Farge" onclick="pickColor()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.3C12 2.3 4.8 10 4.8 15.2a7.2 7.2 0 0 0 14.4 0C19.2 10 12 2.3 12 2.3z"/></svg>
+        Farge
+      </button>
+      <button class="etool" id="t-erase" title="Fjern" onclick="setTool('erase')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16a2 2 0 0 1 0-3l9-9a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3l-7 8"/><path d="M6 11l6 6"/></svg>
+        Fjern
+      </button>
+      <div class="etool-shape">
+        <button class="etool" id="t-shape" title="Form" onclick="toggleShapeMenu()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <rect x="2" y="3" width="8" height="8" rx="1"/>
+            <circle cx="18" cy="7" r="4.3"/>
+            <path d="M6 22 L2 15 L10 15 Z"/>
+            <path d="M18 13.5 v8 M14 17.5 h8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+          Form
+        </button>
+        <div class="shape-menu" id="shape-menu">
+          <button data-shape="rect" title="Rektangel" onclick="event.stopPropagation();setShape('rect')"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="1"/></svg></button>
+          <button data-shape="ellipse" title="Sirkel" onclick="event.stopPropagation();setShape('ellipse')"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><ellipse cx="12" cy="12" rx="9" ry="7"/></svg></button>
+          <button data-shape="triangle" title="Trekant" onclick="event.stopPropagation();setShape('triangle')"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linejoin="round"><path d="M12 4 L21 20 L3 20 Z"/></svg></button>
+          <button data-shape="line" title="Linje" onclick="event.stopPropagation();setShape('line')"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"><line x1="4" y1="20" x2="20" y2="4"/></svg></button>
+        </div>
+      </div>
+      <button class="etool" id="t-image" title="Bilde" onclick="document.getElementById('ed-file').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Bilde
+      </button>
+      <button class="etool" id="t-clear" title="Slett" onclick="clearCanvas()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 2.5h5a1 1 0 0 1 1 1V5H20v2H4V5h4.5V3.5a1 1 0 0 1 1-1zM6 8h12l-1 12.2a2 2 0 0 1-2 1.8H9a2 2 0 0 1-2-1.8L6 8z"/></svg>
+        Slett
+      </button>
+    </div>
+
+    <!-- Card + side controls -->
+    <div class="editor-cardcol">
+      <div class="editor-card">
+        <div class="editor-hd" id="ed-header">
+          <span id="ed-hd-num"></span>
+          <span id="ed-hd-title" contenteditable="true" data-ph="Kort Overskrift"></span>
+        </div>
+        <div class="editor-canvas-wrap">
+          <canvas id="ed-canvas" width="1000" height="640"></canvas>
+        </div>
+        <div class="editor-desc" id="ed-desc" contenteditable="true" data-placeholder="Forklar ideen bak illustrasjonen"></div>
+      </div>
+
+      <div class="editor-side">
+        <button class="editor-x" title="Lukk" onclick="closeEditor()">&times;</button>
+        <button class="editor-save" title="Lagre" onclick="closeEditor()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Lagre
+        </button>
+      </div>
+    </div>
+
+  </div>
+  <input type="file" id="ed-file" accept="image/*" style="display:none">
+</div>
+
+
+<script>
+// ── Modal ────────────────────────────────────────────────────
+function openModal() { document.getElementById('help-modal').classList.add('open'); }
+function closeModal(e) { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); }
+
+// ── Navigation ──────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Open a lerret and set its title/breadcrumb so Problem vs Løsning is visible
+function openLerret(id, title) {
+  showPage(id);
+  const page = document.getElementById(id);
+  const h1 = page.querySelector('.tool-hd h1');
+  if (h1) h1.textContent = title;
+  const crumb = page.querySelector('.nb-crumb');
+  if (crumb) crumb.textContent = 'INNOV102 < ' + title;
+}
+
+// ── Make image area (click opens the drawing editor) ─────────
+function makeImgArea(num, extraStyle) {
+  const area = document.createElement('div');
+  area.className = 'cbox-img';
+  if (extraStyle) area.style.cssText = extraStyle;
+
+  const numEl = document.createElement('span');
+  numEl.className = 'placeholder-num';
+  numEl.textContent = num;
+  area.appendChild(numEl);
+
+  const hint = document.createElement('span');
+  hint.className = 'upload-hint';
+  hint.textContent = '✎ Tegn / legg til bilde';
+  area.appendChild(hint);
+
+  return area;
+}
+
+// ── Build Sprikende Lerret (8 boxes + download) ──────────────
+function buildSprikende() {
+  const grid = document.getElementById('sp-grid');
+
+  for (let i = 1; i <= 8; i++) {
+    const box = document.createElement('div');
+    box.className = 'cbox';
+
+    // Header: zero-padded number + editable title + help
+    const hd = document.createElement('div');
+    hd.className = 'cbox-hd';
+    hd.innerHTML =
+      `<span class="cbox-num">${String(i).padStart(2, '0')}</span>` +
+      `<span class="cbox-title" contenteditable="true" data-ph="Kort overskrift"></span>`;
+    box.appendChild(hd);
+
+    // Image zone (click opens the editor) — icon + hint placeholder
+    const imgArea = document.createElement('div');
+    imgArea.className = 'cbox-img';
+    imgArea.innerHTML =
+      `<span class="placeholder-num sp-ph">` +
+        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>` +
+        `<span class="sp-ph-t">Legg til tegning eller bilde</span>` +
+      `</span>`;
+    imgArea.addEventListener('click', () => openEditor(box, i));
+    box.appendChild(imgArea);
+
+    // Description (always-visible white zone)
+    const desc = document.createElement('div');
+    desc.className = 'cbox-desc';
+    desc.contentEditable = 'true';
+    desc.textContent = 'Forklar ideen bak illustrasjonen';
+    desc.style.color = '#999';
+    desc.addEventListener('focus', function () {
+      if (this.textContent === 'Forklar ideen bak illustrasjonen') {
+        this.textContent = '';
+        this.style.color = '#333';
+      }
+    });
+    desc.addEventListener('blur', function () {
+      if (!this.textContent.trim()) {
+        this.textContent = 'Forklar ideen bak illustrasjonen';
+        this.style.color = '#999';
+      }
+    });
+    box.appendChild(desc);
+
+    grid.appendChild(box);
+  }
+  // Download moved to the page header (no box 9).
+}
+
+// ── Build Samlende Lerret / Storyboard (6 panels + download) ──
+function buildStoryboard() {
+  const grid = document.getElementById('sb-grid');
+
+  for (let i = 0; i < 6; i++) {
+    const box = document.createElement('div');
+    box.className = 'sbbox';
+
+    const hd = document.createElement('div');
+    hd.className = 'cbox-hd';
+    hd.innerHTML =
+      `<span class="cbox-num">${String(i + 1).padStart(2, '0')}</span>` +
+      `<span class="cbox-title" contenteditable="true" data-ph="Kort overskrift"></span>`;
+    box.appendChild(hd);
+
+    const imgArea = document.createElement('div');
+    imgArea.className = 'cbox-img';
+    imgArea.innerHTML =
+      `<span class="placeholder-num sp-ph">` +
+        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>` +
+        `<span class="sp-ph-t">Legg til tegning eller bilde</span>` +
+      `</span>`;
+    imgArea.addEventListener('click', () => openEditor(box, i + 1));
+    box.appendChild(imgArea);
+
+    const desc = document.createElement('div');
+    desc.className = 'cbox-desc';
+    desc.contentEditable = 'true';
+    desc.textContent = 'Forklar ideen bak illustrasjonen';
+    desc.style.color = '#999';
+    desc.addEventListener('focus', function () {
+      if (this.textContent === 'Forklar ideen bak illustrasjonen') { this.textContent = ''; this.style.color = '#333'; }
+    });
+    desc.addEventListener('blur', function () {
+      if (!this.textContent.trim()) { this.textContent = 'Forklar ideen bak illustrasjonen'; this.style.color = '#999'; }
+    });
+    box.appendChild(desc);
+
+    grid.appendChild(box);
+  }
+  // Download moved to the page header (no box 9).
+}
+
+// ── Build INNOV101 Storyboard (same labels/prompts as Samlende Lerret Løsning) ──
+function buildStoryboard101() {
+  const grid = document.getElementById('sb101-grid');
+  const labels = ['Problem', 'Konsekvens', 'Oppdagelse', 'Konkurransefortrinn', 'Funksjonalitet', 'Problemfri'];
+  const prompts = [
+    'Vis en situasjon hvor en bruker møter på et problem',
+    'Beskriv problemets konsekvens for brukeren',
+    'Gjennom hvilken kanal oppdager brukeren løsningen?',
+    'Hvorfor velger brukeren denne løsningen fremfor andre?',
+    'Beskriv løsningens viktigste funksjonalitet',
+    'Vis en situasjon hvor brukeren ikke lenger har et problem'
+  ];
+
+  for (let i = 0; i < 6; i++) {
+    const prompt = prompts[i];
+    const box = document.createElement('div');
+    box.className = 'sbbox';
+    box.dataset.ph = prompt;
+
+    const hd = document.createElement('div');
+    hd.className = 'cbox-hd';
+    hd.innerHTML =
+      `<span class="cbox-num">${i + 1}.</span>` +
+      `<span class="cbox-title" contenteditable="true" data-ph="Kort Overskrift"></span>`;
+    box.appendChild(hd);
+    hd.querySelector('.cbox-title').textContent = labels[i];
+
+    const imgArea = makeImgArea(i + 1, 'min-height:200px;');
+    imgArea.addEventListener('click', () => openEditor(box, i + 1));
+    box.appendChild(imgArea);
+
+    const desc = document.createElement('div');
+    desc.className = 'cbox-desc';
+    desc.contentEditable = 'true';
+    desc.textContent = prompt;
+    desc.style.color = '#aaa';
+    desc.addEventListener('focus', function () {
+      if (this.textContent === prompt) { this.textContent = ''; this.style.color = '#333'; }
+    });
+    desc.addEventListener('blur', function () {
+      if (!this.textContent.trim()) { this.textContent = prompt; this.style.color = '#aaa'; }
+    });
+    box.appendChild(desc);
+
+    grid.appendChild(box);
+  }
+
+  const dl = document.createElement('div');
+  dl.className = 'dbox';
+  dl.innerHTML = `
+    <h3>Last ned storyboardet</h3>
+    <p>Har du fylt inn alle rutene?<br><br>Da kan du laste ned ditt storyboard som PDF.</p>
+    <button class="btn-dl" onclick="downloadPDF('sb101')">Last Ned &#8675;</button>
+  `;
+  grid.appendChild(dl);
+}
+
+// ── Build Samlende Lerret Løsning (6 storyboard boxes, pre-labelled) ──
+function buildStoryboardLosning() {
+  const grid = document.getElementById('sl-grid');
+  const labels = ['Problem', 'Konsekvens', 'Oppdagelse', 'Konkurransefortrinn', 'Funksjonalitet', 'Problemfri'];
+  const prompts = [
+    'Vis en situasjon hvor en bruker møter på et problem',
+    'Beskriv problemets konsekvens for brukeren',
+    'Gjennom hvilken kanal oppdager brukeren løsningen?',
+    'Hvorfor velger brukeren denne løsningen fremfor andre?',
+    'Beskriv løsningens viktigste funksjonalitet',
+    'Vis en situasjon hvor brukeren ikke lenger har et problem'
+  ];
+
+  for (let i = 0; i < 6; i++) {
+    const prompt = prompts[i];
+    const box = document.createElement('div');
+    box.className = 'sbbox';
+    box.dataset.ph = prompt;
+
+    // Header: number + pre-filled category label
+    const hd = document.createElement('div');
+    hd.className = 'cbox-hd';
+    hd.innerHTML =
+      `<span class="cbox-num">${i + 1}.</span>` +
+      `<span class="cbox-title" contenteditable="true" data-ph="Kort Overskrift"></span>`;
+    box.appendChild(hd);
+    hd.querySelector('.cbox-title').textContent = labels[i];
+
+    // Larger image area
+    const imgArea = makeImgArea(i + 1, 'min-height:200px;');
+    imgArea.addEventListener('click', () => openEditor(box, i + 1));
+    box.appendChild(imgArea);
+
+    // Description — this box's own prompt as placeholder
+    const desc = document.createElement('div');
+    desc.className = 'cbox-desc';
+    desc.contentEditable = 'true';
+    desc.textContent = prompt;
+    desc.style.color = '#aaa';
+    desc.addEventListener('focus', function () {
+      if (this.textContent === prompt) { this.textContent = ''; this.style.color = '#333'; }
+    });
+    desc.addEventListener('blur', function () {
+      if (!this.textContent.trim()) { this.textContent = prompt; this.style.color = '#aaa'; }
+    });
+    box.appendChild(desc);
+
+    grid.appendChild(box);
+  }
+
+  const dl = document.createElement('div');
+  dl.className = 'dbox';
+  dl.innerHTML = `
+    <h3>Last ned lerretet</h3>
+    <p>Har du fylt inn alle rutene?<br><br>Da kan du laste ned ditt samlende lerret som PDF.</p>
+    <button class="btn-dl" onclick="downloadPDF('sl')">Last Ned &#8675;</button>
+  `;
+  grid.appendChild(dl);
+}
+
+// ── PDF download ─────────────────────────────────────────────
+function downloadPDF(type) {
+  const cfg = {
+    lc:    { page: 'page-lean-canvas',         title: 'lc-title',    name: 'Lean Canvas',             rw: 1500 },
+    sp:    { page: 'page-sprikende',           title: 'sp-title',    name: 'Sprikende Lerret',        rw: 1700 },
+    sb:    { page: 'page-storyboard',          title: 'sb-title',    name: 'Samlende Lerret',         rw: 1300 },
+    sl:    { page: 'page-samlende-losning',    title: 'sl-title',    name: 'Samlende Lerret Løsning', rw: 1300 },
+    sb101: { page: 'page-innov101-storyboard', title: 'sb101-title', name: 'Storyboard',              rw: 1300 }
+  }[type];
+  const pageEl = document.getElementById(cfg.page);
+  const titleEl = document.getElementById(cfg.title);
+  const rawTitle = titleEl.value.trim();
+  const filename = (rawTitle && rawTitle !== '(Din egen tittel)' && rawTitle !== 'Din egen tittel') ? rawTitle : cfg.name;
+
+  // Hide nav, download box and footer so only the header + boxes show.
+  const navbar = pageEl.querySelector('.navbar');
+  const dbox = pageEl.querySelector('.dbox');
+  const footer = pageEl.querySelector('.footer');
+  if (navbar) navbar.style.display = 'none';
+  if (dbox) dbox.style.display = 'none';
+  if (footer) footer.style.display = 'none';
+  pageEl.classList.add('pdf-mode');
+
+  // Render at a FIXED width so the layout (box proportions, one-line headers)
+  // is identical to the screen regardless of the browser window size.
+  const w = cfg.rw;
+  const prevWidth = pageEl.style.width;
+  pageEl.style.width = w + 'px';
+  const h = Math.max(pageEl.scrollHeight, pageEl.offsetHeight) + 20;
+
+  const opt = {
+    margin: 0,
+    filename: filename + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollY: 0 },
+    jsPDF: { unit: 'px', format: [w, h], orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(pageEl).save().then(() => {
+    pageEl.classList.remove('pdf-mode');
+    pageEl.style.width = prevWidth;
+    if (navbar) navbar.style.display = '';
+    if (dbox) dbox.style.display = '';
+    if (footer) footer.style.display = '';
+  });
+}
+
+// ══════════════════════ DRAWING EDITOR ══════════════════════
+const ed = {
+  canvas: null, ctx: null,
+  box: null, imgArea: null,
+  tool: 'draw', color: '#820A12', shape: 'rect',
+  drawing: false, dirty: false,
+  snapshot: null, start: null, last: null
+};
+
+function initEditor() {
+  ed.canvas = document.getElementById('ed-canvas');
+  ed.ctx = ed.canvas.getContext('2d');
+
+  const c = ed.canvas;
+  c.addEventListener('pointerdown', edDown);
+  c.addEventListener('pointermove', edMove);
+  window.addEventListener('pointerup', edUp);
+
+  document.getElementById('ed-file').addEventListener('change', edInsertImage);
+}
+
+function edPos(e) {
+  const r = ed.canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - r.left) * (ed.canvas.width / r.width),
+    y: (e.clientY - r.top) * (ed.canvas.height / r.height)
+  };
+}
+
+function edStrokeStyle() {
+  const ctx = ed.ctx;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  if (ed.tool === 'erase') {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineWidth = 26;
+  } else {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.strokeStyle = ed.color;
+    ctx.fillStyle = ed.color;
+    ctx.lineWidth = ed.tool === 'shape' ? 3 : 4;
+  }
+}
+
+function edDown(e) {
+  e.preventDefault();
+  ed.drawing = true; ed.dirty = true;
+  const p = edPos(e);
+  edStrokeStyle();
+  if (ed.tool === 'shape') {
+    ed.start = p;
+    ed.snapshot = ed.ctx.getImageData(0, 0, ed.canvas.width, ed.canvas.height);
+  } else {
+    ed.ctx.beginPath();
+    ed.ctx.moveTo(p.x, p.y);
+    ed.ctx.lineTo(p.x + 0.1, p.y + 0.1);
+    ed.ctx.stroke();
+    ed.last = p;
+  }
+}
+
+function edMove(e) {
+  if (!ed.drawing) return;
+  const p = edPos(e);
+  if (ed.tool === 'shape') {
+    ed.ctx.putImageData(ed.snapshot, 0, 0);
+    edDrawShape(ed.start, p);
+  } else {
+    ed.ctx.lineTo(p.x, p.y);
+    ed.ctx.stroke();
+    ed.last = p;
+  }
+}
+
+function edUp() { ed.drawing = false; }
+
+function edDrawShape(a, b) {
+  const ctx = ed.ctx;
+  ctx.beginPath();
+  if (ed.shape === 'rect') {
+    ctx.rect(a.x, a.y, b.x - a.x, b.y - a.y);
+    ctx.stroke();
+  } else if (ed.shape === 'ellipse') {
+    ctx.ellipse((a.x + b.x) / 2, (a.y + b.y) / 2,
+      Math.abs(b.x - a.x) / 2, Math.abs(b.y - a.y) / 2, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  } else if (ed.shape === 'triangle') {
+    ctx.moveTo((a.x + b.x) / 2, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.lineTo(a.x, b.y);
+    ctx.closePath();
+    ctx.stroke();
+  } else if (ed.shape === 'line') {
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  }
+}
+
+function setTool(t) {
+  ed.tool = t;
+  document.getElementById('shape-menu').classList.remove('open');
+  highlightTool();
+}
+
+function highlightTool() {
+  ['draw', 'erase', 'shape', 'image', 'clear'].forEach(id => {
+    document.getElementById('t-' + id).classList.remove('active');
+  });
+  const map = { draw: 't-draw', erase: 't-erase', shape: 't-shape' };
+  if (map[ed.tool]) document.getElementById(map[ed.tool]).classList.add('active');
+}
+
+function pickColor() {
+  let inp = document.getElementById('ed-color-input');
+  if (!inp) {
+    inp = document.createElement('input');
+    inp.type = 'color';
+    inp.id = 'ed-color-input';
+    inp.style.display = 'none';
+    inp.addEventListener('input', e => {
+      ed.color = e.target.value;
+      ed.tool = 'draw';
+      highlightTool();
+    });
+    document.body.appendChild(inp);
+  }
+  inp.value = ed.color;
+  inp.click();
+}
+
+function toggleShapeMenu() {
+  ed.tool = 'shape';
+  highlightTool();
+  document.getElementById('shape-menu').classList.toggle('open');
+}
+
+function setShape(s) {
+  ed.shape = s;
+  ed.tool = 'shape';
+  highlightTool();
+  document.querySelectorAll('#shape-menu button').forEach(b => {
+    b.classList.toggle('active', b.dataset.shape === s);
+  });
+}
+
+function clearCanvas() {
+  ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
+  ed.dirty = true;
+}
+
+function edInsertImage(e) {
+  const file = e.target.files[0];
+  if (!file) { return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const cw = ed.canvas.width, ch = ed.canvas.height;
+      const scale = Math.min(cw / img.width, ch / img.height);
+      const w = img.width * scale, h = img.height * scale;
+      ed.ctx.globalCompositeOperation = 'source-over';
+      ed.ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
+      ed.dirty = true;
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+// ── Open / close ─────────────────────────────────────────────
+function openEditor(box, num) {
+  ed.box = box;
+  ed.imgArea = box.querySelector('.cbox-img');
+  const numEl = box.querySelector('.cbox-num');
+  const titleEl = box.querySelector('.cbox-title');
+  const desc = box.querySelector('.cbox-desc');
+  const placeholder = box.dataset.ph || 'Forklar ideen bak illustrasjonen';
+
+  // Breadcrumb reflects which lerret we're editing
+  const crumbs = {
+    'page-sprikende': 'INNOV102 < SPRIKENDE LERRET',
+    'page-storyboard': 'INNOV102 < SAMLENDE LERRET',
+    'page-samlende-losning': 'INNOV102 < SAMLENDE LERRET LØSNING',
+    'page-innov101-storyboard': 'INNOV101 < STORYBOARD'
+  };
+  const pageId = (box.closest('.page') || {}).id;
+  document.getElementById('ed-crumb').textContent = crumbs[pageId] || 'INNOV102';
+
+  // Header + description into the modal (title empty -> placeholder shows)
+  document.getElementById('ed-hd-num').textContent = numEl.textContent;
+  document.getElementById('ed-hd-title').textContent = titleEl.textContent;
+  const edDesc = document.getElementById('ed-desc');
+  edDesc.dataset.placeholder = placeholder;
+  edDesc.textContent = (desc.textContent.trim() === placeholder) ? '' : desc.textContent;
+
+  // Load any existing drawing
+  ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
+  ed.dirty = false;
+  if (box.dataset.drawing) {
+    const img = new Image();
+    img.onload = () => ed.ctx.drawImage(img, 0, 0, ed.canvas.width, ed.canvas.height);
+    img.src = box.dataset.drawing;
+  }
+
+  setTool('draw');
+  document.getElementById('editor').classList.add('open');
+}
+
+function closeEditor() {
+  if (!ed.box) return;
+  const title = ed.box.querySelector('.cbox-title');
+  const desc = ed.box.querySelector('.cbox-desc');
+  const placeholder = ed.box.dataset.ph || 'Forklar ideen bak illustrasjonen';
+
+  // Save title back to the box (empty -> placeholder reappears via CSS)
+  title.textContent = document.getElementById('ed-hd-title').textContent.trim();
+
+  // Save description
+  const newDesc = document.getElementById('ed-desc').textContent.trim();
+  if (newDesc) {
+    desc.textContent = newDesc;
+    desc.style.color = '#333';
+  } else {
+    desc.textContent = placeholder;
+    desc.style.color = '#aaa';
+  }
+
+  // Save drawing as the box image
+  if (ed.dirty || ed.box.dataset.drawing) {
+    const url = ed.canvas.toDataURL('image/png');
+    ed.box.dataset.drawing = url;
+    const num = ed.imgArea.querySelector('.placeholder-num');
+    if (num) num.remove();
+    let img = ed.imgArea.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      ed.imgArea.insertBefore(img, ed.imgArea.firstChild);
+    }
+    img.src = url;
+  }
+
+  document.getElementById('editor').classList.remove('open');
+  ed.box = null;
+}
+
+// ── Lean Canvas word count + limit ───────────────────────────
+function lcWords(t) { t = t.trim(); return t === '' ? 0 : t.split(/\s+/).length; }
+function lcInput(ta) {
+  const limit = +ta.dataset.limit;
+  let w = lcWords(ta.value);
+  if (w > limit) {                       // enforce the word limit
+    ta.value = ta.value.trim().split(/\s+/).slice(0, limit).join(' ');
+    w = limit;
+  }
+  const box = ta.closest('.lc-box, .lc-maltall-box');
+  const c = box && box.querySelector('.lc-count');
+  if (c) {
+    c.textContent = w + ' / ' + limit + ' ord';
+    // In the small boxes the counter only appears once you start writing
+    if (box.classList.contains('lc-box')) c.style.display = w > 0 ? 'block' : 'none';
+  }
+  // The grey hint sentence disappears as soon as you start writing
+  const desc = box && box.querySelector('.lc-desc');
+  if (desc) desc.style.display = w > 0 ? 'none' : '';
+}
+
+// ── Init ─────────────────────────────────────────────────────
+buildSprikende();
+buildStoryboard();
+buildStoryboardLosning();
+buildStoryboard101();
+initEditor();
+
+// Lean Canvas: click anywhere in a box to put the cursor in its text field
+document.querySelectorAll('#page-lean-canvas .lc-box, #page-lean-canvas .lc-maltall-box').forEach(function (b) {
+  b.addEventListener('mousedown', function (e) {
+    if (e.target.tagName === 'TEXTAREA' || e.target.closest('.lc-help')) return;
+    e.preventDefault();
+    var ta = b.querySelector('.lc-ta');
+    if (ta) ta.focus();
+  });
+});
+</script>
+</body>
+</html>
