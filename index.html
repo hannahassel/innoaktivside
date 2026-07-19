@@ -251,7 +251,8 @@
     .sp-download svg { width: 18px; height: 18px; }
 
     /* ── Lerret boxes (shared by Sprikende + Samlende via .lerret-grid) ── */
-    .lerret-grid .cbox, .lerret-grid .sbbox { border: none; border-radius: 12px; overflow: hidden; background: transparent; box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
+    .lerret-grid .cbox, .lerret-grid .sbbox { border: none; border-radius: 12px; overflow: hidden; background: transparent; box-shadow: 0 3px 12px rgba(0,0,0,0.10); position: relative; }
+    .lerret-count { position: absolute; bottom: 8px; right: 14px; font-size: 11px; color: #b3aaa0; display: none; pointer-events: none; }
     .lerret-grid .cbox-hd { background: var(--red-dark); font-size: 13.5px; padding: 9px 12px; align-items: center; }
     .lerret-grid { align-items: start; }
     .lerret-grid .cbox-img { flex: none; height: 180px; min-height: 180px; max-height: 180px; background: var(--pink); flex-direction: column; gap: 12px; color: var(--red-dark); position: relative; overflow: hidden; }
@@ -260,7 +261,7 @@
     .sp-ph { display: flex; flex-direction: column; align-items: center; gap: 13px; color: var(--red-dark); }
     .sp-ph svg { width: 30px; height: 30px; color: #d3ccc2; }
     .sp-ph-t { font-size: 15px; font-weight: bold; color: var(--red-dark); }
-    .lerret-grid .cbox-desc { background: #fff; min-height: 78px; padding: 15px 17px; font-size: 13px; color: #999; font-style: italic; line-height: 1.5; }
+    .lerret-grid .cbox-desc { background: #fff; min-height: 78px; padding: 15px 17px 26px; font-size: 13px; color: #999; font-style: italic; line-height: 1.5; }
     .lerret-grid .cbox-hd { font-size: 15px; padding: 11px 14px; }
 
     /* Hide header controls in the PDF export, keep the title + boxes */
@@ -717,7 +718,7 @@
 
   <div class="home-body">
     <h1 class="home-title">Velkommen til Innoaktivsiden!</h1>
-    <p class="home-subtitle">Her finner du interaktive oppgaver til INNOV-emnene.</p>
+    <p class="home-subtitle">Interaktive verktøy til INNOV-emnene, samlet på ett sted.</p>
 
     <div class="course-rows">
       <button class="course-row cr-101" onclick="showPage('page-innov101')">
@@ -726,7 +727,7 @@
           <span class="cr-code">INNOV101/641</span>
           <span class="cr-title">Introduksjon til innovasjonsmetoder</span>
         </span>
-        <span class="cr-cta">TIL OPPGAVER <span class="cr-arrow">→</span></span>
+        <span class="cr-cta">TIL EMNESIDE <span class="cr-arrow">→</span></span>
       </button>
       <button class="course-row cr-102" onclick="showPage('page-innov102')">
         <span class="cr-bar"></span>
@@ -734,7 +735,7 @@
           <span class="cr-code">INNOV102/642</span>
           <span class="cr-title">Introduksjon til designtenking</span>
         </span>
-        <span class="cr-cta">TIL OPPGAVER <span class="cr-arrow">→</span></span>
+        <span class="cr-cta">TIL EMNESIDE <span class="cr-arrow">→</span></span>
       </button>
     </div>
   </div>
@@ -1205,56 +1206,56 @@
         <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
         <div class="lc-title">1. PROBLEM</div>
         <div class="lc-desc">Situasjoner/behov som oppleves lite hensiktsmessige, tidskrevende eller problematiske</div>
-        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
-        <div class="lc-count">0 / 40 ord</div>
+        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 50 ord</div>
       </div>
 
       <div class="lc-box">
         <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
         <div class="lc-title">2. LØSNING</div>
         <div class="lc-desc">Hva består løsningen av, og hvilke funksjoner har systemet eller tjenesten?</div>
-        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
-        <div class="lc-count">0 / 40 ord</div>
+        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 50 ord</div>
       </div>
 
       <div class="lc-box">
         <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
         <div class="lc-title">3. VERDIFORSLAG</div>
         <div class="lc-desc">Slagord. PR. Kommunikasjon</div>
-        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
-        <div class="lc-count">0 / 40 ord</div>
+        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 50 ord</div>
       </div>
 
       <div class="lc-box">
         <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
         <div class="lc-title">4. KANAL</div>
         <div class="lc-desc">Hvordan når man brukerne?</div>
-        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
-        <div class="lc-count">0 / 40 ord</div>
+        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 50 ord</div>
       </div>
 
       <div class="lc-box">
         <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
         <div class="lc-title">5. BRUKER</div>
         <div class="lc-desc">Hvem har problemet og vil verdsette løsningen?</div>
-        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
-        <div class="lc-count">0 / 40 ord</div>
+        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 50 ord</div>
       </div>
 
       <div class="lc-box lc-wide">
         <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
         <div class="lc-title">6. KOSTNADER</div>
         <div class="lc-desc">De viktigste kostnadene knyttet til utvikling, drift og videreføring av tjenesten</div>
-        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
-        <div class="lc-count">0 / 40 ord</div>
+        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 50 ord</div>
       </div>
 
       <div class="lc-box lc-wide">
         <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
         <div class="lc-title">7. INNTEKTER</div>
         <div class="lc-desc">Redegjør for hvilke verdier eller inntekter løsningen genererer</div>
-        <textarea class="lc-ta" data-limit="40" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
-        <div class="lc-count">0 / 40 ord</div>
+        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <div class="lc-count">0 / 50 ord</div>
       </div>
 
     </div>
@@ -1964,6 +1965,46 @@ buildStoryboard();
 buildStoryboardLosning();
 buildStoryboard101();
 initEditor();
+
+// Lerret / storyboard description boxes: max 50 words + live counter
+function placeCaretEnd(el) {
+  try {
+    const r = document.createRange();
+    r.selectNodeContents(el); r.collapse(false);
+    const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  } catch (e) { /* selection API unavailable */ }
+}
+function wireDescWordLimits() {
+  const LIMIT = 50;
+  document.querySelectorAll('.lerret-grid .cbox-desc').forEach(function (desc) {
+    const box = desc.closest('.cbox, .sbbox');
+    if (!box) return;
+    const ph = desc.textContent;            // the box's placeholder text
+    const counter = document.createElement('div');
+    counter.className = 'lerret-count';
+    counter.textContent = '0 / ' + LIMIT + ' ord';
+    box.appendChild(counter);
+
+    function words(t) { t = t.trim(); return t === '' ? [] : t.split(/\s+/); }
+    function update() {
+      const showingPlaceholder = (desc.textContent === ph);
+      let w = showingPlaceholder ? [] : words(desc.textContent);
+      if (w.length > LIMIT) {
+        desc.textContent = w.slice(0, LIMIT).join(' ');
+        placeCaretEnd(desc);
+        w = words(desc.textContent);
+      }
+      counter.textContent = w.length + ' / ' + LIMIT + ' ord';
+      counter.style.display = w.length > 0 ? 'block' : 'none';
+    }
+    desc.addEventListener('input', update);
+    desc.addEventListener('blur', function () {
+      // existing blur handler restores the placeholder when empty
+      if (desc.textContent === ph || !desc.textContent.trim()) counter.style.display = 'none';
+    });
+  });
+}
+wireDescWordLimits();
 
 // Lean Canvas: click anywhere in a box to put the cursor in its text field
 document.querySelectorAll('#page-lean-canvas .lc-box, #page-lean-canvas .lc-maltall-box').forEach(function (b) {
