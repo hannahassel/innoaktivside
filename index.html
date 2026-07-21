@@ -238,7 +238,8 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 24px;
       padding: 20px 40px 60px;
-      max-width: 1320px;
+      max-width: 1500px;
+      width: 80%;
       margin: 0 auto;
       flex: 1;
       align-content: start;
@@ -247,7 +248,7 @@
     /* ── Sprikende header (beige, breadcrumb + title + download) ── */
     .sp-header {
       display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
-      max-width: 1320px; margin: 0 auto; width: 100%; padding: 30px 40px 4px;
+      max-width: 1500px; margin: 0 auto; width: 80%; padding: 30px 40px 4px;
     }
     .sp-head-left { flex: 1; min-width: 0; }
     .sp-crumb { font-size: 13px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red-dark); margin-bottom: 12px; }
@@ -275,7 +276,7 @@
     .lerret-grid .cbox-num { color: var(--red-dark); }
     .lerret-grid .cbox-title { color: var(--red-dark); }
     .lerret-grid .cbox-title:empty:before { color: #a7a29a; }
-    .lerret-grid .cbox-img { flex: none; min-height: 146px; padding: 28px 24px; background: var(--pink); align-items: center; justify-content: center; color: var(--red-dark); border-top: 0.5px solid #eae2d5; border-bottom: 0.5px solid #eae2d5; position: relative; overflow: hidden; }
+    .lerret-grid .cbox-img { flex: none; min-height: 165px; padding: 28px 24px; background: var(--pink); align-items: center; justify-content: center; color: var(--red-dark); border-top: 0.5px solid #eae2d5; border-bottom: 0.5px solid #eae2d5; position: relative; overflow: hidden; }
     /* Drawing fills the zone absolutely so it can never make the box taller */
     .lerret-grid .cbox-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .sp-ph { display: flex; flex-direction: column; align-items: center; gap: 13px; color: var(--red-dark); }
@@ -284,18 +285,25 @@
     .lerret-grid .sp-ph { flex-direction: row; gap: 0; }
     .lerret-grid .sp-ph svg { width: 46px; height: 46px; color: var(--red-dark); }
     .lerret-grid .sp-ph-t { display: none; }
-    .lerret-grid .cbox-desc { background: #fff; min-height: 150px; padding: 18px 20px 34px; font-size: 13.5px; color: var(--red-dark); font-style: normal; line-height: 1.7; }
+    .lerret-grid .cbox-desc { background: #fff; min-height: 165px; padding: 18px 20px 34px; font-size: 13.5px; color: var(--red-dark); font-style: normal; line-height: 1.7; }
+    /* Hover: whole card turns pink and lifts slightly (matches the design) */
+    .lerret-grid .cbox, .lerret-grid .sbbox { transition: transform .18s, box-shadow .18s; }
+    .lerret-grid .cbox-hd, .lerret-grid .cbox-desc { transition: background .18s; }
+    .lerret-grid .cbox:hover, .lerret-grid .sbbox:hover { transform: scale(1.03); box-shadow: 0 8px 22px rgba(130,10,18,0.16); }
+    .lerret-grid .cbox:hover .cbox-hd, .lerret-grid .cbox:hover .cbox-desc,
+    .lerret-grid .sbbox:hover .cbox-hd, .lerret-grid .sbbox:hover .cbox-desc { background: var(--pink); }
 
     /* Hide header controls in the PDF export, keep the title + boxes */
     .pdf-mode .sp-crumb, .pdf-mode .sp-help, .pdf-mode .sp-download { display: none !important; }
 
-    /* ── Storyboard grid (3×2 + download) ── */
+    /* ── Storyboard grid (Samlende: 3 columns) ── */
     .sb-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 28px;
       padding: 20px 40px 60px;
-      max-width: 1320px;
+      max-width: 1500px;
+      width: 80%;
       margin: 0 auto;
       flex: 1;
       align-content: start;
@@ -409,7 +417,7 @@
 
     /* ── Storyboard box (taller image, no desc) ── */
     .sbbox { background: var(--white); border: 1px solid #ddd; display: flex; flex-direction: column; }
-    .sbbox .cbox-img { min-height: 146px; }
+    .sbbox .cbox-img { min-height: 165px; }
 
     /* ── Download box ── */
     .dbox {
@@ -1593,7 +1601,7 @@ function buildSprikende() {
     imgArea.className = 'cbox-img';
     imgArea.innerHTML =
       `<span class="placeholder-num sp-ph">` +
-        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>` +
+        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><circle cx="14.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"/><path d="M3 16l4-4a2 2 0 0 1 2.7-.1L14 15"/><path d="M18 16v6"/><path d="M15 19h6"/></svg>` +
         `<span class="sp-ph-t">Legg til tegning eller bilde</span>` +
       `</span>`;
     imgArea.addEventListener('click', () => openEditor(box, i));
@@ -1643,7 +1651,7 @@ function buildStoryboard() {
     imgArea.className = 'cbox-img';
     imgArea.innerHTML =
       `<span class="placeholder-num sp-ph">` +
-        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>` +
+        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><circle cx="14.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"/><path d="M3 16l4-4a2 2 0 0 1 2.7-.1L14 15"/><path d="M18 16v6"/><path d="M15 19h6"/></svg>` +
         `<span class="sp-ph-t">Legg til tegning eller bilde</span>` +
       `</span>`;
     imgArea.addEventListener('click', () => openEditor(box, i + 1));
@@ -1699,7 +1707,7 @@ function buildStoryboard101() {
     imgArea.className = 'cbox-img';
     imgArea.innerHTML =
       `<span class="placeholder-num sp-ph">` +
-        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>` +
+        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><circle cx="14.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"/><path d="M3 16l4-4a2 2 0 0 1 2.7-.1L14 15"/><path d="M18 16v6"/><path d="M15 19h6"/></svg>` +
         `<span class="sp-ph-t">Legg til tegning eller bilde</span>` +
       `</span>`;
     imgArea.addEventListener('click', () => openEditor(box, i + 1));
@@ -1746,7 +1754,7 @@ function buildStoryboardLosning() {
     imgArea.className = 'cbox-img';
     imgArea.innerHTML =
       `<span class="placeholder-num sp-ph">` +
-        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>` +
+        `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><circle cx="14.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"/><path d="M3 16l4-4a2 2 0 0 1 2.7-.1L14 15"/><path d="M18 16v6"/><path d="M15 19h6"/></svg>` +
         `<span class="sp-ph-t">Legg til tegning eller bilde</span>` +
       `</span>`;
     imgArea.addEventListener('click', () => openEditor(box, i + 1));
