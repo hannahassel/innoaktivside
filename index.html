@@ -70,13 +70,13 @@
     /* Help button: filled dark-red circle with white question mark */
     .nb-help {
       width: 30px; height: 30px; border-radius: 50%;
-      background: var(--text); color: white;
+      background: var(--red-dark); color: white;
       border: none; cursor: pointer; padding: 0;
       font-size: 17px; font-weight: bold; line-height: 1;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .nb-help:hover { background: #000; }
+    .nb-help:hover { background: #5e080f; }
     /* Home button: white house silhouette, no background */
     .nb-home {
       background: none; border: none; cursor: pointer; padding: 2px;
@@ -119,13 +119,29 @@
 
     /* ── Double-diamond panel (INNOV102 landing, 4 cards) ── */
     .dd-panel {
-      background: #FBF3E4;
-      border-radius: 14px;
-      padding: 26px 26px 22px;
-      max-width: 1140px;
-      margin: 0 auto 44px;
+      background: transparent;
+      padding: 4px 20px 30px;
+      max-width: 1400px;
+      margin: 0 auto 40px;
     }
     .tool-cards-4 { display: flex; gap: 18px; }
+    /* ── INNOV102 landing: 6 cards in 3 phase pairs + triple diamond ── */
+    .tool-cards-6 { display: flex; gap: 56px; align-items: stretch; }
+    .dd-pair { flex: 1 1 0; min-width: 0; display: flex; gap: 12px; }
+    .dd-pair .dd-arrow { left: 16px; right: auto; }
+    .dd-pair .dd-card { flex: 1 1 0; min-width: 0; padding: 16px 15px 42px; border-top-width: 6px; }
+    .dd-pair .dd-t { font-size: 17px; }
+    .dd-pair .dd-sub { font-size: 14px; }
+    .dd-pair .dd-d { font-size: 12px; }
+    .pair-problem  .dd-card { border-top-color: #C25A4E; }
+    .pair-problem  .dd-ic, .pair-problem  .dd-sub { color: #C25A4E; }
+    .pair-ide      .dd-card { border-top-color: #A2131D; }
+    .pair-ide      .dd-ic, .pair-ide      .dd-sub { color: #A2131D; }
+    .pair-losning  .dd-card { border-top-color: #820A12; }
+    .pair-losning  .dd-ic, .pair-losning  .dd-sub { color: #820A12; }
+    .triple-diamond { margin-top: 14px; }
+    .triple-diamond svg { width: 100%; height: auto; display: block; }
+    @media (max-width: 900px) { .tool-cards-6 { flex-wrap: wrap; } .dd-pair { flex: 1 1 46%; } }
     .dd-card {
       flex: 1 1 0; min-width: 0; position: relative;
       text-align: left; cursor: pointer; font-family: inherit;
@@ -220,17 +236,18 @@
     .canvas-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      padding: 12px 8% 48px;
-      max-width: 1600px;
+      gap: 24px;
+      padding: 20px 40px 60px;
+      max-width: 1320px;
       margin: 0 auto;
       flex: 1;
+      align-content: start;
     }
 
     /* ── Sprikende header (beige, breadcrumb + title + download) ── */
     .sp-header {
       display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
-      max-width: 1600px; margin: 0 auto; width: 100%; padding: 22px 8% 4px;
+      max-width: 1320px; margin: 0 auto; width: 100%; padding: 30px 40px 4px;
     }
     .sp-head-left { flex: 1; min-width: 0; }
     .sp-crumb { font-size: 13px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red-dark); margin-bottom: 12px; }
@@ -250,19 +267,24 @@
     .sp-download:hover { background: #5e080f; }
     .sp-download svg { width: 18px; height: 18px; }
 
-    /* ── Lerret boxes (shared by Sprikende + Samlende via .lerret-grid) ── */
-    .lerret-grid .cbox, .lerret-grid .sbbox { border: none; border-radius: 12px; overflow: hidden; background: transparent; box-shadow: 0 3px 12px rgba(0,0,0,0.10); position: relative; }
-    .lerret-count { position: absolute; bottom: 8px; right: 14px; font-size: 11px; color: #b3aaa0; display: none; pointer-events: none; }
-    .lerret-grid .cbox-hd { background: var(--red-dark); font-size: 13.5px; padding: 9px 12px; align-items: center; }
+    /* ── Lerret boxes (new design: white card, bordered header, pink image, desc + count) ── */
     .lerret-grid { align-items: start; }
-    .lerret-grid .cbox-img { flex: none; height: 180px; min-height: 180px; max-height: 180px; background: var(--pink); flex-direction: column; gap: 12px; color: var(--red-dark); position: relative; overflow: hidden; }
-    /* Drawing fills the fixed zone absolutely so it can never make the box taller */
+    .lerret-grid .cbox, .lerret-grid .sbbox { background: #fff; border: 1px solid #ece3d6; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px rgba(130,10,18,0.05); position: relative; }
+    .lerret-count { position: absolute; bottom: 12px; right: 16px; font-size: 13px; color: #a6a6a6; display: none; pointer-events: none; }
+    .lerret-grid .cbox-hd { background: #fff; color: var(--red-dark); font-size: 16px; font-weight: 600; letter-spacing: 0; padding: 18px 24px 16px; border-bottom: 1px solid #eee6d8; gap: 6px; align-items: center; }
+    .lerret-grid .cbox-num { color: var(--red-dark); }
+    .lerret-grid .cbox-title { color: var(--red-dark); }
+    .lerret-grid .cbox-title:empty:before { color: #a7a29a; }
+    .lerret-grid .cbox-img { flex: none; min-height: 146px; padding: 28px 24px; background: var(--pink); align-items: center; justify-content: center; color: var(--red-dark); border-top: 0.5px solid #eae2d5; border-bottom: 0.5px solid #eae2d5; position: relative; overflow: hidden; }
+    /* Drawing fills the zone absolutely so it can never make the box taller */
     .lerret-grid .cbox-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .sp-ph { display: flex; flex-direction: column; align-items: center; gap: 13px; color: var(--red-dark); }
     .sp-ph svg { width: 30px; height: 30px; color: #d3ccc2; }
     .sp-ph-t { font-size: 15px; font-weight: bold; color: var(--red-dark); }
-    .lerret-grid .cbox-desc { background: #fff; min-height: 78px; padding: 15px 17px 26px; font-size: 13px; color: #999; font-style: italic; line-height: 1.5; }
-    .lerret-grid .cbox-hd { font-size: 15px; padding: 11px 14px; }
+    .lerret-grid .sp-ph { flex-direction: row; gap: 0; }
+    .lerret-grid .sp-ph svg { width: 46px; height: 46px; color: var(--red-dark); }
+    .lerret-grid .sp-ph-t { display: none; }
+    .lerret-grid .cbox-desc { background: #fff; min-height: 150px; padding: 18px 20px 34px; font-size: 13.5px; color: var(--red-dark); font-style: normal; line-height: 1.7; }
 
     /* Hide header controls in the PDF export, keep the title + boxes */
     .pdf-mode .sp-crumb, .pdf-mode .sp-help, .pdf-mode .sp-download { display: none !important; }
@@ -271,11 +293,12 @@
     .sb-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      padding: 12px 8% 48px;
-      max-width: 1600px;
+      gap: 28px;
+      padding: 20px 40px 60px;
+      max-width: 1320px;
       margin: 0 auto;
       flex: 1;
+      align-content: start;
     }
 
     /* ── PDF export mode: deterministic box heights so nothing stretches/clips ── */
@@ -301,8 +324,8 @@
     .lc-cols span:first-child { text-align: right; padding-right: 26px; border-right: 2px solid #dccfc0; }
     .lc-cols span:last-child { text-align: left; padding-left: 26px; }
     .lc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 16px; }
-    .lc-box { grid-column: span 2; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); padding: 16px 16px 28px; position: relative; display: flex; flex-direction: column; min-height: 300px; }
-    .lc-box.lc-wide { grid-column: span 5; min-height: 170px; }
+    .lc-box { grid-column: span 2; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); padding: 16px 16px 28px; position: relative; display: flex; flex-direction: column; min-height: 350px; }
+    .lc-box.lc-wide { grid-column: span 5; min-height: 210px; }
     .lc-title { font-size: 14.5px; font-weight: bold; color: var(--red-dark); letter-spacing: 0.4px; padding-right: 26px; }
     .lc-desc { font-size: 12.5px; color: #8a8a8a; line-height: 1.5; margin: 8px 0 8px; }
     .lc-ta { flex: 1; width: 100%; border: none; outline: none; resize: none; font-family: inherit; font-size: 14px; color: var(--text); background: transparent; cursor: text; }
@@ -322,11 +345,11 @@
     .lc-maltall-box { width: 100%; }
     .lc-maltall-inner { border-left: 6px solid var(--red-dark); padding-left: 16px; }
     .lc-maltall-label { font-size: 15px; font-weight: bold; color: var(--red-dark); letter-spacing: 1px; margin-bottom: 8px; }
-    .lc-maltall-box { position: relative; background: #fff; border: 1px solid #e6ded3; border-radius: 10px; padding: 16px 16px 30px; min-height: 190px; display: flex; }
+    .lc-maltall-box { position: relative; background: #fff; border: 1px solid #e6ded3; border-radius: 10px; padding: 16px 16px 30px; min-height: 230px; display: flex; }
     .lc-maltall-box textarea { flex: 1; border: none; outline: none; resize: vertical; font-family: inherit; font-size: 14px; color: var(--text); background: transparent; }
     @media (max-width: 1100px) {
       .lc-grid { grid-template-columns: repeat(2, 1fr); }
-      .lc-box { grid-column: span 1; min-height: 240px; }
+      .lc-box { grid-column: span 1; min-height: 285px; }
       .lc-box.lc-wide { grid-column: span 2; }
       .lc-cols { display: none; }
     }
@@ -386,7 +409,7 @@
 
     /* ── Storyboard box (taller image, no desc) ── */
     .sbbox { background: var(--white); border: 1px solid #ddd; display: flex; flex-direction: column; }
-    .sbbox .cbox-img { min-height: 180px; }
+    .sbbox .cbox-img { min-height: 146px; }
 
     /* ── Download box ── */
     .dbox {
@@ -827,7 +850,7 @@
       <button class="i101-card" onclick="showPage('page-plakat')">
         <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="8.5" y1="8" x2="15.5" y2="8"/></svg></span>
         <span class="i101-t">Plakat (kanal)</span>
-        <span class="i101-d">Velg størrelse og lag en plakat.</span>
+        <span class="i101-d">Velg format og lag en plakat.</span>
         <span class="i101-prev">
           <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg">
             <!-- left dashed placeholder -->
@@ -883,88 +906,121 @@
     <h1 class="landing-title">INNOV102/642: Introduksjon til designtenking</h1>
 
     <div class="dd-panel">
-      <div class="tool-cards-4">
+      <div class="tool-cards-6">
 
-      <!-- 1. Sprikende lerret Problem  ->  page-sprikende (8 bokser) -->
-      <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET PROBLEM')">
-        <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
-        <span class="dd-t">Sprikende lerret</span>
-        <span class="dd-sub">Problem</span>
-        <span class="dd-d">8 bokser med problemer<br>Utforsk og kartlegg problemer bredt</span>
-        <span class="dd-arrow">→</span>
-      </button>
+        <div class="dd-pair pair-problem">
+          <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET PROBLEM')">
+            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
+            <span class="dd-t">Sprikende lerret</span>
+            <span class="dd-sub">Problem</span>
+            <span class="dd-d">8 bokser med problemer.<br>Utforsk og kartlegg problemer bredt.</span>
+            <span class="dd-arrow">&#8594;</span>
+          </button>
+          <button class="dd-card" onclick="openLerret('page-storyboard','SAMLENDE LERRET PROBLEM')">
+            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
+            <span class="dd-t">Samlende lerret</span>
+            <span class="dd-sub">Problem</span>
+            <span class="dd-d">6 ruter tittel/illustrasjon.<br>Snevre inn til &#233;n problemdefinisjon.</span>
+            <span class="dd-arrow">&#8594;</span>
+          </button>
+        </div>
 
-      <!-- 2. Samlende lerret Problem  ->  page-storyboard (6 bokser) -->
-      <button class="dd-card" onclick="openLerret('page-storyboard','SAMLENDE LERRET PROBLEM')">
-        <span class="dd-ic"><img src="logo2-icon.png" alt="" width="26" height="26"></span>
-        <span class="dd-t">Samlende lerret</span>
-        <span class="dd-sub">Problem</span>
-        <span class="dd-d">6 ruter tittel/illustrasjon<br>Snevre inn til én problemdefinisjon</span>
-        <span class="dd-arrow">→</span>
-      </button>
+        <div class="dd-pair pair-ide">
+          <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET IDÉ')">
+            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
+            <span class="dd-t">Sprikende lerret</span>
+            <span class="dd-sub">Id&#233;</span>
+            <span class="dd-d">8 bokser med ideer.<br>Id&#233;myldre mange mulige l&#248;sninger.</span>
+            <span class="dd-arrow">&#8594;</span>
+          </button>
+          <button class="dd-card" onclick="openLerret('page-storyboard','SAMLENDE LERRET IDÉ')">
+            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
+            <span class="dd-t">Samlende lerret</span>
+            <span class="dd-sub">Id&#233;</span>
+            <span class="dd-d">6 ruter tittel/illustrasjon.<br>Velg den beste ideen.</span>
+            <span class="dd-arrow">&#8594;</span>
+          </button>
+        </div>
 
-      <!-- 3. Sprikende lerret Løsning  ->  page-sprikende (8 bokser) -->
-      <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET LØSNING')">
-        <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
-        <span class="dd-t">Sprikende lerret</span>
-        <span class="dd-sub">Løsning</span>
-        <span class="dd-d">8 bokser med problemer<br>Idémyldre mange mulige løsninger</span>
-        <span class="dd-arrow">→</span>
-      </button>
+        <div class="dd-pair pair-losning">
+          <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET PROTOTYPE')">
+            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
+            <span class="dd-t">Sprikende lerret</span>
+            <span class="dd-sub">Prototype</span>
+            <span class="dd-d">8 bokser med prototyper.<br>Utforsk ulike varianter av prototypen.</span>
+            <span class="dd-arrow">&#8594;</span>
+          </button>
+          <button class="dd-card" onclick="openLerret('page-storyboard','SAMLENDE LERRET PROTOTYPE')">
+            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
+            <span class="dd-t">Samlende lerret</span>
+            <span class="dd-sub">Prototype</span>
+            <span class="dd-d">6 ruter tittel/illustrasjon.<br>Konkretiser den endelige prototypen.</span>
+            <span class="dd-arrow">&#8594;</span>
+          </button>
+        </div>
 
-      <!-- 4. Samlende lerret Løsning  ->  page-samlende-losning (6 bokser) -->
-      <button class="dd-card" onclick="openLerret('page-samlende-losning','SAMLENDE LERRET LØSNING')">
-        <span class="dd-ic"><img src="logo2-icon.png" alt="" width="26" height="26"></span>
-        <span class="dd-t">Samlende lerret</span>
-        <span class="dd-sub">Løsning</span>
-        <span class="dd-d">6 ruter tittel/illustrasjon<br>Velg og konkretiser beste løsning</span>
-        <span class="dd-arrow">→</span>
-      </button>
+      </div><!-- /tool-cards-6 -->
 
-      </div><!-- /tool-cards-4 -->
-
-      <div class="double-diamond">
-        <svg viewBox="0 0 1000 330" xmlns="http://www.w3.org/2000/svg" font-family="'Open Sans', Arial, sans-serif">
-          <!-- dashed connectors from each card down to its phase dot -->
+      <div class="triple-diamond">
+        <svg viewBox="0 0 1600 310" xmlns="http://www.w3.org/2000/svg" font-family="'Open Sans', Arial, sans-serif">
+          <!-- dashed connectors dropping from the six cards to the process line -->
           <g stroke="#C4B49B" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round">
-            <line x1="125" y1="6" x2="125" y2="137"/>
-            <line x1="375" y1="6" x2="375" y2="130"/>
-            <line x1="625" y1="6" x2="625" y2="130"/>
-            <line x1="875" y1="6" x2="875" y2="137"/>
+            <line x1="120"  y1="4" x2="120"  y2="143"/>
+            <line x1="376"  y1="4" x2="376"  y2="81"/>
+            <line x1="672"  y1="4" x2="672"  y2="77"/>
+            <line x1="928"  y1="4" x2="928"  y2="148"/>
+            <line x1="1225" y1="4" x2="1225" y2="76"/>
+            <line x1="1479" y1="4" x2="1479" y2="158"/>
           </g>
-          <!-- faint diamond outline (lower edges complete the diamonds) -->
+          <!-- faint lower diamond edges (symmetric with the peaks) -->
           <g fill="none" stroke="#D8CBB4" stroke-width="1.5" stroke-linejoin="round">
-            <path d="M25 190 L250 310 L500 190"/>
-            <path d="M500 190 L750 310 L975 190"/>
+            <path d="M90 160 L305 278 L520 160"/>
+            <path d="M520 160 L735 278 L950 160"/>
+            <path d="M950 160 L1165 278 L1380 160"/>
           </g>
-          <!-- bold process line (upper zig-zag) -->
-          <path d="M25 190 L250 70 L500 190 L750 70 L975 190" fill="none" stroke="#820A12" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
-          <!-- phase dots -->
-          <circle cx="125" cy="137" r="8" fill="#BE564E"/>
-          <circle cx="375" cy="130" r="8" fill="#BE564E"/>
-          <circle cx="625" cy="130" r="8" fill="#820A12"/>
-          <circle cx="875" cy="137" r="8" fill="#820A12"/>
-          <!-- phase labels -->
-          <g font-size="12.5" font-weight="bold" text-anchor="middle" letter-spacing="0.8">
-            <text x="125" y="113" fill="#BE564E">OPPDAGE</text>
-            <text x="375" y="106" fill="#BE564E">DEFINERE</text>
-            <text x="625" y="106" fill="#820A12">IDÉGENERERE</text>
-            <text x="875" y="113" fill="#820A12">PROTOTYPE</text>
+          <!-- bold process line, three coloured phases -->
+          <path d="M90 160 L305 42 L520 160"    fill="none" stroke="#C25A4E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M520 160 L735 42 L950 160"   fill="none" stroke="#A2131D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M950 160 L1165 42 L1380 160" fill="none" stroke="#820A12" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M1380 160 L1520 160"         fill="none" stroke="#820A12" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- phase labels sit BELOW each slope, with air up to the line -->
+          <!-- beige knockouts so the process line does not cut through the labels -->
+          <g fill="#FFF9F0">
+            <rect x="165" y="99" width="130" height="24"/>
+            <rect x="334" y="99" width="92" height="24"/>
+            <rect x="610" y="99" width="100" height="24"/>
+            <rect x="779" y="99" width="62" height="24"/>
+            <rect x="1019" y="99" width="142" height="24"/>
+            <rect x="1188" y="99" width="104" height="24"/>
           </g>
-          <!-- nodes -->
+          <g font-size="12.5" font-weight="bold" text-anchor="middle" letter-spacing="0.2">
+            <text x="230"  y="112" fill="#C25A4E">Problemutvikling</text>
+            <text x="380"  y="112" fill="#C25A4E">Problemvalg</text>
+            <text x="660"  y="112" fill="#A2131D">Id&#233;utvikling</text>
+            <text x="810"  y="112" fill="#A2131D">Id&#233;valg</text>
+            <text x="1090" y="112" fill="#820A12">Prototypeutvikling</text>
+            <text x="1240" y="112" fill="#820A12">Prototypevalg</text>
+          </g>
+          <!-- end nodes (open) -->
           <g fill="#fff" stroke="#820A12" stroke-width="2.5">
-            <circle cx="25" cy="190" r="9"/>
-            <circle cx="500" cy="190" r="9"/>
-            <circle cx="975" cy="190" r="9"/>
+            <circle cx="90" cy="160" r="9"/>
+            <circle cx="1520" cy="160" r="9"/>
           </g>
+          <!-- phase nodes (filled) -->
+          <circle cx="520" cy="160" r="8" fill="#C25A4E"/>
+          <circle cx="950" cy="160" r="8" fill="#A2131D"/>
+          <circle cx="1380" cy="160" r="8" fill="#820A12"/>
           <!-- node labels -->
-          <g fill="#200505" font-size="15" font-weight="600">
-            <text x="14" y="216" text-anchor="start">Problem</text>
-            <text x="500" y="216" text-anchor="middle">Problemdefinisjon</text>
-            <text x="986" y="216" text-anchor="end">Løsning</text>
+          <g fill="#200505" font-size="15" font-weight="600" text-anchor="middle">
+            <text x="74" y="156" text-anchor="end">Utgangs-</text>
+            <text x="74" y="174" text-anchor="end">punkt</text>
+            <text x="520" y="185">Problem</text>
+            <text x="950" y="185">Id&#233;</text>
+            <text x="1380" y="185">Prototype</text>
+            <text x="1520" y="185">M&#229;l</text>
           </g>
         </svg>
-        <div class="dd-caption">Dobbeltdiamanten – rammeverk for designtenkning</div>
+        <div class="dd-caption">Trippeldiamanten &#8211; rammeverk for designtenkning</div>
       </div>
     </div>
   </div>
@@ -1000,7 +1056,7 @@
   <div class="sp-header">
     <div class="sp-head-left">
       <h1 class="sp-title">Sprikende lerret
-        <button class="nb-help sp-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="nb-help sp-help" title="Hjelp" onclick="openLerretHelp()">?</button>
       </h1>
       <div class="sp-sub">
         <input type="text" id="sp-title" value="Din egen tittel"
@@ -1017,7 +1073,8 @@
   <div class="canvas-grid lerret-grid" id="sp-grid"></div>
 
   <div class="footer">
-    <div class="footer-name">SPRIKENDE LERRET | INNOAKTIV</div>
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
     <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
   </div>
 </div>
@@ -1046,7 +1103,7 @@
   <div class="sp-header">
     <div class="sp-head-left">
       <h1 class="sp-title">Samlende lerret
-        <button class="nb-help sp-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="nb-help sp-help" title="Hjelp" onclick="openLerretHelp()">?</button>
       </h1>
       <div class="sp-sub">
         <input type="text" id="sb-title" value="Din egen tittel"
@@ -1063,7 +1120,8 @@
   <div class="sb-grid lerret-grid" id="sb-grid"></div>
 
   <div class="footer">
-    <div class="footer-name">SAMLENDE LERRET | INNOAKTIV</div>
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
     <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
   </div>
 </div>
@@ -1092,7 +1150,7 @@
   <div class="sp-header">
     <div class="sp-head-left">
       <h1 class="sp-title">Samlende lerret
-        <button class="nb-help sp-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="nb-help sp-help" title="Hjelp" onclick="openLerretHelp()">?</button>
       </h1>
       <div class="sp-sub">
         <input type="text" id="sl-title" value="Din egen tittel"
@@ -1109,7 +1167,8 @@
   <div class="sb-grid lerret-grid" id="sl-grid"></div>
 
   <div class="footer">
-    <div class="footer-name">SAMLENDE LERRET | INNOAKTIV</div>
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
     <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
   </div>
 </div>
@@ -1138,7 +1197,7 @@
   <div class="sp-header">
     <div class="sp-head-left">
       <h1 class="sp-title">Storyboard
-        <button class="nb-help sp-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="nb-help sp-help" title="Hjelp" onclick="document.getElementById('storyboard-help-modal').classList.add('open')">?</button>
       </h1>
       <div class="sp-sub">
         <input type="text" id="sb101-title" value="Din egen tittel"
@@ -1155,7 +1214,8 @@
   <div class="sb-grid lerret-grid" id="sb101-grid"></div>
 
   <div class="footer">
-    <div class="footer-name">STORYBOARD | INNOAKTIV</div>
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
     <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
   </div>
 </div>
@@ -1184,7 +1244,7 @@
   <div class="sp-header lc-header">
     <div class="sp-head-left">
       <h1 class="sp-title">Lean canvas
-        <button class="nb-help sp-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="nb-help sp-help" title="Hjelp" onclick="openLcHelp('overview')">?</button>
       </h1>
       <div class="sp-sub">
         <input type="text" id="lc-title" value="Din egen tittel"
@@ -1203,7 +1263,7 @@
     <div class="lc-grid">
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="lc-help" title="Hjelp" onclick="openLcHelp('problem')">?</button>
         <div class="lc-title">1. PROBLEM</div>
         <div class="lc-desc">Situasjoner/behov som oppleves lite hensiktsmessige, tidskrevende eller problematiske</div>
         <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
@@ -1211,7 +1271,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="lc-help" title="Hjelp" onclick="openLcHelp('losning')">?</button>
         <div class="lc-title">2. LØSNING</div>
         <div class="lc-desc">Hva består løsningen av, og hvilke funksjoner har systemet eller tjenesten?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
@@ -1219,7 +1279,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="lc-help" title="Hjelp" onclick="openLcHelp('verdiforslag')">?</button>
         <div class="lc-title">3. VERDIFORSLAG</div>
         <div class="lc-desc">Slagord. PR. Kommunikasjon</div>
         <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
@@ -1227,7 +1287,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="lc-help" title="Hjelp" onclick="openLcHelp('kanal')">?</button>
         <div class="lc-title">4. KANAL</div>
         <div class="lc-desc">Hvordan når man brukerne?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
@@ -1235,7 +1295,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="lc-help" title="Hjelp" onclick="openLcHelp('bruker')">?</button>
         <div class="lc-title">5. BRUKER</div>
         <div class="lc-desc">Hvem har problemet og vil verdsette løsningen?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
@@ -1243,7 +1303,7 @@
       </div>
 
       <div class="lc-box lc-wide">
-        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="lc-help" title="Hjelp" onclick="openLcHelp('kostnader')">?</button>
         <div class="lc-title">6. KOSTNADER</div>
         <div class="lc-desc">De viktigste kostnadene knyttet til utvikling, drift og videreføring av tjenesten</div>
         <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
@@ -1251,7 +1311,7 @@
       </div>
 
       <div class="lc-box lc-wide">
-        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="lc-help" title="Hjelp" onclick="openLcHelp('inntekter')">?</button>
         <div class="lc-title">7. INNTEKTER</div>
         <div class="lc-desc">Redegjør for hvilke verdier eller inntekter løsningen genererer</div>
         <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
@@ -1265,7 +1325,7 @@
     <div class="lc-maltall-inner">
       <div class="lc-maltall-label">MÅLTALL</div>
       <div class="lc-maltall-box">
-        <button class="lc-help" title="Hjelp" onclick="openModal()">?</button>
+        <button class="lc-help" title="Hjelp" onclick="openLcHelp('maltall')">?</button>
         <textarea class="lc-ta" data-limit="300" placeholder="Fyll inn måltall her..." oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 300 ord</div>
       </div>
@@ -1273,7 +1333,8 @@
   </div>
 
   <div class="footer">
-    <div class="footer-name">LEAN CANVAS | INNOAKTIV</div>
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
     <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
   </div>
 </div>
@@ -1308,6 +1369,34 @@
     <p>Denne siden er ditt digitale verktøy (<strong>Innoaktiv</strong>) hvor du finner interaktive oppgaver til INNOV-emnene på UIB.</p>
     <p>NB: Dette er en prototype under utvikling. Dersom du oppdager feil eller mangler, vennligst send en tilbakemelding til: hanna.hassel@uib.no.</p>
     <button class="modal-ok" onclick="document.getElementById('help-modal').classList.remove('open')">OK</button>
+  </div>
+</div>
+
+<!-- Context-specific help modal for the lerret tools (Problem / Idé / Prototype) -->
+<div class="modal-overlay" id="lerret-help-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <div id="lh-eyebrow" style="font-size:12px;font-weight:bold;letter-spacing:0.4px;color:var(--red-dark);margin-bottom:6px;"></div>
+    <h2 id="lh-title" style="text-transform:none;"></h2>
+    <p id="lh-body"></p>
+    <button class="modal-ok" onclick="document.getElementById('lerret-help-modal').classList.remove('open')">OK</button>
+  </div>
+</div>
+
+<!-- Storyboard example modal (INNOV101 Storyboard "?" beside the heading) -->
+<div class="modal-overlay" id="storyboard-help-modal" onclick="closeModal(event)">
+  <div class="modal" style="max-width:720px;max-height:88vh;overflow:auto;">
+    <h2 style="text-transform:none;">Eksempel storyboard</h2>
+    <img src="brodderstorybaord.png" alt="Eksempel på et utfylt storyboard" style="width:100%;height:auto;border-radius:8px;display:block;margin:0 0 8px;">
+    <button class="modal-ok" onclick="document.getElementById('storyboard-help-modal').classList.remove('open')">OK</button>
+  </div>
+</div>
+
+<!-- Lean Canvas help modal (heading + the 8 boxes) -->
+<div class="modal-overlay" id="lc-help-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <h2 id="lch-title" style="text-transform:none;"></h2>
+    <p id="lch-body"></p>
+    <button class="modal-ok" onclick="document.getElementById('lc-help-modal').classList.remove('open')">OK</button>
   </div>
 </div>
 
@@ -1365,6 +1454,10 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 2.5h5a1 1 0 0 1 1 1V5H20v2H4V5h4.5V3.5a1 1 0 0 1 1-1zM6 8h12l-1 12.2a2 2 0 0 1-2 1.8H9a2 2 0 0 1-2-1.8L6 8z"/></svg>
         Slett
       </button>
+      <button class="etool" id="t-undo" title="Angre" onclick="edUndo()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 7 4 12 9 17"/><path d="M4 12h11a4 4 0 0 1 0 8h-3"/></svg>
+        Angre
+      </button>
     </div>
 
     <!-- Card + side controls -->
@@ -1399,6 +1492,43 @@
 function openModal() { document.getElementById('help-modal').classList.add('open'); }
 function closeModal(e) { if (e.target === e.currentTarget) e.currentTarget.classList.remove('open'); }
 
+// Context-specific help for the lerret pages (depends on which card you entered from)
+const LERRET_HELP = {
+  'sprikende|problem':   { eyebrow: 'Sprikende Lerret Problem',   title: 'Problem – Sprikende lerret',   body: 'Her utforsker du problemet bredt. Fyll ut alle 8 boksene med ulike situasjoner, behov eller utfordringer du har observert, og illustrer hver med en tegning eller et bilde. Ikke velg eller vurder ennå, målet er flest mulig perspektiver.' },
+  'samlende|problem':    { eyebrow: 'Samlende Lerret Problem',    title: 'Problem – Samlende lerret',    body: 'Her snevrer du inn. Se gjennom de 8 problemene du kartla, og bruk boksene til å formulere én tydelig problemdefinisjon.' },
+  'sprikende|ide':       { eyebrow: 'Sprikende Lerret Idé',       title: 'Idé – Sprikende lerret',       body: 'Her idémyldrer du fritt. Fyll ut alle 8 boksene med ulike ideer til hvordan problemet kan løses. Tenk bredt, og ikke bekymre deg for om ideene er gode nok ennå.' },
+  'samlende|ide':        { eyebrow: 'Samlende Lerret Idé',        title: 'Idé – Samlende lerret',        body: 'Her velger du blant ideene dine. Vurder styrker og svakheter, og bruk boksene til å konkretisere den ideen du tror har størst potensial.' },
+  'sprikende|prototype': { eyebrow: 'Sprikende Lerret Prototype', title: 'Prototype – Sprikende lerret', body: 'Her utforsker du ulike måter å løse problemet på. Fyll ut boksene med forskjellige varianter av løsningen din, og illustrer hver.' },
+  'samlende|prototype':  { eyebrow: 'Samlende Lerret Prototype',  title: 'Prototype – Samlende lerret',  body: 'Her lander du på én løsning. Bruk boksene til å beskrive og konkretisere løsningen du går videre med.' }
+};
+let lerretCtx = 'sprikende|problem';
+function openLerretHelp() {
+  const c = LERRET_HELP[lerretCtx] || LERRET_HELP['sprikende|problem'];
+  document.getElementById('lh-eyebrow').textContent = c.eyebrow;
+  document.getElementById('lh-title').textContent = c.title;
+  document.getElementById('lh-body').textContent = c.body;
+  document.getElementById('lerret-help-modal').classList.add('open');
+}
+
+// Lean Canvas help (heading + each of the 8 boxes)
+const LC_HELP = {
+  overview:     { title: 'Lean canvas',      body: 'Lean canvas er et verktøy for å oppsummere forretningsideen din på én side. De syv boksene henger sammen, og vi anbefaler derfor å fylle ut boksene i rekkefølge fra 1 til 7, da de bygger på hverandre.' },
+  problem:      { title: '1. Problem',       body: 'Her beskriver du problemet du ønsker å løse. Det kan være noe som ikke fungerer som det burde, noe som tar unødvendig mye tid, eller noe som oppleves som frustrerende eller irriterende for brukeren. Fokuser på situasjonen slik den er i dag, og hvilke utfordringer eller smertepunkter som faktisk eksisterer.' },
+  losning:      { title: '2. Løsning',       body: 'Her beskriver du hva løsningen består av. Forklar hvilke funksjoner systemet eller tjenesten har, og hvordan den håndterer problemet. Fokuser på hva løsningen gjør, ikke hvordan den er bygget eller implementert.' },
+  verdiforslag: { title: '3. Verdiforslag',  body: 'Her beskriver du verdien løsningen gir. Formuler et tydelig og kort budskap som forklarer hvorfor løsningen er nyttig og hva som gjør den attraktiv. Dette kan være et slagord eller en enkel setning som kommuniserer hovedfordelen til brukeren.' },
+  kanal:        { title: '4. Kanal',         body: 'Her beskriver du hvordan du planlegger å nå brukerne. Forklar hvilke kanaler som brukes for å komme i kontakt med målgruppen og gjøre løsningen tilgjengelig, enten det er digitale plattformer, direkte salg, samarbeidspartnere eller andre distribusjonsformer.' },
+  bruker:       { title: '5. Bruker',        body: 'Her beskriver du hvem som opplever problemet. Hvem er personen eller gruppen som har utfordringen, og som vil ha glede av løsningen? Beskriv brukeren slik de er i dag, med utgangspunkt i rolle, behov eller situasjon.' },
+  kostnader:    { title: '6. Kostnader',     body: 'Her beskriver du hvilke kostnader som er knyttet til løsningen. Dette kan være utgifter til lønn, leie, lisenser, drift eller andre nødvendige ressurser for å utvikle, drifte og levere varen eller tjenesten.' },
+  inntekter:    { title: '7. Inntekter',     body: 'Her beskriver du hva du får igjen for løsningen. Dette kan være økonomiske inntekter (abonnementer, engangsbetalinger, annonser) eller andre målbare verdier som spart tid, økt effektivitet eller oppmerksomhet.' },
+  maltall:      { title: 'Måltall',          body: 'Her kan du skrive inntil 300 ord om ditt Lean Canvas. Beskriv målene dine, viktige måltall eller andre tanker om prosjektet som ikke passer inn i de andre boksene.' }
+};
+function openLcHelp(key) {
+  const c = LC_HELP[key] || LC_HELP.overview;
+  document.getElementById('lch-title').textContent = c.title;
+  document.getElementById('lch-body').textContent = c.body;
+  document.getElementById('lc-help-modal').classList.add('open');
+}
+
 // ── Navigation ──────────────────────────────────────────────
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1414,6 +1544,13 @@ function openLerret(id, title) {
   if (h1) h1.textContent = title;
   const crumb = page.querySelector('.nb-crumb');
   if (crumb) crumb.textContent = 'INNOV102 < ' + title;
+  // Remember which card we came from, so the "?" beside the heading shows the right help
+  const t = (title || '').toUpperCase();
+  const tool = t.indexOf('SAMLENDE') !== -1 ? 'samlende' : 'sprikende';
+  const phase = t.indexOf('PROTOTYPE') !== -1 ? 'prototype'
+              : (t.indexOf('IDÉ') !== -1 || t.indexOf('IDE') !== -1) ? 'ide'
+              : 'problem';
+  lerretCtx = tool + '|' + phase;
 }
 
 // ── Make image area (click opens the drawing editor) ─────────
@@ -1447,7 +1584,7 @@ function buildSprikende() {
     const hd = document.createElement('div');
     hd.className = 'cbox-hd';
     hd.innerHTML =
-      `<span class="cbox-num">${String(i).padStart(2, '0')}</span>` +
+      `<span class="cbox-num">${i}.</span>` +
       `<span class="cbox-title" contenteditable="true" data-ph="Kort overskrift"></span>`;
     box.appendChild(hd);
 
@@ -1498,7 +1635,7 @@ function buildStoryboard() {
     const hd = document.createElement('div');
     hd.className = 'cbox-hd';
     hd.innerHTML =
-      `<span class="cbox-num">${String(i + 1).padStart(2, '0')}</span>` +
+      `<span class="cbox-num">${i + 1}.</span>` +
       `<span class="cbox-title" contenteditable="true" data-ph="Kort overskrift"></span>`;
     box.appendChild(hd);
 
@@ -1552,7 +1689,7 @@ function buildStoryboard101() {
     const hd = document.createElement('div');
     hd.className = 'cbox-hd';
     hd.innerHTML =
-      `<span class="cbox-num">${String(i + 1).padStart(2, '0')}</span>` +
+      `<span class="cbox-num">${i + 1}.</span>` +
       `<span class="cbox-title" contenteditable="true" data-ph="Kort overskrift"></span>`;
     box.appendChild(hd);
     hd.querySelector('.cbox-title').textContent = labels[i];
@@ -1587,32 +1724,22 @@ function buildStoryboard101() {
   // Download moved to the page header (no download box).
 }
 
-// ── Build Samlende Lerret Løsning (6 storyboard boxes, pre-labelled) ──
+// ── Build Samlende Lerret Løsning (6 boxes, generic placeholders) ──
 function buildStoryboardLosning() {
   const grid = document.getElementById('sl-grid');
-  const labels = ['Problem', 'Konsekvens', 'Oppdagelse', 'Konkurransefortrinn', 'Funksjonalitet', 'Problemfri'];
-  const prompts = [
-    'Vis en situasjon hvor en bruker møter på et problem',
-    'Beskriv problemets konsekvens for brukeren',
-    'Gjennom hvilken kanal oppdager brukeren løsningen?',
-    'Hvorfor velger brukeren denne løsningen fremfor andre?',
-    'Beskriv løsningens viktigste funksjonalitet',
-    'Vis en situasjon hvor brukeren ikke lenger har et problem'
-  ];
+  const PH = 'Forklar ideen bak illustrasjonen';
 
   for (let i = 0; i < 6; i++) {
-    const prompt = prompts[i];
     const box = document.createElement('div');
     box.className = 'sbbox';
 
-    // Header: number + pre-filled category label (burgundy, same as Samlende lerret)
+    // Header: number + editable title ("Kort overskrift" placeholder)
     const hd = document.createElement('div');
     hd.className = 'cbox-hd';
     hd.innerHTML =
-      `<span class="cbox-num">${String(i + 1).padStart(2, '0')}</span>` +
+      `<span class="cbox-num">${i + 1}.</span>` +
       `<span class="cbox-title" contenteditable="true" data-ph="Kort overskrift"></span>`;
     box.appendChild(hd);
-    hd.querySelector('.cbox-title').textContent = labels[i];
 
     // Pink image zone (click opens the editor)
     const imgArea = document.createElement('div');
@@ -1625,17 +1752,17 @@ function buildStoryboardLosning() {
     imgArea.addEventListener('click', () => openEditor(box, i + 1));
     box.appendChild(imgArea);
 
-    // White description zone — this box's own prompt as placeholder
+    // White description zone — generic placeholder
     const desc = document.createElement('div');
     desc.className = 'cbox-desc';
     desc.contentEditable = 'true';
-    desc.textContent = prompt;
+    desc.textContent = PH;
     desc.style.color = '#999';
     desc.addEventListener('focus', function () {
-      if (this.textContent === prompt) { this.textContent = ''; this.style.color = '#333'; }
+      if (this.textContent === PH) { this.textContent = ''; this.style.color = '#333'; }
     });
     desc.addEventListener('blur', function () {
-      if (!this.textContent.trim()) { this.textContent = prompt; this.style.color = '#999'; }
+      if (!this.textContent.trim()) { this.textContent = PH; this.style.color = '#999'; }
     });
     box.appendChild(desc);
 
@@ -1697,8 +1824,23 @@ const ed = {
   box: null, imgArea: null,
   tool: 'draw', color: '#820A12', shape: 'rect',
   drawing: false, dirty: false,
-  snapshot: null, start: null, last: null
+  snapshot: null, start: null, last: null,
+  undoStack: []
 };
+
+// Save the canvas state before an action so it can be undone
+function edPushUndo() {
+  try {
+    ed.undoStack.push(ed.ctx.getImageData(0, 0, ed.canvas.width, ed.canvas.height));
+    if (ed.undoStack.length > 40) ed.undoStack.shift();
+  } catch (e) {}
+}
+function edUndo() {
+  if (!ed.undoStack.length) return;
+  ed.ctx.globalCompositeOperation = 'source-over';
+  ed.ctx.putImageData(ed.undoStack.pop(), 0, 0);
+  ed.dirty = true;
+}
 
 function initEditor() {
   ed.canvas = document.getElementById('ed-canvas');
@@ -1737,6 +1879,7 @@ function edStrokeStyle() {
 
 function edDown(e) {
   e.preventDefault();
+  edPushUndo();
   ed.drawing = true; ed.dirty = true;
   const p = edPos(e);
   edStrokeStyle();
@@ -1838,6 +1981,7 @@ function setShape(s) {
 }
 
 function clearCanvas() {
+  edPushUndo();
   ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
   ed.dirty = true;
 }
@@ -1852,6 +1996,7 @@ function edInsertImage(e) {
       const cw = ed.canvas.width, ch = ed.canvas.height;
       const scale = Math.min(cw / img.width, ch / img.height);
       const w = img.width * scale, h = img.height * scale;
+      edPushUndo();
       ed.ctx.globalCompositeOperation = 'source-over';
       ed.ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
       ed.dirty = true;
@@ -1891,6 +2036,7 @@ function openEditor(box, num) {
   // Load any existing drawing
   ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
   ed.dirty = false;
+  ed.undoStack = [];
   if (box.dataset.drawing) {
     const img = new Image();
     img.onload = () => ed.ctx.drawImage(img, 0, 0, ed.canvas.width, ed.canvas.height);
@@ -1982,7 +2128,7 @@ function wireDescWordLimits() {
     const ph = desc.textContent;            // the box's placeholder text
     const counter = document.createElement('div');
     counter.className = 'lerret-count';
-    counter.textContent = '0 / ' + LIMIT + ' ord';
+    counter.textContent = '0/' + LIMIT + ' ord';
     box.appendChild(counter);
 
     function words(t) { t = t.trim(); return t === '' ? [] : t.split(/\s+/); }
@@ -1994,7 +2140,7 @@ function wireDescWordLimits() {
         placeCaretEnd(desc);
         w = words(desc.textContent);
       }
-      counter.textContent = w.length + ' / ' + LIMIT + ' ord';
+      counter.textContent = w.length + '/' + LIMIT + ' ord';
       counter.style.display = w.length > 0 ? 'block' : 'none';
     }
     desc.addEventListener('input', update);
