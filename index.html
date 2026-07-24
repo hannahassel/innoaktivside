@@ -54,6 +54,8 @@
     /* University of Bergen logo (black line art rendered white on the coloured bars) */
     .brand-logo { object-fit: contain; display: block; }
     .nb-logo-img { width: 40px; height: 40px; }
+    .nb-brand-btn { display: flex; align-items: center; gap: 11px; background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: #fff; }
+    .nb-brand-btn:hover { opacity: 0.85; }
     .footer-logo-img { width: 58px; height: 58px; margin: 0 auto 11px; }
     .nb-logo {
       width: 36px; height: 36px; border-radius: 50%;
@@ -278,7 +280,7 @@
     .lerret-grid .cbox-title:empty:before { color: #a7a29a; }
     .lerret-grid .cbox-img { flex: none; min-height: 165px; padding: 28px 24px; background: var(--pink); align-items: center; justify-content: center; color: var(--red-dark); border-top: 0.5px solid #eae2d5; border-bottom: 0.5px solid #eae2d5; position: relative; overflow: hidden; }
     /* Drawing fills the zone absolutely so it can never make the box taller */
-    .lerret-grid .cbox-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .lerret-grid .cbox-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
     .sp-ph { display: flex; flex-direction: column; align-items: center; gap: 13px; color: var(--red-dark); }
     .sp-ph svg { width: 30px; height: 30px; color: #d3ccc2; }
     .sp-ph-t { font-size: 15px; font-weight: bold; color: var(--red-dark); }
@@ -315,6 +317,15 @@
        shadows (html2canvas renders them muddy). */
     .pdf-mode { min-height: 0; }
     .pdf-mode .canvas-grid, .pdf-mode .sb-grid { flex: none; align-content: start; }
+    /* PDF: fill the render width so the export isn't left-shifted or cropped by the 80% + auto-margin layout */
+    .pdf-mode .sp-header, .pdf-mode .canvas-grid, .pdf-mode .sb-grid { width: 100%; max-width: none; margin: 0; }
+    /* Lean Canvas PDF: id-scoped so it beats the 8% padding + centring override */
+    #page-lean-canvas.pdf-mode .sp-header,
+    #page-lean-canvas.pdf-mode .lc-canvas,
+    #page-lean-canvas.pdf-mode .lc-maltall {
+      max-width: none; width: 100%; align-self: stretch; margin: 0;
+      padding-left: 40px; padding-right: 40px;
+    }
     .pdf-mode .cbox, .pdf-mode .sbbox { box-shadow: none; }
     .pdf-mode .sp-header { padding-top: 10px; }
     /* Lean Canvas boxes rely on a soft shadow on screen; html2canvas drops shadows,
@@ -468,14 +479,17 @@
     }
     .course-row:hover { background: var(--pink); box-shadow: 0 6px 18px rgba(0,0,0,0.14); transform: translateY(-1px); }
     .cr-bar { flex: 0 0 11px; align-self: stretch; }
+    .cr-mix .cr-bar { background: #A2131D; }
     .cr-101 .cr-bar { background: var(--red-dark); }
     .cr-102 .cr-bar { background: var(--red); }
     .cr-text { flex: 1; padding: 22px 32px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
     .cr-code { font-size: 23px; font-weight: bold; letter-spacing: 0.5px; }
+    .cr-mix .cr-code { color: #A2131D; }
     .cr-101 .cr-code { color: var(--red-dark); }
     .cr-102 .cr-code { color: var(--red); }
     .cr-title { font-size: 17px; color: var(--text); }
     .cr-cta { display: flex; align-items: center; gap: 11px; padding: 0 38px; font-size: 13px; font-weight: bold; letter-spacing: 1px; white-space: nowrap; }
+    .cr-mix .cr-cta { color: #A2131D; }
     .cr-101 .cr-cta { color: var(--red-dark); }
     .cr-102 .cr-cta { color: var(--red); }
     .cr-arrow { font-size: 18px; }
@@ -739,8 +753,10 @@
 
   <nav class="navbar">
     <div class="nb-left">
-      <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
-      <span class="nb-brand">INNOAKTIV</span>
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
+      </button>
     </div>
     <div class="nb-right">
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -749,10 +765,18 @@
 
   <div class="home-body">
     <h1 class="home-title">Velkommen til Innoaktivsiden!</h1>
-    <p class="home-subtitle">Interaktive verktøy til INNOV-emnene, samlet på ett sted.</p>
+    <p class="home-subtitle">Interaktive verktøy til innovasjonsemner ved UiB, samlet på ett sted.</p>
 
     <div class="course-rows">
-      <button class="course-row cr-101" onclick="showPage('page-innov101')">
+      <button class="course-row cr-mix" onclick="openCourse('page-mix100','MIX100')">
+        <span class="cr-bar"></span>
+        <span class="cr-text">
+          <span class="cr-code">MIX100</span>
+          <span class="cr-title">Introduksjon til medie- og interaksjonsdesign</span>
+        </span>
+        <span class="cr-cta">TIL EMNESIDE <span class="cr-arrow">→</span></span>
+      </button>
+      <button class="course-row cr-101" onclick="openCourse('page-innov101','INNOV101')">
         <span class="cr-bar"></span>
         <span class="cr-text">
           <span class="cr-code">INNOV101/641</span>
@@ -791,7 +815,7 @@
       </button>
     </div>
     <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
       </button>
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -807,10 +831,10 @@
     <div class="i101-cards">
 
       <!-- Lean Canvas  ->  page-lean-canvas -->
-      <button class="i101-card" onclick="showPage('page-lean-canvas')">
+      <button class="i101-card" onclick="openCourseTool('page-lean-canvas','LEAN CANVAS')">
         <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg></span>
         <span class="i101-t">Lean Canvas</span>
-        <span class="i101-d">Fyll ut forretningsmodellen i ni ruter.</span>
+        <span class="i101-d">Fyll ut forretningsmodellen i sju ruter.</span>
         <span class="i101-prev">
           <svg viewBox="0 0 200 84" xmlns="http://www.w3.org/2000/svg">
             <g fill="none" stroke="#C15B52" stroke-width="1.3">
@@ -837,7 +861,7 @@
       </button>
 
       <!-- Storyboard  ->  page-innov101-storyboard -->
-      <button class="i101-card" onclick="showPage('page-innov101-storyboard')">
+      <button class="i101-card" onclick="openCourseTool('page-innov101-storyboard','STORYBOARD')">
         <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="7" width="5.5" height="10" rx="1"/><rect x="9.25" y="7" width="5.5" height="10" rx="1"/><rect x="16.5" y="7" width="5.5" height="10" rx="1"/></svg></span>
         <span class="i101-t">Storyboard</span>
         <span class="i101-d">Visualiser brukerreisen steg for steg.</span>
@@ -855,7 +879,118 @@
       </button>
 
       <!-- Plakat (kanal)  ->  page-plakat -->
-      <button class="i101-card" onclick="showPage('page-plakat')">
+      <button class="i101-card" onclick="openCourseTool('page-plakat','PLAKAT (KANAL)')">
+        <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="8.5" y1="8" x2="15.5" y2="8"/></svg></span>
+        <span class="i101-t">Plakat (kanal)</span>
+        <span class="i101-d">Velg format og lag en plakat.</span>
+        <span class="i101-prev">
+          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg">
+            <!-- left dashed placeholder -->
+            <rect x="10" y="16" width="48" height="44" rx="2" fill="none" stroke="#C15B52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <!-- 'new size' dashed preview, offset down-right (shows through the outline square) -->
+            <rect x="112" y="30" width="54" height="36" rx="2" fill="none" stroke="#C15B52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <!-- selected square: outline only, no fill -->
+            <rect x="80" y="12" width="52" height="52" rx="1" fill="none" stroke="#820A12" stroke-width="2"/>
+            <!-- filled corner handles -->
+            <g fill="#820A12">
+              <rect x="76" y="8" width="8" height="8"/>
+              <rect x="128" y="8" width="8" height="8"/>
+              <rect x="76" y="60" width="8" height="8"/>
+              <rect x="128" y="60" width="8" height="8"/>
+            </g>
+          </svg>
+        </span>
+        <span class="i101-arrow">→</span>
+      </button>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════ MIX100 LANDING ════════════════════ -->
+<div class="page" id="page-mix100">
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-back" onclick="showPage('page-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        <span class="nb-crumb">HJEM &lt; MIX100</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
+  <div class="breadcrumb">
+    <a href="#" onclick="showPage('page-home')">HJEM</a> &gt; MIX100
+  </div>
+
+  <div class="landing-body">
+    <h1 class="landing-title">MIX100: Introduksjon til medie- og interaksjonsdesign</h1>
+
+    <div class="i101-cards">
+
+      <!-- Lean Canvas  ->  page-lean-canvas -->
+      <button class="i101-card" onclick="openCourseTool('page-lean-canvas','LEAN CANVAS')">
+        <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="14" width="18" height="7" rx="1"/></svg></span>
+        <span class="i101-t">Lean Canvas</span>
+        <span class="i101-d">Fyll ut forretningsmodellen i sju ruter.</span>
+        <span class="i101-prev">
+          <svg viewBox="0 0 200 84" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="#C15B52" stroke-width="1.3">
+              <rect x="2" y="4" width="36" height="40" rx="3"/>
+              <rect x="42" y="4" width="36" height="40" rx="3"/>
+              <rect x="82" y="4" width="36" height="40" rx="3"/>
+              <rect x="122" y="4" width="36" height="40" rx="3"/>
+              <rect x="162" y="4" width="36" height="40" rx="3"/>
+              <rect x="2" y="50" width="76" height="30" rx="3"/>
+              <rect x="82" y="50" width="116" height="30" rx="3"/>
+            </g>
+            <g stroke="#820A12" stroke-width="2.5" stroke-linecap="round">
+              <line x1="5" y1="6" x2="35" y2="6"/>
+              <line x1="45" y1="6" x2="75" y2="6"/>
+              <line x1="85" y1="6" x2="115" y2="6"/>
+              <line x1="125" y1="6" x2="155" y2="6"/>
+              <line x1="165" y1="6" x2="195" y2="6"/>
+              <line x1="5" y1="52" x2="75" y2="52"/>
+              <line x1="85" y1="52" x2="195" y2="52"/>
+            </g>
+          </svg>
+        </span>
+        <span class="i101-arrow">→</span>
+      </button>
+
+      <!-- Storyboard  ->  page-innov101-storyboard -->
+      <button class="i101-card" onclick="openCourseTool('page-innov101-storyboard','STORYBOARD')">
+        <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="7" width="5.5" height="10" rx="1"/><rect x="9.25" y="7" width="5.5" height="10" rx="1"/><rect x="16.5" y="7" width="5.5" height="10" rx="1"/></svg></span>
+        <span class="i101-t">Storyboard</span>
+        <span class="i101-d">Visualiser brukerreisen steg for steg.</span>
+        <span class="i101-prev">
+          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C15B52" stroke-width="1.5">
+            <rect x="2" y="2" width="62" height="34" rx="2"/>
+            <rect x="69" y="2" width="62" height="34" rx="2"/>
+            <rect x="136" y="2" width="62" height="34" rx="2"/>
+            <rect x="2" y="42" width="62" height="34" rx="2"/>
+            <rect x="69" y="42" width="62" height="34" rx="2"/>
+            <rect x="136" y="42" width="62" height="34" rx="2"/>
+          </svg>
+        </span>
+        <span class="i101-arrow">→</span>
+      </button>
+
+      <!-- Plakat (kanal)  ->  page-plakat -->
+      <button class="i101-card" onclick="openCourseTool('page-plakat','PLAKAT (KANAL)')">
         <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="8.5" y1="8" x2="15.5" y2="8"/></svg></span>
         <span class="i101-t">Plakat (kanal)</span>
         <span class="i101-d">Velg format og lag en plakat.</span>
@@ -895,11 +1030,13 @@
 
   <nav class="navbar">
     <div class="nb-left">
-      <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
-      <span class="nb-brand">INNOAKTIV</span>
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
+      </button>
     </div>
     <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
       </button>
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -1054,7 +1191,7 @@
       </button>
     </div>
     <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
       </button>
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -1101,7 +1238,7 @@
       </button>
     </div>
     <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
       </button>
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -1148,7 +1285,7 @@
       </button>
     </div>
     <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
       </button>
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -1187,7 +1324,7 @@
 
   <nav class="navbar">
     <div class="nb-left">
-      <button class="nb-back" onclick="showPage('page-innov101')">
+      <button class="nb-back" onclick="courseBack()">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
@@ -1195,7 +1332,7 @@
       </button>
     </div>
     <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
       </button>
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -1234,7 +1371,7 @@
 
   <nav class="navbar">
     <div class="nb-left">
-      <button class="nb-back" onclick="showPage('page-innov101')">
+      <button class="nb-back" onclick="courseBack()">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
@@ -1242,7 +1379,7 @@
       </button>
     </div>
     <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
       </button>
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -1352,7 +1489,7 @@
 <div class="page embed-page" id="page-plakat">
   <nav class="navbar">
     <div class="nb-left">
-      <button class="nb-back" onclick="showPage('page-innov101')">
+      <button class="nb-back" onclick="courseBack()">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
@@ -1360,7 +1497,7 @@
       </button>
     </div>
     <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="showPage('page-home')">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
       </button>
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
@@ -1396,6 +1533,18 @@
     <h2 style="text-transform:none;">Eksempel storyboard</h2>
     <img src="brodderstorybaord.png" alt="Eksempel på et utfylt storyboard" style="width:100%;height:auto;border-radius:8px;display:block;margin:0 0 8px;">
     <button class="modal-ok" onclick="document.getElementById('storyboard-help-modal').classList.remove('open')">OK</button>
+  </div>
+</div>
+
+<!-- Go-home confirmation modal -->
+<div class="modal-overlay" id="home-confirm-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <h2 style="text-transform:none;">Gå til forsiden?</h2>
+    <p>Er du sikker på at du vil gå hjem?</p>
+    <div style="display:flex; gap:10px; margin-top:4px;">
+      <button class="modal-ok" onclick="confirmHome()">Ja, gå hjem</button>
+      <button class="modal-ok" style="background:#efefef; color:#333;" onclick="document.getElementById('home-confirm-modal').classList.remove('open')">Avbryt</button>
+    </div>
   </div>
 </div>
 
@@ -1561,6 +1710,29 @@ function openLerret(id, title) {
   lerretCtx = tool + '|' + phase;
 }
 
+// ── Course context: remember which course landing you came from ──
+let courseCtx = { landing: 'page-innov101', label: 'INNOV101' };
+function openCourse(landingId, label) {
+  courseCtx = { landing: landingId, label: label };
+  showPage(landingId);
+}
+function openCourseTool(pageId, toolLabel) {
+  showPage(pageId);
+  const crumb = document.getElementById(pageId).querySelector('.nb-crumb');
+  if (crumb) crumb.textContent = courseCtx.label + ' < ' + toolLabel;
+}
+function courseBack() { showPage(courseCtx.landing); }
+
+// ── Go home (with confirmation) ─────────────────────────────
+function goHome() {
+  if (document.getElementById('page-home').classList.contains('active')) return; // already home
+  document.getElementById('home-confirm-modal').classList.add('open');
+}
+function confirmHome() {
+  document.getElementById('home-confirm-modal').classList.remove('open');
+  showPage('page-home');
+}
+
 // ── Make image area (click opens the drawing editor) ─────────
 function makeImgArea(num, extraStyle) {
   const area = document.createElement('div');
@@ -1692,6 +1864,7 @@ function buildStoryboard101() {
     const prompt = prompts[i];
     const box = document.createElement('div');
     box.className = 'sbbox';
+    box.dataset.ph = prompt;
 
     // Header: number + pre-filled category label (burgundy, same as Samlende lerret)
     const hd = document.createElement('div');
@@ -1804,20 +1977,42 @@ function downloadPDF(type) {
 
   // Render at a FIXED width so the layout (box proportions, one-line headers)
   // is identical to the screen regardless of the browser window size.
-  const w = cfg.rw;
+  let w = cfg.rw;
   const prevWidth = pageEl.style.width;
   pageEl.style.width = w + 'px';
+
+  // html2canvas can't render text typed into a <textarea>, so mirror each into a
+  // plain div (same text + styling) for the export, then remove it afterwards.
+  const taMirrors = [];
+  pageEl.querySelectorAll('textarea').forEach(function (ta) {
+    const cs = getComputedStyle(ta);
+    const mir = document.createElement('div');
+    mir.textContent = ta.value;
+    mir.style.cssText = 'flex:1;width:100%;white-space:pre-wrap;overflow-wrap:break-word;background:transparent;' +
+      'font-family:' + cs.fontFamily + ';font-size:' + cs.fontSize + ';line-height:' + cs.lineHeight + ';color:' + cs.color + ';';
+    ta.style.display = 'none';
+    ta.parentNode.insertBefore(mir, ta);
+    taMirrors.push({ ta: ta, mir: mir });
+  });
+
+  // Widen the page to the actual content width so the right column(s) are never cropped
+  w = Math.max(w, pageEl.scrollWidth);
+  pageEl.style.width = w + 'px';
+  w = Math.max(w, pageEl.scrollWidth);
+  pageEl.style.width = w + 'px';
+
   const h = Math.max(pageEl.scrollHeight, pageEl.offsetHeight) + 20;
 
   const opt = {
     margin: 0,
     filename: filename + '.pdf',
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollY: 0 },
-    jsPDF: { unit: 'px', format: [w, h], orientation: 'portrait' }
+    html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollX: 0, scrollY: 0, x: 0 },
+    jsPDF: { unit: 'px', format: [w, h], orientation: w >= h ? 'landscape' : 'portrait' }
   };
 
   html2pdf().set(opt).from(pageEl).save().then(() => {
+    taMirrors.forEach(function (m) { m.mir.remove(); m.ta.style.display = ''; });
     pageEl.classList.remove('pdf-mode');
     pageEl.style.width = prevWidth;
     if (navbar) navbar.style.display = '';
