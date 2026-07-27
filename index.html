@@ -99,6 +99,17 @@
     .breadcrumb a { color: var(--text-light); text-decoration: none; }
     .breadcrumb a:hover { text-decoration: underline; }
 
+    /* ── Standalone breadcrumb bar (task pages, no header) ── */
+    .crumbbar { display: flex; align-items: center; gap: 9px; padding: 16px 40px 2px; font-size: 13px; letter-spacing: 0.3px; }
+    .crumb-back { display: inline-flex; align-items: center; justify-content: center; background: none; border: none; padding: 4px; margin-right: 2px; border-radius: 6px; cursor: pointer; color: var(--red-dark); }
+    .crumb-back svg { width: 18px; height: 18px; }
+    .crumb-back:hover { background: rgba(130,10,18,0.08); }
+    .crumb-link { display: inline-flex; align-items: center; gap: 5px; color: var(--red-dark); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-weight: 600; }
+    .crumb-link:hover { color: var(--red); }
+    .crumb-ico { width: 15px; height: 15px; fill: currentColor; }
+    .crumb-sep { color: #b9ab97; }
+    .crumb-current { color: #8a8078; }
+
     /* ── Landing page ── */
     .landing-body { flex: 1; }
     .landing-title {
@@ -246,6 +257,8 @@
       flex: 1;
       align-content: start;
     }
+    /* Prototype-varianten av Sprikende lerret viser bare 4 bokser */
+    #sp-grid.only4 .cbox:nth-child(n+5) { display: none; }
 
     /* ── Sprikende header (beige, breadcrumb + title + download) ── */
     .sp-header {
@@ -807,11 +820,9 @@
 <div class="page" id="page-innov101">
   <nav class="navbar">
     <div class="nb-left">
-      <button class="nb-back" onclick="showPage('page-home')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        <span class="nb-crumb">HJEM &lt; INNOV101/641</span>
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
     <div class="nb-right">
@@ -821,9 +832,6 @@
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
     </div>
   </nav>
-  <div class="breadcrumb">
-    <a href="#" onclick="showPage('page-home')">HJEM</a> &gt; INNOV101/641
-  </div>
 
   <div class="landing-body">
     <h1 class="landing-title">INNOV101/641: Introduksjon til innovasjonsmetoder</h1>
@@ -918,11 +926,9 @@
 <div class="page" id="page-mix100">
   <nav class="navbar">
     <div class="nb-left">
-      <button class="nb-back" onclick="showPage('page-home')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        <span class="nb-crumb">HJEM &lt; MIX100</span>
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
     <div class="nb-right">
@@ -932,9 +938,6 @@
       <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
     </div>
   </nav>
-  <div class="breadcrumb">
-    <a href="#" onclick="showPage('page-home')">HJEM</a> &gt; MIX100
-  </div>
 
   <div class="landing-body">
     <h1 class="landing-title">MIX100: Introduksjon til medie- og interaksjonsdesign</h1>
@@ -1043,10 +1046,6 @@
     </div>
   </nav>
 
-  <div class="breadcrumb">
-    <a href="#" onclick="showPage('page-home')">HJEM</a> &gt; INNOV102/642
-  </div>
-
   <div class="landing-body">
     <h1 class="landing-title">INNOV102/642: Introduksjon til designtenking</h1>
 
@@ -1054,13 +1053,13 @@
       <div class="tool-cards-6">
 
         <div class="dd-pair pair-problem">
-          <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET PROBLEM')">
+          <button class="dd-card" onclick="openLerret('page-sprikende','PROBLEMUTVIKLING')">
             <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
             <span class="dd-t">Problemutvikling</span>
             <span class="dd-d">Her skal du presentere 8 problemer.</span>
             <span class="dd-arrow">&#8594;</span>
           </button>
-          <button class="dd-card" onclick="openLerret('page-storyboard','SAMLENDE LERRET PROBLEM')">
+          <button class="dd-card" onclick="openLerret('page-storyboard','PROBLEMVALG')">
             <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
             <span class="dd-t">Problemvalg</span>
             <span class="dd-d">Her skal du formidle det valgte problemet.</span>
@@ -1069,13 +1068,13 @@
         </div>
 
         <div class="dd-pair pair-ide">
-          <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET IDÉ')">
+          <button class="dd-card" onclick="openLerret('page-sprikende','IDÉUTVIKLING')">
             <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
             <span class="dd-t">Id&#233;utvikling</span>
             <span class="dd-d">Her skal du presentere 8 id&#233;er.</span>
             <span class="dd-arrow">&#8594;</span>
           </button>
-          <button class="dd-card" onclick="openLerret('page-storyboard','SAMLENDE LERRET IDÉ')">
+          <button class="dd-card" onclick="openLerret('page-storyboard','IDÉVALG')">
             <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
             <span class="dd-t">Id&#233;valg</span>
             <span class="dd-d">Her skal du formidle den valgte ideen.</span>
@@ -1084,13 +1083,13 @@
         </div>
 
         <div class="dd-pair pair-losning">
-          <button class="dd-card" onclick="openLerret('page-sprikende','SPRIKENDE LERRET PROTOTYPE')">
+          <button class="dd-card" onclick="openLerret('page-sprikende','PROTOTYPEUTVIKLING')">
             <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
             <span class="dd-t">Prototypeutvikling</span>
             <span class="dd-d">Her skal du presentere 4 prototyper.</span>
             <span class="dd-arrow">&#8594;</span>
           </button>
-          <button class="dd-card" onclick="openLerret('page-storyboard','SAMLENDE LERRET PROTOTYPE')">
+          <button class="dd-card" onclick="openLerret('page-storyboard','PROTOTYPEVALG')">
             <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
             <span class="dd-t">Prototypevalg</span>
             <span class="dd-d">Her skal du formidle den valgte prototypen.</span>
@@ -1175,22 +1174,18 @@
 <!-- ════════════════════ SPRIKENDE LERRET ════════════════════ -->
 <div class="page" id="page-sprikende">
 
-  <nav class="navbar">
-    <div class="nb-left">
-      <button class="nb-back" onclick="showPage('page-innov102')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        <span class="nb-crumb">INNOV102 &lt; SPRIKENDE LERRET</span>
-      </button>
-    </div>
-    <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="goHome()">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
-      </button>
-      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
-    </div>
-  </nav>
+  <div class="crumbbar">
+    <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="showPage('page-innov102')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <a class="crumb-link crumb-home" onclick="goHome()">
+      <svg class="crumb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>Hjem
+    </a>
+    <span class="crumb-sep">&#8250;</span>
+    <a class="crumb-link crumb-course" onclick="showPage('page-innov102')">INNOV102</a>
+    <span class="crumb-sep">&#8250;</span>
+    <span class="crumb-current">SPRIKENDE LERRET</span>
+  </div>
 
   <div class="sp-header">
     <div class="sp-head-left">
@@ -1210,34 +1205,24 @@
   </div>
 
   <div class="canvas-grid lerret-grid" id="sp-grid"></div>
-
-  <div class="footer">
-    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
-    <div class="footer-name">INNOAKTIV</div>
-    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
-  </div>
 </div>
 
 
 <!-- ════════════════════ SAMLENDE LERRET / STORYBOARD ════════════════════ -->
 <div class="page" id="page-storyboard">
 
-  <nav class="navbar">
-    <div class="nb-left">
-      <button class="nb-back" onclick="showPage('page-innov102')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        <span class="nb-crumb">INNOV102 &lt; SAMLENDE LERRET</span>
-      </button>
-    </div>
-    <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="goHome()">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
-      </button>
-      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
-    </div>
-  </nav>
+  <div class="crumbbar">
+    <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="showPage('page-innov102')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <a class="crumb-link crumb-home" onclick="goHome()">
+      <svg class="crumb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>Hjem
+    </a>
+    <span class="crumb-sep">&#8250;</span>
+    <a class="crumb-link crumb-course" onclick="showPage('page-innov102')">INNOV102</a>
+    <span class="crumb-sep">&#8250;</span>
+    <span class="crumb-current">SAMLENDE LERRET</span>
+  </div>
 
   <div class="sp-header">
     <div class="sp-head-left">
@@ -1257,34 +1242,24 @@
   </div>
 
   <div class="sb-grid lerret-grid" id="sb-grid"></div>
-
-  <div class="footer">
-    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
-    <div class="footer-name">INNOAKTIV</div>
-    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
-  </div>
 </div>
 
 
 <!-- ════════════════════ SAMLENDE LERRET LØSNING ════════════════════ -->
 <div class="page" id="page-samlende-losning">
 
-  <nav class="navbar">
-    <div class="nb-left">
-      <button class="nb-back" onclick="showPage('page-innov102')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        <span class="nb-crumb">INNOV102 &lt; SAMLENDE LERRET LØSNING</span>
-      </button>
-    </div>
-    <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="goHome()">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
-      </button>
-      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
-    </div>
-  </nav>
+  <div class="crumbbar">
+    <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="showPage('page-innov102')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <a class="crumb-link crumb-home" onclick="goHome()">
+      <svg class="crumb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>Hjem
+    </a>
+    <span class="crumb-sep">&#8250;</span>
+    <a class="crumb-link crumb-course" onclick="showPage('page-innov102')">INNOV102</a>
+    <span class="crumb-sep">&#8250;</span>
+    <span class="crumb-current">SAMLENDE LERRET LØSNING</span>
+  </div>
 
   <div class="sp-header">
     <div class="sp-head-left">
@@ -1304,34 +1279,24 @@
   </div>
 
   <div class="sb-grid lerret-grid" id="sl-grid"></div>
-
-  <div class="footer">
-    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
-    <div class="footer-name">INNOAKTIV</div>
-    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
-  </div>
 </div>
 
 
 <!-- ════════════════════ INNOV101 STORYBOARD ════════════════════ -->
 <div class="page" id="page-innov101-storyboard">
 
-  <nav class="navbar">
-    <div class="nb-left">
-      <button class="nb-back" onclick="courseBack()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        <span class="nb-crumb">INNOV101 &lt; STORYBOARD</span>
-      </button>
-    </div>
-    <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="goHome()">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
-      </button>
-      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
-    </div>
-  </nav>
+  <div class="crumbbar">
+    <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="courseBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <a class="crumb-link crumb-home" onclick="goHome()">
+      <svg class="crumb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>Hjem
+    </a>
+    <span class="crumb-sep">&#8250;</span>
+    <a class="crumb-link crumb-course" onclick="courseBack()">INNOV101</a>
+    <span class="crumb-sep">&#8250;</span>
+    <span class="crumb-current">STORYBOARD</span>
+  </div>
 
   <div class="sp-header">
     <div class="sp-head-left">
@@ -1351,34 +1316,24 @@
   </div>
 
   <div class="sb-grid lerret-grid" id="sb101-grid"></div>
-
-  <div class="footer">
-    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
-    <div class="footer-name">INNOAKTIV</div>
-    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
-  </div>
 </div>
 
 
 <!-- ════════════════════ LEAN CANVAS (embedded design) ════════════════════ -->
 <div class="page" id="page-lean-canvas">
 
-  <nav class="navbar">
-    <div class="nb-left">
-      <button class="nb-back" onclick="courseBack()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        <span class="nb-crumb">INNOV101 &lt; LEAN CANVAS</span>
-      </button>
-    </div>
-    <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="goHome()">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
-      </button>
-      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
-    </div>
-  </nav>
+  <div class="crumbbar">
+    <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="courseBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <a class="crumb-link crumb-home" onclick="goHome()">
+      <svg class="crumb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>Hjem
+    </a>
+    <span class="crumb-sep">&#8250;</span>
+    <a class="crumb-link crumb-course" onclick="courseBack()">INNOV101</a>
+    <span class="crumb-sep">&#8250;</span>
+    <span class="crumb-current">LEAN CANVAS</span>
+  </div>
 
   <div class="sp-header lc-header">
     <div class="sp-head-left">
@@ -1470,33 +1425,23 @@
       </div>
     </div>
   </div>
-
-  <div class="footer">
-    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
-    <div class="footer-name">INNOAKTIV</div>
-    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
-  </div>
 </div>
 
 
 <!-- ════════════════════ PLAKAT (kanal) (embedded design) ════════════════════ -->
 <div class="page embed-page" id="page-plakat">
-  <nav class="navbar">
-    <div class="nb-left">
-      <button class="nb-back" onclick="courseBack()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"/>
-        </svg>
-        <span class="nb-crumb">INNOV101 &lt; PLAKAT</span>
-      </button>
-    </div>
-    <div class="nb-right">
-      <button class="nb-home" title="Hjem" onclick="goHome()">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
-      </button>
-      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
-    </div>
-  </nav>
+  <div class="crumbbar">
+    <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="courseBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <a class="crumb-link crumb-home" onclick="goHome()">
+      <svg class="crumb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>Hjem
+    </a>
+    <span class="crumb-sep">&#8250;</span>
+    <a class="crumb-link crumb-course" onclick="courseBack()">INNOV101</a>
+    <span class="crumb-sep">&#8250;</span>
+    <span class="crumb-current">PLAKAT</span>
+  </div>
   <iframe class="embed-frame" src="plakat.html" title="Fra idé til plakat"></iframe>
 </div>
 
@@ -1687,21 +1632,33 @@ function showPage(id) {
   window.scrollTo(0, 0);
 }
 
+// Fill the standalone breadcrumb on a task page: Hjem › <course> › <current>
+function setCrumb(pageEl, courseLabel, landingId, currentLabel) {
+  if (!pageEl) return;
+  const course = pageEl.querySelector('.crumb-course');
+  const current = pageEl.querySelector('.crumb-current');
+  const back = pageEl.querySelector('.crumb-back');
+  if (course) { course.textContent = courseLabel; course.onclick = function () { showPage(landingId); }; }
+  if (current) current.textContent = currentLabel;
+  if (back) back.onclick = function () { showPage(landingId); };
+}
+
 // Open a lerret and set its title/breadcrumb so Problem vs Løsning is visible
 function openLerret(id, title) {
   showPage(id);
   const page = document.getElementById(id);
-  const h1 = page.querySelector('.tool-hd h1');
-  if (h1) h1.textContent = title;
-  const crumb = page.querySelector('.nb-crumb');
-  if (crumb) crumb.textContent = 'INNOV102 < ' + title;
+  setCrumb(page, 'INNOV102', 'page-innov102', title);
   // Remember which card we came from, so the "?" beside the heading shows the right help
   const t = (title || '').toUpperCase();
-  const tool = t.indexOf('SAMLENDE') !== -1 ? 'samlende' : 'sprikende';
+  const tool = (id === 'page-storyboard') ? 'samlende' : 'sprikende';
   const phase = t.indexOf('PROTOTYPE') !== -1 ? 'prototype'
               : (t.indexOf('IDÉ') !== -1 || t.indexOf('IDE') !== -1) ? 'ide'
               : 'problem';
   lerretCtx = tool + '|' + phase;
+  // Sprikende lerret: prototype-varianten viser bare 4 bokser (skjuler de siste 4)
+  if (id === 'page-sprikende') {
+    document.getElementById('sp-grid').classList.toggle('only4', phase === 'prototype');
+  }
 }
 
 // ── Course context: remember which course landing you came from ──
@@ -1712,8 +1669,7 @@ function openCourse(landingId, label) {
 }
 function openCourseTool(pageId, toolLabel) {
   showPage(pageId);
-  const crumb = document.getElementById(pageId).querySelector('.nb-crumb');
-  if (crumb) crumb.textContent = courseCtx.label + ' < ' + toolLabel;
+  setCrumb(document.getElementById(pageId), courseCtx.label, courseCtx.landing, toolLabel);
 }
 function courseBack() { showPage(courseCtx.landing); }
 
