@@ -139,7 +139,7 @@
     }
     .tool-cards-4 { display: flex; gap: 18px; }
     /* ── INNOV102 landing: 6 cards in 3 phase pairs + triple diamond ── */
-    .tool-cards-6 { display: flex; gap: 56px; align-items: stretch; }
+    .tool-cards-6 { display: flex; gap: 56px; align-items: stretch; margin-top: 56px; }
     .dd-pair { flex: 1 1 0; min-width: 0; display: flex; gap: 12px; }
     .dd-pair .dd-arrow { left: 16px; right: auto; }
     .dd-pair .dd-card { flex: 1 1 0; min-width: 0; padding: 16px 15px 42px; border-top-width: 6px; }
@@ -150,8 +150,8 @@
     .pair-problem  .dd-ic, .pair-problem  .dd-sub { color: #C25A4E; }
     .pair-ide      .dd-card { border-top-color: #A2131D; }
     .pair-ide      .dd-ic, .pair-ide      .dd-sub { color: #A2131D; }
-    .pair-losning  .dd-card { border-top-color: #820A12; }
-    .pair-losning  .dd-ic, .pair-losning  .dd-sub { color: #820A12; }
+    .pair-losning  .dd-card { border-top-color: #E08A3C; }
+    .pair-losning  .dd-ic, .pair-losning  .dd-sub { color: #E08A3C; }
     .triple-diamond { margin-top: 14px; }
     .triple-diamond svg { width: 100%; height: auto; display: block; }
     @media (max-width: 900px) { .tool-cards-6 { flex-wrap: wrap; } .dd-pair { flex: 1 1 46%; } }
@@ -274,6 +274,12 @@
     .sp-sub { margin-top: 9px; max-width: 460px; border-bottom: 2px dashed #c2b8ac; padding-bottom: 5px; }
     .sp-sub input { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 18px; color: #8a8078; }
     .sp-sub input:focus { outline: none; color: #555; }
+    /* Lerret header: small phase line + large own-title field */
+    .sp-phase { font-size: 15px; color: #8a8078; line-height: 1.5; margin-bottom: 8px; }
+    .sp-phase strong { display: block; margin-bottom: 3px; color: var(--red-dark); font-weight: 700; }
+    .sp-title-input { width: 100%; max-width: 640px; border: none; background: transparent; font-family: var(--font-sans); font-size: 30px; font-weight: bold; color: var(--red); line-height: 1.15; padding: 2px 0; border-bottom: 2px dashed transparent; }
+    .sp-title-input:hover { border-bottom-color: #d9cebc; }
+    .sp-title-input:focus { outline: none; border-bottom-color: var(--red); }
     .sp-download {
       display: flex; align-items: center; gap: 9px; flex-shrink: 0;
       background: var(--red-dark); color: #fff; border: none; border-radius: 9px;
@@ -1050,6 +1056,57 @@
     <h1 class="landing-title">INNOV102/642: Introduksjon til designtenking</h1>
 
     <div class="dd-panel">
+
+      <div class="triple-diamond">
+        <svg viewBox="0 0 1600 310" xmlns="http://www.w3.org/2000/svg" font-family="'Open Sans', Arial, sans-serif">
+          <!-- faint lower diamond edges (symmetric with the peaks) -->
+          <g fill="none" stroke="#D8CBB4" stroke-width="1.5" stroke-linejoin="round">
+            <path d="M90 160 L305 278 L520 160"/>
+            <path d="M520 160 L735 278 L950 160"/>
+            <path d="M950 160 L1165 278 L1380 160"/>
+          </g>
+          <!-- bold process line, three coloured phases -->
+          <path d="M90 160 L305 42 L520 160"    fill="none" stroke="#C25A4E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M520 160 L735 42 L950 160"   fill="none" stroke="#A2131D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M950 160 L1165 42 L1380 160" fill="none" stroke="#E08A3C" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M1380 160 L1520 160"         fill="none" stroke="#E08A3C" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- beige knockouts so the process line does not cut through the labels -->
+          <g fill="#FFF9F0">
+            <rect x="165" y="99" width="130" height="24"/>
+            <rect x="334" y="99" width="92" height="24"/>
+            <rect x="610" y="99" width="100" height="24"/>
+            <rect x="779" y="99" width="62" height="24"/>
+            <rect x="1019" y="99" width="142" height="24"/>
+            <rect x="1188" y="99" width="104" height="24"/>
+          </g>
+          <g font-size="12.5" font-weight="bold" text-anchor="middle" letter-spacing="0.2">
+            <text x="230"  y="112" fill="#C25A4E">Problemutvikling</text>
+            <text x="380"  y="112" fill="#C25A4E">Problemvalg</text>
+            <text x="660"  y="112" fill="#A2131D">Id&#233;utvikling</text>
+            <text x="810"  y="112" fill="#A2131D">Id&#233;valg</text>
+            <text x="1090" y="112" fill="#E08A3C">Prototypeutvikling</text>
+            <text x="1240" y="112" fill="#E08A3C">Prototypevalg</text>
+          </g>
+          <!-- end nodes (open) -->
+          <circle cx="90" cy="160" r="9" fill="#fff" stroke="#C25A4E" stroke-width="2.5"/>
+          <circle cx="1520" cy="160" r="9" fill="#fff" stroke="#E08A3C" stroke-width="2.5"/>
+          <!-- phase nodes (filled) -->
+          <circle cx="520" cy="160" r="8" fill="#C25A4E"/>
+          <circle cx="950" cy="160" r="8" fill="#A2131D"/>
+          <circle cx="1380" cy="160" r="8" fill="#E08A3C"/>
+          <!-- node labels -->
+          <g fill="#200505" font-size="15" font-weight="600" text-anchor="middle">
+            <text x="74" y="156" text-anchor="end">Utgangs-</text>
+            <text x="74" y="174" text-anchor="end">punkt</text>
+            <text x="520" y="185">Problem</text>
+            <text x="950" y="185">Id&#233;</text>
+            <text x="1380" y="185">Prototype</text>
+            <text x="1520" y="185">M&#229;l</text>
+          </g>
+        </svg>
+        <div class="dd-caption">Trippeldiamanten &#8211; rammeverk for designtenkning</div>
+      </div>
+
       <div class="tool-cards-6">
 
         <div class="dd-pair pair-problem">
@@ -1098,68 +1155,6 @@
         </div>
 
       </div><!-- /tool-cards-6 -->
-
-      <div class="triple-diamond">
-        <svg viewBox="0 0 1600 310" xmlns="http://www.w3.org/2000/svg" font-family="'Open Sans', Arial, sans-serif">
-          <!-- dashed connectors dropping from the six cards to the process line -->
-          <g stroke="#C4B49B" stroke-width="1.5" stroke-dasharray="2 6" stroke-linecap="round">
-            <line x1="120"  y1="4" x2="120"  y2="143"/>
-            <line x1="376"  y1="4" x2="376"  y2="81"/>
-            <line x1="672"  y1="4" x2="672"  y2="77"/>
-            <line x1="928"  y1="4" x2="928"  y2="148"/>
-            <line x1="1225" y1="4" x2="1225" y2="76"/>
-            <line x1="1479" y1="4" x2="1479" y2="158"/>
-          </g>
-          <!-- faint lower diamond edges (symmetric with the peaks) -->
-          <g fill="none" stroke="#D8CBB4" stroke-width="1.5" stroke-linejoin="round">
-            <path d="M90 160 L305 278 L520 160"/>
-            <path d="M520 160 L735 278 L950 160"/>
-            <path d="M950 160 L1165 278 L1380 160"/>
-          </g>
-          <!-- bold process line, three coloured phases -->
-          <path d="M90 160 L305 42 L520 160"    fill="none" stroke="#C25A4E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M520 160 L735 42 L950 160"   fill="none" stroke="#A2131D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M950 160 L1165 42 L1380 160" fill="none" stroke="#820A12" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M1380 160 L1520 160"         fill="none" stroke="#820A12" stroke-width="2.2" stroke-linecap="round"/>
-          <!-- phase labels sit BELOW each slope, with air up to the line -->
-          <!-- beige knockouts so the process line does not cut through the labels -->
-          <g fill="#FFF9F0">
-            <rect x="165" y="99" width="130" height="24"/>
-            <rect x="334" y="99" width="92" height="24"/>
-            <rect x="610" y="99" width="100" height="24"/>
-            <rect x="779" y="99" width="62" height="24"/>
-            <rect x="1019" y="99" width="142" height="24"/>
-            <rect x="1188" y="99" width="104" height="24"/>
-          </g>
-          <g font-size="12.5" font-weight="bold" text-anchor="middle" letter-spacing="0.2">
-            <text x="230"  y="112" fill="#C25A4E">Problemutvikling</text>
-            <text x="380"  y="112" fill="#C25A4E">Problemvalg</text>
-            <text x="660"  y="112" fill="#A2131D">Id&#233;utvikling</text>
-            <text x="810"  y="112" fill="#A2131D">Id&#233;valg</text>
-            <text x="1090" y="112" fill="#820A12">Prototypeutvikling</text>
-            <text x="1240" y="112" fill="#820A12">Prototypevalg</text>
-          </g>
-          <!-- end nodes (open) -->
-          <g fill="#fff" stroke="#820A12" stroke-width="2.5">
-            <circle cx="90" cy="160" r="9"/>
-            <circle cx="1520" cy="160" r="9"/>
-          </g>
-          <!-- phase nodes (filled) -->
-          <circle cx="520" cy="160" r="8" fill="#C25A4E"/>
-          <circle cx="950" cy="160" r="8" fill="#A2131D"/>
-          <circle cx="1380" cy="160" r="8" fill="#820A12"/>
-          <!-- node labels -->
-          <g fill="#200505" font-size="15" font-weight="600" text-anchor="middle">
-            <text x="74" y="156" text-anchor="end">Utgangs-</text>
-            <text x="74" y="174" text-anchor="end">punkt</text>
-            <text x="520" y="185">Problem</text>
-            <text x="950" y="185">Id&#233;</text>
-            <text x="1380" y="185">Prototype</text>
-            <text x="1520" y="185">M&#229;l</text>
-          </g>
-        </svg>
-        <div class="dd-caption">Trippeldiamanten &#8211; rammeverk for designtenkning</div>
-      </div>
     </div>
   </div>
 
@@ -1189,14 +1184,10 @@
 
   <div class="sp-header">
     <div class="sp-head-left">
-      <h1 class="sp-title">Sprikende lerret
-        <button class="nb-help sp-help" title="Hjelp" onclick="openLerretHelp()">?</button>
-      </h1>
-      <div class="sp-sub">
-        <input type="text" id="sp-title" value="Din egen tittel"
-          onfocus="if(this.value==='Din egen tittel')this.value=''"
-          onblur="if(!this.value.trim())this.value='Din egen tittel'">
-      </div>
+      <div class="sp-phase"></div>
+      <input class="sp-title-input" type="text" id="sp-title" value="Din egen tittel"
+        onfocus="if(this.value==='Din egen tittel')this.value=''"
+        onblur="if(!this.value.trim())this.value='Din egen tittel'">
     </div>
     <button class="sp-download" onclick="downloadPDF('sp')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
@@ -1226,14 +1217,10 @@
 
   <div class="sp-header">
     <div class="sp-head-left">
-      <h1 class="sp-title">Samlende lerret
-        <button class="nb-help sp-help" title="Hjelp" onclick="openLerretHelp()">?</button>
-      </h1>
-      <div class="sp-sub">
-        <input type="text" id="sb-title" value="Din egen tittel"
-          onfocus="if(this.value==='Din egen tittel')this.value=''"
-          onblur="if(!this.value.trim())this.value='Din egen tittel'">
-      </div>
+      <div class="sp-phase"></div>
+      <input class="sp-title-input" type="text" id="sb-title" value="Din egen tittel"
+        onfocus="if(this.value==='Din egen tittel')this.value=''"
+        onblur="if(!this.value.trim())this.value='Din egen tittel'">
     </div>
     <button class="sp-download" onclick="downloadPDF('sb')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
@@ -1643,6 +1630,36 @@ function setCrumb(pageEl, courseLabel, landingId, currentLabel) {
   if (back) back.onclick = function () { showPage(landingId); };
 }
 
+// Phase-specific header + box text inside each lerret (per boss's wording)
+const lerretMeta = {
+  sprikende: {
+    problem:   { phase: 'Problemutvikling',   instr: 'Her skal du presentere 8 problemer.' },
+    ide:       { phase: 'Idéutvikling',       instr: 'Her skal du presentere 8 idéer.' },
+    prototype: { phase: 'Prototypeutvikling', instr: 'Her skal du presentere 4 prototyper.' }
+  },
+  samlende: {
+    problem:   { phase: 'Problemvalg',   instr: 'Her skal du formidle det valgte problemet.' },
+    ide:       { phase: 'Idévalg',       instr: 'Her skal du formidle den valgte idéen.' },
+    prototype: { phase: 'Prototypevalg', instr: 'Her skal du formidle den valgte prototypen.' }
+  }
+};
+const lerretBoxWord = { problem: 'problemet', ide: 'idéen', prototype: 'prototypen' };
+function applyLerretText(pageEl, tool, phase) {
+  const meta = (lerretMeta[tool] || {})[phase];
+  if (!meta) return;
+  const phaseEl = pageEl.querySelector('.sp-phase');
+  if (phaseEl) phaseEl.innerHTML = '<strong>' + meta.phase + '.</strong> ' + meta.instr;
+  const newPh = 'Bruk informasjon fra datainnsamlingen til å forklare hva ' + lerretBoxWord[phase] + ' går ut på. Skriv omtrent 50 ord.';
+  pageEl.querySelectorAll('.cbox-desc').forEach(function (desc) {
+    const box = desc.closest('.cbox, .sbbox');
+    if (!box) return;
+    const old = (box.dataset.ph || '').trim();
+    const showing = (desc.textContent.trim() === '' || desc.textContent.trim() === old);
+    box.dataset.ph = newPh;
+    if (showing) { desc.textContent = newPh; desc.style.color = '#999'; }
+  });
+}
+
 // Open a lerret and set its title/breadcrumb so Problem vs Løsning is visible
 function openLerret(id, title) {
   showPage(id);
@@ -1659,6 +1676,7 @@ function openLerret(id, title) {
   if (id === 'page-sprikende') {
     document.getElementById('sp-grid').classList.toggle('only4', phase === 'prototype');
   }
+  applyLerretText(page, tool, phase);
 }
 
 // ── Course context: remember which course landing you came from ──
@@ -1729,23 +1747,18 @@ function buildSprikende() {
     imgArea.addEventListener('click', () => openEditor(box, i));
     box.appendChild(imgArea);
 
-    // Description (always-visible white zone)
+    // Description (always-visible white zone) — placeholder held in box.dataset.ph (phase-aware)
+    box.dataset.ph = 'Forklar ideen bak illustrasjonen';
     const desc = document.createElement('div');
     desc.className = 'cbox-desc';
     desc.contentEditable = 'true';
-    desc.textContent = 'Forklar ideen bak illustrasjonen';
+    desc.textContent = box.dataset.ph;
     desc.style.color = '#999';
     desc.addEventListener('focus', function () {
-      if (this.textContent === 'Forklar ideen bak illustrasjonen') {
-        this.textContent = '';
-        this.style.color = '#333';
-      }
+      if (this.textContent === box.dataset.ph) { this.textContent = ''; this.style.color = '#333'; }
     });
     desc.addEventListener('blur', function () {
-      if (!this.textContent.trim()) {
-        this.textContent = 'Forklar ideen bak illustrasjonen';
-        this.style.color = '#999';
-      }
+      if (!this.textContent.trim()) { this.textContent = box.dataset.ph; this.style.color = '#999'; }
     });
     box.appendChild(desc);
 
@@ -1779,16 +1792,17 @@ function buildStoryboard() {
     imgArea.addEventListener('click', () => openEditor(box, i + 1));
     box.appendChild(imgArea);
 
+    box.dataset.ph = 'Forklar ideen bak illustrasjonen';
     const desc = document.createElement('div');
     desc.className = 'cbox-desc';
     desc.contentEditable = 'true';
-    desc.textContent = 'Forklar ideen bak illustrasjonen';
+    desc.textContent = box.dataset.ph;
     desc.style.color = '#999';
     desc.addEventListener('focus', function () {
-      if (this.textContent === 'Forklar ideen bak illustrasjonen') { this.textContent = ''; this.style.color = '#333'; }
+      if (this.textContent === box.dataset.ph) { this.textContent = ''; this.style.color = '#333'; }
     });
     desc.addEventListener('blur', function () {
-      if (!this.textContent.trim()) { this.textContent = 'Forklar ideen bak illustrasjonen'; this.style.color = '#999'; }
+      if (!this.textContent.trim()) { this.textContent = box.dataset.ph; this.style.color = '#999'; }
     });
     box.appendChild(desc);
 
@@ -1884,6 +1898,7 @@ function buildStoryboardLosning() {
     box.appendChild(imgArea);
 
     // White description zone — generic placeholder
+    box.dataset.ph = PH;
     const desc = document.createElement('div');
     desc.className = 'cbox-desc';
     desc.contentEditable = 'true';
@@ -2278,7 +2293,6 @@ function wireDescWordLimits() {
   document.querySelectorAll('.lerret-grid .cbox-desc').forEach(function (desc) {
     const box = desc.closest('.cbox, .sbbox');
     if (!box) return;
-    const ph = desc.textContent;            // the box's placeholder text
     const counter = document.createElement('div');
     counter.className = 'lerret-count';
     counter.textContent = '0/' + LIMIT + ' ord';
@@ -2286,7 +2300,7 @@ function wireDescWordLimits() {
 
     function words(t) { t = t.trim(); return t === '' ? [] : t.split(/\s+/); }
     function update() {
-      const showingPlaceholder = (desc.textContent === ph);
+      const showingPlaceholder = (desc.textContent === box.dataset.ph);
       let w = showingPlaceholder ? [] : words(desc.textContent);
       if (w.length > LIMIT) {
         desc.textContent = w.slice(0, LIMIT).join(' ');
@@ -2299,7 +2313,7 @@ function wireDescWordLimits() {
     desc.addEventListener('input', update);
     desc.addEventListener('blur', function () {
       // existing blur handler restores the placeholder when empty
-      if (desc.textContent === ph || !desc.textContent.trim()) counter.style.display = 'none';
+      if (desc.textContent === box.dataset.ph || !desc.textContent.trim()) counter.style.display = 'none';
     });
   });
 }
