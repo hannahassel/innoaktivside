@@ -56,7 +56,7 @@
     .nb-logo-img { width: 40px; height: 40px; }
     .nb-brand-btn { display: flex; align-items: center; gap: 11px; background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: #fff; }
     .nb-brand-btn:hover { opacity: 0.85; }
-    .footer-logo-img { width: 58px; height: 58px; margin: 0 auto 11px; }
+    .footer-logo-img { width: 42px; height: 42px; margin: 0 auto 7px; }
     .nb-logo {
       width: 36px; height: 36px; border-radius: 50%;
       border: 1.5px solid rgba(255,255,255,0.55);
@@ -72,13 +72,13 @@
     /* Help button: filled dark-red circle with white question mark */
     .nb-help {
       width: 30px; height: 30px; border-radius: 50%;
-      background: var(--red-dark); color: white;
-      border: none; cursor: pointer; padding: 0;
+      background: #fff; color: #000;
+      border: 1px solid #e5dccb; cursor: pointer; padding: 0;
       font-size: 17px; font-weight: bold; line-height: 1;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .nb-help:hover { background: #5e080f; }
+    .nb-help:hover { background: #f0e9dd; }
     /* Home button: white house silhouette, no background */
     .nb-home {
       background: none; border: none; cursor: pointer; padding: 2px;
@@ -100,13 +100,14 @@
     .breadcrumb a:hover { text-decoration: underline; }
 
     /* ── Standalone breadcrumb bar (task pages, no header) ── */
-    .crumbbar { display: flex; align-items: center; gap: 9px; padding: 16px 40px 2px; font-size: 13px; letter-spacing: 0.3px; }
+    .crumbbar { display: flex; align-items: center; gap: 11px; padding: 18px 40px 2px; font-size: 15.5px; letter-spacing: 0.3px; }
+    .pdf-mode .crumbbar { display: none !important; }
     .crumb-back { display: inline-flex; align-items: center; justify-content: center; background: none; border: none; padding: 4px; margin-right: 2px; border-radius: 6px; cursor: pointer; color: var(--red-dark); }
-    .crumb-back svg { width: 18px; height: 18px; }
+    .crumb-back svg { width: 21px; height: 21px; }
     .crumb-back:hover { background: rgba(130,10,18,0.08); }
     .crumb-link { display: inline-flex; align-items: center; gap: 5px; color: var(--red-dark); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-weight: 600; }
     .crumb-link:hover { color: var(--red); }
-    .crumb-ico { width: 15px; height: 15px; fill: currentColor; }
+    .crumb-ico { width: 18px; height: 18px; fill: currentColor; }
     .crumb-sep { color: #b9ab97; }
     .crumb-current { color: #8a8078; }
 
@@ -175,6 +176,32 @@
     .double-diamond { margin-top: 10px; }
     .double-diamond svg { width: 100%; height: auto; display: block; }
     .dd-caption { text-align: center; font-style: italic; color: #9a8b76; font-size: 13px; margin-top: 8px; }
+
+    /* INNOV102 landing (ny skisse): rød tittel + fase-seksjoner med store kort */
+    #page-innov102 .landing-title { color: var(--red); }
+    .dd-cards { display: flex; flex-direction: column; gap: 26px; max-width: 940px; width: 100%; margin: 40px auto 0; padding: 0 40px; }
+    .dd-section-label { display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .dd-section-label::after { content: ""; flex: 1; height: 1px; background: #e6dccb; }
+    .dd-row { display: flex; gap: 22px; }
+    .dd-card2 { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 10px; text-align: left; cursor: pointer; font-family: inherit; background: #fff; border: 1px solid #efe6d8; border-top: 4px solid var(--red-dark); border-radius: 12px; padding: 18px 22px 16px; box-shadow: 0 2px 12px rgba(130,10,18,0.05); transition: box-shadow .15s, transform .1s; }
+    .dd-card2:hover { box-shadow: 0 8px 24px rgba(130,10,18,0.13); transform: translateY(-2px); }
+    .dd-card2-head { display: flex; align-items: center; gap: 11px; }
+    .dd-card2-head svg { width: 21px; height: 21px; color: #200505; flex-shrink: 0; }
+    .dd-card2-title { font-size: 18px; font-weight: 700; color: #200505; transition: color .15s; }
+    .dd-card2-desc { font-size: 13.5px; color: #6f665c; line-height: 1.5; }
+    .dd-card2-cta { align-self: flex-end; margin-top: auto; padding-top: 6px; font-size: 13px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; gap: 6px; }
+    .dd-card2-arrow { text-decoration: none; font-size: 15px; }
+    .pair-problem .dd-card2 { border-top-color: #C25A4E; }
+    .pair-problem .dd-section-label, .pair-problem .dd-card2-cta { color: #C25A4E; }
+    .pair-ide .dd-card2 { border-top-color: #A2131D; }
+    .pair-ide .dd-section-label, .pair-ide .dd-card2-cta { color: #A2131D; }
+    .pair-losning .dd-card2 { border-top-color: #E08A3C; }
+    .pair-losning .dd-section-label, .pair-losning .dd-card2-cta { color: #E08A3C; }
+    /* Hover: korttittel får kortets fasefarge */
+    .pair-problem .dd-card2:hover .dd-card2-title { color: #C25A4E; }
+    .pair-ide .dd-card2:hover .dd-card2-title { color: #A2131D; }
+    .pair-losning .dd-card2:hover .dd-card2-title { color: #E08A3C; }
+    @media (max-width: 820px) { .dd-row { flex-direction: column; } }
 
     /* ── INNOV101 landing cards (hover -> pink) ── */
     .i101-cards { display: flex; gap: 20px; max-width: 1040px; margin: 6px auto 44px; padding: 0 22px; align-items: stretch; }
@@ -277,7 +304,7 @@
     /* Lerret header: small phase line + large own-title field */
     .sp-phase { font-size: 15px; color: #8a8078; line-height: 1.5; margin-bottom: 8px; }
     .sp-phase strong { display: block; margin-bottom: 3px; color: var(--red-dark); font-weight: 700; }
-    .sp-title-input { width: 100%; max-width: 640px; border: none; background: transparent; font-family: var(--font-sans); font-size: 30px; font-weight: bold; color: var(--red); line-height: 1.15; padding: 2px 0; border-bottom: 2px dashed transparent; }
+    .sp-title-input { width: 100%; max-width: 760px; border: none; background: transparent; font-family: var(--font-sans); font-size: 40px; font-weight: bold; color: var(--red); line-height: 1.15; padding: 2px 0; border-bottom: 2px dashed transparent; }
     .sp-title-input:hover { border-bottom-color: #d9cebc; }
     .sp-title-input:focus { outline: none; border-bottom-color: var(--red); }
     .sp-download {
@@ -307,12 +334,6 @@
     .lerret-grid .sp-ph svg { width: 46px; height: 46px; color: var(--red-dark); }
     .lerret-grid .sp-ph-t { display: none; }
     .lerret-grid .cbox-desc { background: #fff; min-height: 165px; padding: 18px 20px 34px; font-size: 13.5px; color: var(--red-dark); font-style: normal; line-height: 1.7; }
-    /* Hover: whole card turns pink and lifts slightly (matches the design) */
-    .lerret-grid .cbox, .lerret-grid .sbbox { transition: transform .18s, box-shadow .18s; }
-    .lerret-grid .cbox-hd, .lerret-grid .cbox-desc { transition: background .18s; }
-    .lerret-grid .cbox:hover, .lerret-grid .sbbox:hover { transform: scale(1.03); box-shadow: 0 8px 22px rgba(130,10,18,0.16); }
-    .lerret-grid .cbox:hover .cbox-hd, .lerret-grid .cbox:hover .cbox-desc,
-    .lerret-grid .sbbox:hover .cbox-hd, .lerret-grid .sbbox:hover .cbox-desc { background: var(--pink); }
 
     /* Hide header controls in the PDF export, keep the title + boxes */
     .pdf-mode .sp-crumb, .pdf-mode .sp-help, .pdf-mode .sp-download { display: none !important; }
@@ -361,7 +382,10 @@
     .lc-cols span { flex: 1; font-size: 17px; font-weight: bold; letter-spacing: 4px; color: #a7988f; padding: 4px 0; }
     .lc-cols span:first-child { text-align: right; padding-right: 26px; border-right: 2px solid #dccfc0; }
     .lc-cols span:last-child { text-align: left; padding-left: 26px; }
-    .lc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 16px; }
+    .lc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 16px; position: relative; }
+    /* PRODUKT/MARKED-skillelinje som går ned gjennom rutenettet (skiller også Kostnader/Inntekter) */
+    .lc-grid::before { content: ""; position: absolute; top: -10px; bottom: -10px; left: 50%; width: 2px; margin-left: -1px; background: #dccfc0; z-index: 0; }
+    .lc-grid > .lc-box { z-index: 1; }
     .lc-box { grid-column: span 2; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); padding: 16px 16px 28px; position: relative; display: flex; flex-direction: column; min-height: 350px; }
     .lc-box.lc-wide { grid-column: span 5; min-height: 210px; }
     .lc-title { font-size: 14.5px; font-weight: bold; color: var(--red-dark); letter-spacing: 0.4px; padding-right: 26px; }
@@ -369,10 +393,8 @@
     .lc-ta { flex: 1; width: 100%; border: none; outline: none; resize: none; font-family: inherit; font-size: 14px; color: var(--text); background: transparent; cursor: text; }
     .lc-ta::placeholder { color: #c8c0b6; font-style: italic; }
     .lc-box, .lc-maltall-box { cursor: text; }
-    .lc-help { position: absolute; top: 14px; right: 14px; width: 22px; height: 22px; border-radius: 50%; background: var(--red-dark); color: #fff; border: none; cursor: pointer; font-size: 12px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; font-family: inherit; }
-    .lc-help:hover { background: #5e080f; }
-    /* Lean Canvas title help circle is burgundy (not near-black) */
-    #page-lean-canvas .sp-help { background: var(--red-dark); }
+    .lc-help { position: absolute; top: 14px; right: 14px; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: #000; border: 1px solid #e5dccb; cursor: pointer; font-size: 12px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; font-family: inherit; }
+    .lc-help:hover { background: #f0e9dd; }
     /* Lean Canvas download button is the strong red (matches the design) */
     .lc-download { background: var(--red); }
     .lc-download:hover { background: #d4141f; }
@@ -469,7 +491,7 @@
     /* ── Footer ── */
     .footer {
       background: var(--red-dark); color: white;
-      text-align: center; padding: 28px 20px;
+      text-align: center; padding: 16px 20px;
       margin-top: auto; flex-shrink: 0;
     }
     .footer-logo {
@@ -478,8 +500,8 @@
       margin: 0 auto 11px;
       display: flex; align-items: center; justify-content: center;
     }
-    .footer-name { font-weight: bold; letter-spacing: 2px; font-size: 13px; margin-bottom: 9px; }
-    .footer-credits { font-size: 11.5px; font-style: italic; opacity: 0.92; line-height: 1.7; }
+    .footer-name { font-weight: bold; letter-spacing: 2px; font-size: 12px; margin-bottom: 5px; }
+    .footer-credits { font-size: 11px; font-style: italic; opacity: 0.92; line-height: 1.55; }
 
     /* ── Home page ── */
     .home-body { flex: 1; padding: 52px 44px 44px; max-width: 1060px; margin: 0 auto; width: 100%; }
@@ -498,19 +520,19 @@
     }
     .course-row:hover { background: var(--pink); box-shadow: 0 6px 18px rgba(0,0,0,0.14); transform: translateY(-1px); }
     .cr-bar { flex: 0 0 11px; align-self: stretch; }
-    .cr-mix .cr-bar { background: #A2131D; }
-    .cr-101 .cr-bar { background: var(--red-dark); }
-    .cr-102 .cr-bar { background: var(--red); }
+    .cr-mix .cr-bar { background: #C25A4E; }
+    .cr-101 .cr-bar { background: #A2131D; }
+    .cr-102 .cr-bar { background: #E08A3C; }
     .cr-text { flex: 1; padding: 22px 32px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
     .cr-code { font-size: 23px; font-weight: bold; letter-spacing: 0.5px; }
-    .cr-mix .cr-code { color: #A2131D; }
-    .cr-101 .cr-code { color: var(--red-dark); }
-    .cr-102 .cr-code { color: var(--red); }
+    .cr-mix .cr-code { color: #C25A4E; }
+    .cr-101 .cr-code { color: #A2131D; }
+    .cr-102 .cr-code { color: #E08A3C; }
     .cr-title { font-size: 17px; color: var(--text); }
     .cr-cta { display: flex; align-items: center; gap: 11px; padding: 0 38px; font-size: 13px; font-weight: bold; letter-spacing: 1px; white-space: nowrap; }
-    .cr-mix .cr-cta { color: #A2131D; }
-    .cr-101 .cr-cta { color: var(--red-dark); }
-    .cr-102 .cr-cta { color: var(--red); }
+    .cr-mix .cr-cta { color: #C25A4E; }
+    .cr-101 .cr-cta { color: #A2131D; }
+    .cr-102 .cr-cta { color: #E08A3C; }
     .cr-arrow { font-size: 18px; }
     @media (max-width: 620px) {
       .cr-cta span { display: none; }
@@ -1052,6 +1074,14 @@
     </div>
   </nav>
 
+  <div class="crumbbar">
+    <a class="crumb-link crumb-home" onclick="goHome()">
+      <svg class="crumb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>HJEM
+    </a>
+    <span class="crumb-sep">&#8250;</span>
+    <span class="crumb-current">INNOV102</span>
+  </div>
+
   <div class="landing-body">
     <h1 class="landing-title">INNOV102/642: Introduksjon til designtenking</h1>
 
@@ -1098,63 +1128,66 @@
           <g fill="#200505" font-size="15" font-weight="600" text-anchor="middle">
             <text x="74" y="156" text-anchor="end">Utgangs-</text>
             <text x="74" y="174" text-anchor="end">punkt</text>
-            <text x="520" y="185">Problem</text>
-            <text x="950" y="185">Id&#233;</text>
-            <text x="1380" y="185">Prototype</text>
+            <text x="520" y="185" fill="#C25A4E" font-weight="700">Problem</text>
+            <text x="950" y="185" fill="#A2131D" font-weight="700">Id&#233;</text>
+            <text x="1380" y="185" fill="#E08A3C" font-weight="700">Prototype</text>
             <text x="1520" y="185">M&#229;l</text>
           </g>
         </svg>
         <div class="dd-caption">Trippeldiamanten &#8211; rammeverk for designtenkning</div>
       </div>
 
-      <div class="tool-cards-6">
+      <div class="dd-cards">
 
-        <div class="dd-pair pair-problem">
-          <button class="dd-card" onclick="openLerret('page-sprikende','PROBLEMUTVIKLING')">
-            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
-            <span class="dd-t">Problemutvikling</span>
-            <span class="dd-d">Her skal du presentere 8 problemer.</span>
-            <span class="dd-arrow">&#8594;</span>
-          </button>
-          <button class="dd-card" onclick="openLerret('page-storyboard','PROBLEMVALG')">
-            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
-            <span class="dd-t">Problemvalg</span>
-            <span class="dd-d">Her skal du formidle det valgte problemet.</span>
-            <span class="dd-arrow">&#8594;</span>
-          </button>
+        <div class="dd-section pair-problem">
+          <div class="dd-section-label">Problem</div>
+          <div class="dd-row">
+            <button class="dd-card2" onclick="openLerret('page-sprikende','PROBLEMUTVIKLING')">
+              <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span class="dd-card2-title">Problemutvikling</span></span>
+              <span class="dd-card2-desc">Her skal du presentere 8 problemer.</span>
+              <span class="dd-card2-cta">Gå til lerret <span class="dd-card2-arrow">&#8594;</span></span>
+            </button>
+            <button class="dd-card2" onclick="openLerret('page-storyboard','PROBLEMVALG')">
+              <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span class="dd-card2-title">Problemvalg</span></span>
+              <span class="dd-card2-desc">Her skal du formidle det valgte problemet.</span>
+              <span class="dd-card2-cta">Gå til lerret <span class="dd-card2-arrow">&#8594;</span></span>
+            </button>
+          </div>
         </div>
 
-        <div class="dd-pair pair-ide">
-          <button class="dd-card" onclick="openLerret('page-sprikende','IDÉUTVIKLING')">
-            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
-            <span class="dd-t">Id&#233;utvikling</span>
-            <span class="dd-d">Her skal du presentere 8 id&#233;er.</span>
-            <span class="dd-arrow">&#8594;</span>
-          </button>
-          <button class="dd-card" onclick="openLerret('page-storyboard','IDÉVALG')">
-            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
-            <span class="dd-t">Id&#233;valg</span>
-            <span class="dd-d">Her skal du formidle den valgte ideen.</span>
-            <span class="dd-arrow">&#8594;</span>
-          </button>
+        <div class="dd-section pair-ide">
+          <div class="dd-section-label">Id&#233;</div>
+          <div class="dd-row">
+            <button class="dd-card2" onclick="openLerret('page-sprikende','IDÉUTVIKLING')">
+              <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span class="dd-card2-title">Id&#233;utvikling</span></span>
+              <span class="dd-card2-desc">Her skal du presentere 8 id&#233;er.</span>
+              <span class="dd-card2-cta">Gå til lerret <span class="dd-card2-arrow">&#8594;</span></span>
+            </button>
+            <button class="dd-card2" onclick="openLerret('page-storyboard','IDÉVALG')">
+              <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span class="dd-card2-title">Id&#233;valg</span></span>
+              <span class="dd-card2-desc">Her skal du formidle den valgte ideen.</span>
+              <span class="dd-card2-cta">Gå til lerret <span class="dd-card2-arrow">&#8594;</span></span>
+            </button>
+          </div>
         </div>
 
-        <div class="dd-pair pair-losning">
-          <button class="dd-card" onclick="openLerret('page-sprikende','PROTOTYPEUTVIKLING')">
-            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
-            <span class="dd-t">Prototypeutvikling</span>
-            <span class="dd-d">Her skal du presentere 4 prototyper.</span>
-            <span class="dd-arrow">&#8594;</span>
-          </button>
-          <button class="dd-card" onclick="openLerret('page-storyboard','PROTOTYPEVALG')">
-            <span class="dd-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg></span>
-            <span class="dd-t">Prototypevalg</span>
-            <span class="dd-d">Her skal du formidle den valgte prototypen.</span>
-            <span class="dd-arrow">&#8594;</span>
-          </button>
+        <div class="dd-section pair-losning">
+          <div class="dd-section-label">Prototype</div>
+          <div class="dd-row">
+            <button class="dd-card2" onclick="openLerret('page-sprikende','PROTOTYPEUTVIKLING')">
+              <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span class="dd-card2-title">Prototypeutvikling</span></span>
+              <span class="dd-card2-desc">Her skal du presentere 4 prototyper.</span>
+              <span class="dd-card2-cta">Gå til lerret <span class="dd-card2-arrow">&#8594;</span></span>
+            </button>
+            <button class="dd-card2" onclick="openLerret('page-storyboard','PROTOTYPEVALG')">
+              <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span class="dd-card2-title">Prototypevalg</span></span>
+              <span class="dd-card2-desc">Her skal du formidle den valgte prototypen.</span>
+              <span class="dd-card2-cta">Gå til lerret <span class="dd-card2-arrow">&#8594;</span></span>
+            </button>
+          </div>
         </div>
 
-      </div><!-- /tool-cards-6 -->
+      </div><!-- /dd-cards -->
     </div>
   </div>
 
@@ -1168,6 +1201,21 @@
 
 <!-- ════════════════════ SPRIKENDE LERRET ════════════════════ -->
 <div class="page" id="page-sprikende">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
 
   <div class="crumbbar">
     <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="showPage('page-innov102')">
@@ -1196,11 +1244,32 @@
   </div>
 
   <div class="canvas-grid lerret-grid" id="sp-grid"></div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
 </div>
 
 
 <!-- ════════════════════ SAMLENDE LERRET / STORYBOARD ════════════════════ -->
 <div class="page" id="page-storyboard">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
 
   <div class="crumbbar">
     <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="showPage('page-innov102')">
@@ -1229,11 +1298,32 @@
   </div>
 
   <div class="sb-grid lerret-grid" id="sb-grid"></div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
 </div>
 
 
 <!-- ════════════════════ SAMLENDE LERRET LØSNING ════════════════════ -->
 <div class="page" id="page-samlende-losning">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
 
   <div class="crumbbar">
     <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="showPage('page-innov102')">
@@ -1266,11 +1356,32 @@
   </div>
 
   <div class="sb-grid lerret-grid" id="sl-grid"></div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
 </div>
 
 
 <!-- ════════════════════ INNOV101 STORYBOARD ════════════════════ -->
 <div class="page" id="page-innov101-storyboard">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
 
   <div class="crumbbar">
     <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="courseBack()">
@@ -1303,11 +1414,32 @@
   </div>
 
   <div class="sb-grid lerret-grid" id="sb101-grid"></div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
 </div>
 
 
 <!-- ════════════════════ LEAN CANVAS (embedded design) ════════════════════ -->
 <div class="page" id="page-lean-canvas">
+
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
 
   <div class="crumbbar">
     <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="courseBack()">
@@ -1347,7 +1479,7 @@
         <button class="lc-help" title="Hjelp" onclick="openLcHelp('problem')">?</button>
         <div class="lc-title">1. PROBLEM</div>
         <div class="lc-desc">Situasjoner/behov som oppleves lite hensiktsmessige, tidskrevende eller problematiske</div>
-        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 50 ord</div>
       </div>
 
@@ -1355,7 +1487,7 @@
         <button class="lc-help" title="Hjelp" onclick="openLcHelp('losning')">?</button>
         <div class="lc-title">2. LØSNING</div>
         <div class="lc-desc">Hva består løsningen av, og hvilke funksjoner har systemet eller tjenesten?</div>
-        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 50 ord</div>
       </div>
 
@@ -1363,7 +1495,7 @@
         <button class="lc-help" title="Hjelp" onclick="openLcHelp('verdiforslag')">?</button>
         <div class="lc-title">3. VERDIFORSLAG</div>
         <div class="lc-desc">Slagord. PR. Kommunikasjon</div>
-        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 50 ord</div>
       </div>
 
@@ -1371,7 +1503,7 @@
         <button class="lc-help" title="Hjelp" onclick="openLcHelp('kanal')">?</button>
         <div class="lc-title">4. KANAL</div>
         <div class="lc-desc">Hvordan når man brukerne?</div>
-        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 50 ord</div>
       </div>
 
@@ -1379,7 +1511,7 @@
         <button class="lc-help" title="Hjelp" onclick="openLcHelp('bruker')">?</button>
         <div class="lc-title">5. BRUKER</div>
         <div class="lc-desc">Hvem har problemet og vil verdsette løsningen?</div>
-        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 50 ord</div>
       </div>
 
@@ -1387,7 +1519,7 @@
         <button class="lc-help" title="Hjelp" onclick="openLcHelp('kostnader')">?</button>
         <div class="lc-title">6. KOSTNADER</div>
         <div class="lc-desc">De viktigste kostnadene knyttet til utvikling, drift og videreføring av tjenesten</div>
-        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 50 ord</div>
       </div>
 
@@ -1395,7 +1527,7 @@
         <button class="lc-help" title="Hjelp" onclick="openLcHelp('inntekter')">?</button>
         <div class="lc-title">7. INNTEKTER</div>
         <div class="lc-desc">Redegjør for hvilke verdier eller inntekter løsningen genererer</div>
-        <textarea class="lc-ta" data-limit="50" placeholder="Skriv her …" oninput="lcInput(this)"></textarea>
+        <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 50 ord</div>
       </div>
 
@@ -1412,11 +1544,31 @@
       </div>
     </div>
   </div>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
 </div>
 
 
 <!-- ════════════════════ PLAKAT (kanal) (embedded design) ════════════════════ -->
 <div class="page embed-page" id="page-plakat">
+  <nav class="navbar">
+    <div class="nb-left">
+      <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
+        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <span class="nb-brand">INNOAKTIV</span>
+      </button>
+    </div>
+    <div class="nb-right">
+      <button class="nb-home" title="Hjem" onclick="goHome()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"/></svg>
+      </button>
+      <button class="nb-help" title="Hjelp" onclick="openModal()">?</button>
+    </div>
+  </nav>
   <div class="crumbbar">
     <button class="crumb-back" title="Tilbake" aria-label="Tilbake" onclick="courseBack()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -1430,6 +1582,12 @@
     <span class="crumb-current">PLAKAT</span>
   </div>
   <iframe class="embed-frame" src="plakat.html" title="Fra idé til plakat"></iframe>
+
+  <div class="footer">
+    <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+    <div class="footer-name">INNOAKTIV</div>
+    <div class="footer-credits">Utviklet av Hanna Elizabeth Oanæs Hassel,<br>André Fivelsdal Stødle og Liv Margaret Maier</div>
+  </div>
 </div>
 
 
@@ -1694,7 +1852,14 @@ function courseBack() { showPage(courseCtx.landing); }
 // ── Go home (with confirmation) ─────────────────────────────
 function goHome() {
   if (document.getElementById('page-home').classList.contains('active')) return; // already home
-  document.getElementById('home-confirm-modal').classList.add('open');
+  // Bekreftelse trengs bare på oppgavesidene (der man kan miste arbeid) – ellers rett hjem
+  const taskPages = ['page-sprikende', 'page-storyboard', 'page-samlende-losning', 'page-innov101-storyboard', 'page-lean-canvas', 'page-plakat'];
+  const active = document.querySelector('.page.active');
+  if (active && taskPages.indexOf(active.id) !== -1) {
+    document.getElementById('home-confirm-modal').classList.add('open');
+  } else {
+    showPage('page-home');
+  }
 }
 function confirmHome() {
   document.getElementById('home-confirm-modal').classList.remove('open');
