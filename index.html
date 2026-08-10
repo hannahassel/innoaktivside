@@ -213,13 +213,23 @@
       transition: background .15s, box-shadow .15s, transform .1s;
     }
     .i101-card:hover { background: var(--pink); box-shadow: 0 7px 22px rgba(0,0,0,0.15); transform: translateY(-3px); }
-    .i101-ic { color: var(--red-dark); line-height: 0; margin-bottom: 12px; }
+    .i101-ic { color: #200505; line-height: 0; margin-bottom: 12px; }
     .i101-ic svg { width: 26px; height: 26px; }
-    .i101-t { font-size: 21px; font-weight: bold; color: var(--red-dark); margin-bottom: 6px; }
+    .i101-t { font-size: 21px; font-weight: bold; color: #200505; margin-bottom: 6px; }
     .i101-d { font-size: 13px; color: var(--text-light); line-height: 1.5; margin-bottom: 16px; }
-    .i101-prev { margin-top: auto; }
+    .i101-prev { margin-top: auto; color: #200505; }
     .i101-prev svg { width: 100%; height: auto; display: block; }
     .i101-arrow { position: absolute; right: 22px; bottom: 16px; color: var(--red); font-size: 22px; line-height: 1; }
+    /* Tre fargeaksenter for å skille valgene (topplinje + pil + overskrift), gjelder INNOV101 og MIX100 */
+    .i101-cards .i101-card:nth-child(1) { border-top-color: #C25A4E; }
+    .i101-cards .i101-card:nth-child(1) .i101-arrow,
+    .i101-cards .i101-card:nth-child(1) .i101-t { color: #C25A4E; }
+    .i101-cards .i101-card:nth-child(2) { border-top-color: #A2131D; }
+    .i101-cards .i101-card:nth-child(2) .i101-arrow,
+    .i101-cards .i101-card:nth-child(2) .i101-t { color: #A2131D; }
+    .i101-cards .i101-card:nth-child(3) { border-top-color: #E08A3C; }
+    .i101-cards .i101-card:nth-child(3) .i101-arrow,
+    .i101-cards .i101-card:nth-child(3) .i101-t { color: #E08A3C; }
     @media (max-width: 820px) { .i101-cards { flex-wrap: wrap; } .i101-card { flex: 1 1 45%; } }
 
     @media (max-width: 900px) {
@@ -302,8 +312,9 @@
     .sp-sub input { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 18px; color: #8a8078; }
     .sp-sub input:focus { outline: none; color: #555; }
     /* Lerret header: small phase line + large own-title field */
-    .sp-phase { font-size: 15px; color: #8a8078; line-height: 1.5; margin-bottom: 8px; }
-    .sp-phase strong { display: block; margin-bottom: 3px; color: var(--red-dark); font-weight: 700; }
+    .sp-phase { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+    .sp-phase strong { color: var(--red-dark); font-weight: 700; font-size: 17px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .sp-phase-bubble { font-size: 14px; color: #6f665c; background: #fff; border: 1px solid #ece3d6; border-radius: 12px; padding: 7px 16px; box-shadow: 0 1px 5px rgba(0,0,0,0.06); }
     .sp-title-input { width: 100%; max-width: 760px; border: none; background: transparent; font-family: var(--font-sans); font-size: 40px; font-weight: bold; color: var(--red); line-height: 1.15; padding: 2px 0; border-bottom: 2px dashed transparent; }
     .sp-title-input:hover { border-bottom-color: #d9cebc; }
     .sp-title-input:focus { outline: none; border-bottom-color: var(--red); }
@@ -315,6 +326,13 @@
     }
     .sp-download:hover { background: #5e080f; }
     .sp-download svg { width: 18px; height: 18px; }
+    /* Storyboard (INNOV101/MIX100): last ned + "?" i samme røde som overskriften; hover = kun skalering */
+    #page-innov101-storyboard .sp-download { background: var(--red); }
+    #page-innov101-storyboard .sp-download:hover { background: #d4141f; }
+    #page-innov101-storyboard .sp-help { background: var(--red); color: #fff; border-color: var(--red); }
+    #page-innov101-storyboard .sp-help:hover { background: #d4141f; }
+    #page-innov101-storyboard .sbbox { transition: transform .15s, box-shadow .15s; }
+    #page-innov101-storyboard .sbbox:hover { transform: scale(1.02); box-shadow: 0 8px 22px rgba(130,10,18,0.14); }
 
     /* ── Lerret boxes (new design: white card, bordered header, pink image, desc + count) ── */
     .lerret-grid { align-items: start; }
@@ -386,11 +404,11 @@
     /* PRODUKT/MARKED-skillelinje som går ned gjennom rutenettet (skiller også Kostnader/Inntekter) */
     .lc-grid::before { content: ""; position: absolute; top: -10px; bottom: -10px; left: 50%; width: 2px; margin-left: -1px; background: #dccfc0; z-index: 0; }
     .lc-grid > .lc-box { z-index: 1; }
-    .lc-box { grid-column: span 2; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); padding: 16px 16px 28px; position: relative; display: flex; flex-direction: column; min-height: 350px; }
-    .lc-box.lc-wide { grid-column: span 5; min-height: 210px; }
+    .lc-box { grid-column: span 2; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); padding: 16px 16px 28px; position: relative; display: flex; flex-direction: column; min-height: 420px; }
+    .lc-box.lc-wide { grid-column: span 5; min-height: 260px; }
     .lc-title { font-size: 14.5px; font-weight: bold; color: var(--red-dark); letter-spacing: 0.4px; padding-right: 26px; }
     .lc-desc { font-size: 12.5px; color: #8a8a8a; line-height: 1.5; margin: 8px 0 8px; }
-    .lc-ta { flex: 1; width: 100%; border: none; outline: none; resize: none; font-family: inherit; font-size: 14px; color: var(--text); background: transparent; cursor: text; }
+    .lc-ta { flex: 1; width: 100%; margin-top: 12px; border: none; outline: none; resize: none; font-family: inherit; font-size: 14px; line-height: 1.6; color: var(--text); background: transparent; cursor: text; }
     .lc-ta::placeholder { color: #c8c0b6; font-style: italic; }
     .lc-box, .lc-maltall-box { cursor: text; }
     .lc-help { position: absolute; top: 14px; right: 14px; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: #000; border: 1px solid #e5dccb; cursor: pointer; font-size: 12px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; font-family: inherit; }
@@ -873,7 +891,7 @@
         <span class="i101-d">Fyll ut forretningsmodellen i sju ruter.</span>
         <span class="i101-prev">
           <svg viewBox="0 0 200 84" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke="#C15B52" stroke-width="1.3">
+            <g fill="none" stroke="currentColor" stroke-width="1.3">
               <rect x="2" y="4" width="36" height="40" rx="3"/>
               <rect x="42" y="4" width="36" height="40" rx="3"/>
               <rect x="82" y="4" width="36" height="40" rx="3"/>
@@ -882,7 +900,7 @@
               <rect x="2" y="50" width="96" height="30" rx="3"/>
               <rect x="102" y="50" width="96" height="30" rx="3"/>
             </g>
-            <g stroke="#820A12" stroke-width="2.5" stroke-linecap="round">
+            <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
               <line x1="5" y1="6" x2="35" y2="6"/>
               <line x1="45" y1="6" x2="75" y2="6"/>
               <line x1="85" y1="6" x2="115" y2="6"/>
@@ -902,7 +920,7 @@
         <span class="i101-t">Storyboard</span>
         <span class="i101-d">Visualiser brukerreisen steg for steg.</span>
         <span class="i101-prev">
-          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C15B52" stroke-width="1.5">
+          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
             <rect x="2" y="2" width="62" height="34" rx="2"/>
             <rect x="69" y="2" width="62" height="34" rx="2"/>
             <rect x="136" y="2" width="62" height="34" rx="2"/>
@@ -922,13 +940,13 @@
         <span class="i101-prev">
           <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg">
             <!-- left dashed placeholder -->
-            <rect x="10" y="16" width="48" height="44" rx="2" fill="none" stroke="#C15B52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <rect x="10" y="16" width="48" height="44" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
             <!-- 'new size' dashed preview, offset down-right (shows through the outline square) -->
-            <rect x="112" y="30" width="54" height="36" rx="2" fill="none" stroke="#C15B52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <rect x="112" y="30" width="54" height="36" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
             <!-- selected square: outline only, no fill -->
-            <rect x="80" y="12" width="52" height="52" rx="1" fill="none" stroke="#820A12" stroke-width="2"/>
+            <rect x="80" y="12" width="52" height="52" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>
             <!-- filled corner handles -->
-            <g fill="#820A12">
+            <g fill="currentColor">
               <rect x="76" y="8" width="8" height="8"/>
               <rect x="128" y="8" width="8" height="8"/>
               <rect x="76" y="60" width="8" height="8"/>
@@ -979,7 +997,7 @@
         <span class="i101-d">Fyll ut forretningsmodellen i sju ruter.</span>
         <span class="i101-prev">
           <svg viewBox="0 0 200 84" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke="#C15B52" stroke-width="1.3">
+            <g fill="none" stroke="currentColor" stroke-width="1.3">
               <rect x="2" y="4" width="36" height="40" rx="3"/>
               <rect x="42" y="4" width="36" height="40" rx="3"/>
               <rect x="82" y="4" width="36" height="40" rx="3"/>
@@ -988,7 +1006,7 @@
               <rect x="2" y="50" width="96" height="30" rx="3"/>
               <rect x="102" y="50" width="96" height="30" rx="3"/>
             </g>
-            <g stroke="#820A12" stroke-width="2.5" stroke-linecap="round">
+            <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
               <line x1="5" y1="6" x2="35" y2="6"/>
               <line x1="45" y1="6" x2="75" y2="6"/>
               <line x1="85" y1="6" x2="115" y2="6"/>
@@ -1008,7 +1026,7 @@
         <span class="i101-t">Storyboard</span>
         <span class="i101-d">Visualiser brukerreisen steg for steg.</span>
         <span class="i101-prev">
-          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#C15B52" stroke-width="1.5">
+          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
             <rect x="2" y="2" width="62" height="34" rx="2"/>
             <rect x="69" y="2" width="62" height="34" rx="2"/>
             <rect x="136" y="2" width="62" height="34" rx="2"/>
@@ -1028,13 +1046,13 @@
         <span class="i101-prev">
           <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg">
             <!-- left dashed placeholder -->
-            <rect x="10" y="16" width="48" height="44" rx="2" fill="none" stroke="#C15B52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <rect x="10" y="16" width="48" height="44" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
             <!-- 'new size' dashed preview, offset down-right (shows through the outline square) -->
-            <rect x="112" y="30" width="54" height="36" rx="2" fill="none" stroke="#C15B52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <rect x="112" y="30" width="54" height="36" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
             <!-- selected square: outline only, no fill -->
-            <rect x="80" y="12" width="52" height="52" rx="1" fill="none" stroke="#820A12" stroke-width="2"/>
+            <rect x="80" y="12" width="52" height="52" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>
             <!-- filled corner handles -->
-            <g fill="#820A12">
+            <g fill="currentColor">
               <rect x="76" y="8" width="8" height="8"/>
               <rect x="128" y="8" width="8" height="8"/>
               <rect x="76" y="60" width="8" height="8"/>
@@ -1806,7 +1824,7 @@ function applyLerretText(pageEl, tool, phase) {
   const meta = (lerretMeta[tool] || {})[phase];
   if (!meta) return;
   const phaseEl = pageEl.querySelector('.sp-phase');
-  if (phaseEl) phaseEl.innerHTML = '<strong>' + meta.phase + '.</strong> ' + meta.instr;
+  if (phaseEl) phaseEl.innerHTML = '<strong>' + meta.phase + '</strong><span class="sp-phase-bubble">' + meta.instr + '</span>';
   const newPh = 'Bruk informasjon fra datainnsamlingen til å forklare hva ' + lerretBoxWord[phase] + ' går ut på. Skriv omtrent 50 ord.';
   pageEl.querySelectorAll('.cbox-desc').forEach(function (desc) {
     const box = desc.closest('.cbox, .sbbox');
@@ -2418,7 +2436,7 @@ function closeEditor() {
 }
 
 // ── Lean Canvas word count + limit ───────────────────────────
-function lcWords(t) { t = t.trim(); return t === '' ? 0 : t.split(/\s+/).length; }
+function lcWords(t) { t = t.replace(/•/g, ' ').trim(); return t === '' ? 0 : t.split(/\s+/).length; }
 function lcInput(ta) {
   const limit = +ta.dataset.limit;
   let w = lcWords(ta.value);
@@ -2437,6 +2455,26 @@ function lcInput(ta) {
   const desc = box && box.querySelector('.lc-desc');
   if (desc) desc.style.display = w > 0 ? 'none' : '';
 }
+
+// Kulepunkt i Lean Canvas-boksene: starter med "• ", Enter lager nytt punkt
+document.querySelectorAll('#page-lean-canvas .lc-box .lc-ta').forEach(function (ta) {
+  ta.addEventListener('focus', function () {
+    if (ta.value === '') { ta.value = '• '; ta.selectionStart = ta.selectionEnd = ta.value.length; }
+  });
+  ta.addEventListener('blur', function () {
+    if (ta.value.replace(/•/g, '').trim() === '') { ta.value = ''; lcInput(ta); }
+  });
+  ta.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const s = ta.selectionStart, en = ta.selectionEnd;
+      const ins = '\n• ';
+      ta.value = ta.value.slice(0, s) + ins + ta.value.slice(en);
+      ta.selectionStart = ta.selectionEnd = s + ins.length;
+      lcInput(ta);
+    }
+  });
+});
 
 // ── Init ─────────────────────────────────────────────────────
 buildSprikende();
