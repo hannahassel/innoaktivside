@@ -72,8 +72,8 @@
     /* Help button: filled dark-red circle with white question mark */
     .nb-help {
       width: 30px; height: 30px; border-radius: 50%;
-      background: #fff; color: #000;
-      border: 1px solid #e5dccb; cursor: pointer; padding: 0;
+      background: #fff; color: var(--red);
+      border: none; cursor: pointer; padding: 0;
       font-size: 17px; font-weight: bold; line-height: 1;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
@@ -213,23 +213,13 @@
       transition: background .15s, box-shadow .15s, transform .1s;
     }
     .i101-card:hover { background: var(--pink); box-shadow: 0 7px 22px rgba(0,0,0,0.15); transform: translateY(-3px); }
-    .i101-ic { color: #200505; line-height: 0; margin-bottom: 12px; }
+    .i101-ic { color: var(--red-dark); line-height: 0; margin-bottom: 12px; }
     .i101-ic svg { width: 26px; height: 26px; }
-    .i101-t { font-size: 21px; font-weight: bold; color: #200505; margin-bottom: 6px; }
+    .i101-t { font-size: 21px; font-weight: bold; color: var(--red-dark); margin-bottom: 6px; }
     .i101-d { font-size: 13px; color: var(--text-light); line-height: 1.5; margin-bottom: 16px; }
-    .i101-prev { margin-top: auto; color: #200505; }
+    .i101-prev { margin-top: auto; color: var(--red-dark); }
     .i101-prev svg { width: 100%; height: auto; display: block; }
     .i101-arrow { position: absolute; right: 22px; bottom: 16px; color: var(--red); font-size: 22px; line-height: 1; }
-    /* Tre fargeaksenter for å skille valgene (topplinje + pil + overskrift), gjelder INNOV101 og MIX100 */
-    .i101-cards .i101-card:nth-child(1) { border-top-color: #C25A4E; }
-    .i101-cards .i101-card:nth-child(1) .i101-arrow,
-    .i101-cards .i101-card:nth-child(1) .i101-t { color: #C25A4E; }
-    .i101-cards .i101-card:nth-child(2) { border-top-color: #A2131D; }
-    .i101-cards .i101-card:nth-child(2) .i101-arrow,
-    .i101-cards .i101-card:nth-child(2) .i101-t { color: #A2131D; }
-    .i101-cards .i101-card:nth-child(3) { border-top-color: #E08A3C; }
-    .i101-cards .i101-card:nth-child(3) .i101-arrow,
-    .i101-cards .i101-card:nth-child(3) .i101-t { color: #E08A3C; }
     @media (max-width: 820px) { .i101-cards { flex-wrap: wrap; } .i101-card { flex: 1 1 45%; } }
 
     @media (max-width: 900px) {
@@ -1631,9 +1621,9 @@
 
 <!-- Storyboard example modal (INNOV101 Storyboard "?" beside the heading) -->
 <div class="modal-overlay" id="storyboard-help-modal" onclick="closeModal(event)">
-  <div class="modal" style="max-width:720px;max-height:88vh;overflow:auto;">
+  <div class="modal" style="max-width:1150px;width:94vw;max-height:90vh;overflow:auto;">
     <h2 style="text-transform:none;">Eksempel storyboard</h2>
-    <img src="brodderstorybaord.png" alt="Eksempel på et utfylt storyboard" style="width:100%;height:auto;border-radius:8px;display:block;margin:0 0 8px;">
+    <img src="storyboard-eksempel.png" alt="Eksempel på et utfylt storyboard: Broddene som redder dagen" style="width:100%;height:auto;border-radius:8px;display:block;margin:0 0 12px;">
     <button class="modal-ok" onclick="document.getElementById('storyboard-help-modal').classList.remove('open')">OK</button>
   </div>
 </div>
