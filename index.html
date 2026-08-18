@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Innoaktiv</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -621,6 +622,20 @@
       justify-content: center;
     }
     .modal-overlay.open { display: flex; }
+
+    /* Nedlastings-forhåndsvisning (A4 stående) */
+    .dl-box { background: #fff; border-radius: 16px; width: 660px; max-width: 94vw; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .dl-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f3efe8; border-bottom: 1px solid #e6ded3; font-size: 14px; color: #6f665c; font-weight: 600; }
+    .dl-x { background: none; border: none; font-size: 24px; line-height: 1; color: #8a8078; cursor: pointer; padding: 0 4px; }
+    .dl-body { flex: 1; overflow: auto; padding: 26px; background: #faf6ef; display: flex; justify-content: center; align-items: flex-start; }
+    .dl-loading { color: #8a8078; font-style: italic; padding: 70px 0; text-align: center; }
+    .dl-page { background: #fff; width: 100%; max-width: 440px; aspect-ratio: 210 / 297; box-shadow: 0 6px 24px rgba(0,0,0,0.14); border-radius: 4px; overflow: hidden; display: flex; align-items: flex-start; justify-content: center; }
+    .dl-page img { width: 100%; height: 100%; object-fit: contain; object-position: top; display: block; }
+    .dl-foot { display: flex; justify-content: flex-end; gap: 12px; padding: 14px 20px; background: #FFF3E6; border-top: 1px solid #f0e2cf; }
+    .dl-cancel { background: #fff; color: var(--red); border: 1.5px solid var(--red); border-radius: 9px; padding: 9px 22px; font-size: 14px; font-weight: bold; cursor: pointer; font-family: inherit; }
+    .dl-cancel:hover { background: #fff4f0; }
+    .dl-confirm { display: inline-flex; align-items: center; gap: 8px; background: var(--red); color: #fff; border: none; border-radius: 9px; padding: 9px 22px; font-size: 14px; font-weight: bold; cursor: pointer; font-family: inherit; }
+    .dl-confirm:hover { background: #d4141f; }
     .modal {
       background: white;
       border-radius: 16px;
@@ -1245,7 +1260,7 @@
         onfocus="if(this.value==='Din egen tittel')this.value=''"
         onblur="if(!this.value.trim())this.value='Din egen tittel'">
     </div>
-    <button class="sp-download" onclick="downloadPDF('sp')">
+    <button class="sp-download" onclick="showDownloadPreview('sp')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
       Last ned som PDF
     </button>
@@ -1299,7 +1314,7 @@
         onfocus="if(this.value==='Din egen tittel')this.value=''"
         onblur="if(!this.value.trim())this.value='Din egen tittel'">
     </div>
-    <button class="sp-download" onclick="downloadPDF('sb')">
+    <button class="sp-download" onclick="showDownloadPreview('sb')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
       Last ned som PDF
     </button>
@@ -1357,7 +1372,7 @@
           onblur="if(!this.value.trim())this.value='Din egen tittel'">
       </div>
     </div>
-    <button class="sp-download" onclick="downloadPDF('sl')">
+    <button class="sp-download" onclick="showDownloadPreview('sl')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
       Last ned som PDF
     </button>
@@ -1415,7 +1430,7 @@
           onblur="if(!this.value.trim())this.value='Din egen tittel'">
       </div>
     </div>
-    <button class="sp-download" onclick="downloadPDF('sb101')">
+    <button class="sp-download" onclick="showDownloadPreview('sb101')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
       Last ned som PDF
     </button>
@@ -1473,7 +1488,7 @@
           onblur="if(!this.value.trim())this.value='Din egen tittel'">
       </div>
     </div>
-    <button class="sp-download lc-download" onclick="downloadPDF('lc')">
+    <button class="sp-download lc-download" onclick="showDownloadPreview('lc')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
       Last ned som PDF
     </button>
@@ -1625,6 +1640,27 @@
     <h2 style="text-transform:none;">Eksempel storyboard</h2>
     <img src="storyboard-eksempel.png" alt="Eksempel på et utfylt storyboard: Broddene som redder dagen" style="width:100%;height:auto;border-radius:8px;display:block;margin:0 0 12px;">
     <button class="modal-ok" onclick="document.getElementById('storyboard-help-modal').classList.remove('open')">OK</button>
+  </div>
+</div>
+
+<!-- Nedlastings-forhåndsvisning (A4 stående) -->
+<div class="modal-overlay" id="dl-preview-modal" onclick="if(event.target===this)closeDlPreview()">
+  <div class="dl-box">
+    <div class="dl-head">
+      <span>Forhåndsvisning &#8211; A4 stående</span>
+      <button class="dl-x" title="Lukk" onclick="closeDlPreview()">&times;</button>
+    </div>
+    <div class="dl-body">
+      <div id="dl-preview-loading" class="dl-loading">Genererer forhåndsvisning &#8230;</div>
+      <div class="dl-page"><img id="dl-preview-img" alt="Forhåndsvisning" style="display:none;"></div>
+    </div>
+    <div class="dl-foot">
+      <button class="dl-cancel" onclick="closeDlPreview()">Avbryt</button>
+      <button class="dl-confirm" onclick="confirmDownload()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
+        Last ned
+      </button>
+    </div>
   </div>
 </div>
 
@@ -2090,37 +2126,32 @@ function buildStoryboardLosning() {
   // Download moved to the page header (no download box).
 }
 
-// ── PDF download ─────────────────────────────────────────────
-function downloadPDF(type) {
-  const cfg = {
-    lc:    { page: 'page-lean-canvas',         title: 'lc-title',    name: 'Lean Canvas',             rw: 1500 },
-    sp:    { page: 'page-sprikende',           title: 'sp-title',    name: 'Sprikende Lerret',        rw: 1700 },
-    sb:    { page: 'page-storyboard',          title: 'sb-title',    name: 'Samlende Lerret',         rw: 1300 },
-    sl:    { page: 'page-samlende-losning',    title: 'sl-title',    name: 'Samlende Lerret Løsning', rw: 1300 },
-    sb101: { page: 'page-innov101-storyboard', title: 'sb101-title', name: 'Storyboard',              rw: 1300 }
-  }[type];
+// ── PDF-eksport (A4 stående) + forhåndsvisning ────────────────
+const _pdfCfg = {
+  lc:    { page: 'page-lean-canvas',         title: 'lc-title',    name: 'Lean Canvas',             rw: 1500 },
+  sp:    { page: 'page-sprikende',           title: 'sp-title',    name: 'Sprikende Lerret',        rw: 1700 },
+  sb:    { page: 'page-storyboard',          title: 'sb-title',    name: 'Samlende Lerret',         rw: 1300 },
+  sl:    { page: 'page-samlende-losning',    title: 'sl-title',    name: 'Samlende Lerret Løsning', rw: 1300 },
+  sb101: { page: 'page-innov101-storyboard', title: 'sb101-title', name: 'Storyboard',              rw: 1300 }
+};
+// Rendrer innholdet til ETT fullt canvas via html2canvas direkte (ingen klipping av høyre kolonne).
+function _renderCanvas(type) {
+  const cfg = _pdfCfg[type];
   const pageEl = document.getElementById(cfg.page);
   const titleEl = document.getElementById(cfg.title);
-  const rawTitle = titleEl.value.trim();
+  const rawTitle = titleEl ? titleEl.value.trim() : '';
   const filename = (rawTitle && rawTitle !== '(Din egen tittel)' && rawTitle !== 'Din egen tittel') ? rawTitle : cfg.name;
 
-  // Hide nav, download box and footer so only the header + boxes show.
   const navbar = pageEl.querySelector('.navbar');
-  const dbox = pageEl.querySelector('.dbox');
   const footer = pageEl.querySelector('.footer');
   if (navbar) navbar.style.display = 'none';
-  if (dbox) dbox.style.display = 'none';
   if (footer) footer.style.display = 'none';
   pageEl.classList.add('pdf-mode');
 
-  // Render at a FIXED width so the layout (box proportions, one-line headers)
-  // is identical to the screen regardless of the browser window size.
   let w = cfg.rw;
   const prevWidth = pageEl.style.width;
   pageEl.style.width = w + 'px';
 
-  // html2canvas can't render text typed into a <textarea>, so mirror each into a
-  // plain div (same text + styling) for the export, then remove it afterwards.
   const taMirrors = [];
   pageEl.querySelectorAll('textarea').forEach(function (ta) {
     const cs = getComputedStyle(ta);
@@ -2133,30 +2164,63 @@ function downloadPDF(type) {
     taMirrors.push({ ta: ta, mir: mir });
   });
 
-  // Widen the page to the actual content width so the right column(s) are never cropped
   w = Math.max(w, pageEl.scrollWidth);
   pageEl.style.width = w + 'px';
   w = Math.max(w, pageEl.scrollWidth);
   pageEl.style.width = w + 'px';
-
   const h = Math.max(pageEl.scrollHeight, pageEl.offsetHeight) + 20;
 
-  const opt = {
-    margin: 0,
-    filename: filename + '.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollX: 0, scrollY: 0, x: 0 },
-    jsPDF: { unit: 'px', format: [w, h], orientation: w >= h ? 'landscape' : 'portrait' }
-  };
-
-  html2pdf().set(opt).from(pageEl).save().then(() => {
+  function restore() {
     taMirrors.forEach(function (m) { m.mir.remove(); m.ta.style.display = ''; });
     pageEl.classList.remove('pdf-mode');
     pageEl.style.width = prevWidth;
     if (navbar) navbar.style.display = '';
-    if (dbox) dbox.style.display = '';
     if (footer) footer.style.display = '';
+  }
+  return window.html2canvas(pageEl, { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollX: 0, scrollY: 0, x: 0, backgroundColor: '#FFF9F0' })
+    .then(function (canvas) { restore(); return { canvas: canvas, filename: filename }; },
+          function (err) { restore(); throw err; });
+}
+function _savePdfFromCanvas(canvas, filename) {
+  return html2pdf().set({
+    margin: 8,
+    filename: filename + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all'] }
+  }).from(canvas, 'canvas').save();
+}
+function downloadPDF(type) {
+  _renderCanvas(type).then(function (r) { _savePdfFromCanvas(r.canvas, r.filename); });
+}
+
+// Forhåndsvisning (A4 stående) som popper opp når man trykker "Last ned"
+let _dlCanvas = null, _dlFilename = null;
+function showDownloadPreview(type) {
+  const img = document.getElementById('dl-preview-img');
+  const load = document.getElementById('dl-preview-loading');
+  _dlCanvas = null;
+  img.style.display = 'none';
+  if (load) load.style.display = 'block';
+  document.getElementById('dl-preview-modal').classList.add('open');
+
+  _renderCanvas(type).then(function (r) {
+    _dlCanvas = r.canvas;
+    _dlFilename = r.filename;
+    img.src = r.canvas.toDataURL('image/jpeg', 0.92);
+    img.style.display = 'block';
+    if (load) load.style.display = 'none';
+  }, function () {
+    closeDlPreview();
   });
+}
+function confirmDownload() {
+  if (!_dlCanvas) return;
+  _savePdfFromCanvas(_dlCanvas, _dlFilename);
+  closeDlPreview();
+}
+function closeDlPreview() {
+  document.getElementById('dl-preview-modal').classList.remove('open');
 }
 
 // ══════════════════════ DRAWING EDITOR ══════════════════════
