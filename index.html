@@ -42,8 +42,9 @@
 
     /* ── Navbar ── */
     .navbar {
-      background: var(--red);
-      color: white;
+      background: var(--bg);
+      color: var(--text);
+      border-bottom: 1px solid #ece0cf;
       height: 54px;
       padding: 0 18px;
       display: flex;
@@ -55,7 +56,7 @@
     /* University of Bergen logo (black line art rendered white on the coloured bars) */
     .brand-logo { object-fit: contain; display: block; }
     .nb-logo-img { width: 40px; height: 40px; }
-    .nb-brand-btn { display: flex; align-items: center; gap: 11px; background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: #fff; }
+    .nb-brand-btn { display: flex; align-items: center; gap: 11px; background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: var(--text); }
     .nb-brand-btn:hover { opacity: 0.85; }
     .footer-logo-img { width: 42px; height: 42px; margin: 0 auto 7px; }
     .nb-logo {
@@ -70,24 +71,24 @@
       background: none; border: none; color: white;
       font-size: 22px; cursor: pointer; padding: 2px; line-height: 1;
     }
-    /* Help button: filled dark-red circle with white question mark */
+    /* Help button: light circle with dark question mark (beige header) */
     .nb-help {
       width: 30px; height: 30px; border-radius: 50%;
-      background: #fff; color: var(--red);
-      border: none; cursor: pointer; padding: 0;
+      background: #fff; color: var(--text);
+      border: 1px solid #dccfbc; cursor: pointer; padding: 0;
       font-size: 17px; font-weight: bold; line-height: 1;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .nb-help:hover { background: #f0e9dd; }
-    /* Home button: white house silhouette, no background */
+    .nb-help:hover { background: #f3ece0; }
+    /* Home button: dark house silhouette, no background */
     .nb-home {
       background: none; border: none; cursor: pointer; padding: 2px;
       display: flex; align-items: center; justify-content: center;
       line-height: 0;
     }
-    .nb-home svg { width: 24px; height: 24px; fill: white; display: block; }
-    .nb-home:hover svg { fill: rgba(255,255,255,0.8); }
+    .nb-home svg { width: 24px; height: 24px; fill: var(--text); display: block; }
+    .nb-home:hover svg { fill: #6f665c; }
     .nb-back {
       background: none; border: none; color: white;
       cursor: pointer; display: flex; align-items: center; gap: 8px;
@@ -818,7 +819,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -872,7 +873,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -978,7 +979,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -1085,7 +1086,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -1228,7 +1229,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -1282,7 +1283,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -1336,7 +1337,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -1394,7 +1395,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -1452,7 +1453,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
@@ -1581,7 +1582,7 @@
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
-        <img class="brand-logo nb-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
+        <img class="brand-logo nb-logo-img" src="emblem-dark.png" alt="Universitetet i Bergen">
         <span class="nb-brand">INNOAKTIV</span>
       </button>
     </div>
