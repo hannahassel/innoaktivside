@@ -307,7 +307,7 @@
     .sp-phase { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
     .sp-phase strong { color: var(--red-dark); font-weight: 700; font-size: 17px; letter-spacing: 0.5px; text-transform: uppercase; }
     .sp-phase-bubble { font-size: 14px; color: #6f665c; background: #fff; border: 1px solid #ece3d6; border-radius: 12px; padding: 7px 16px; box-shadow: 0 1px 5px rgba(0,0,0,0.06); }
-    .sp-title-input { width: 100%; max-width: 760px; border: none; background: transparent; font-family: var(--font-sans); font-size: 40px; font-weight: bold; color: var(--red); line-height: 1.15; padding: 2px 0; border-bottom: 2px dashed transparent; }
+    .sp-title-input { width: 100%; max-width: 760px; border: none; background: transparent; font-family: var(--font-sans); font-size: 40px; font-weight: bold; color: var(--red); line-height: 1.3; padding: 8px 0 4px; border-bottom: 2px dashed transparent; }
     .sp-title-input:hover { border-bottom-color: #d9cebc; }
     .sp-title-input:focus { outline: none; border-bottom-color: var(--red); }
     .sp-download {
@@ -377,7 +377,7 @@
       padding-left: 40px; padding-right: 40px;
     }
     .pdf-mode .cbox, .pdf-mode .sbbox { box-shadow: none; }
-    .pdf-mode .sp-header { padding-top: 10px; }
+    .pdf-mode .sp-header { padding-top: 24px; }
     /* Lean Canvas boxes rely on a soft shadow on screen; html2canvas drops shadows,
        so give them a visible outline in the PDF so the boxes show up. */
     .pdf-mode .lc-box, .pdf-mode .lc-maltall-box { border: 1px solid #cdbfab !important; box-shadow: none; }
@@ -2165,6 +2165,21 @@ function _renderCanvas(type) {
     taMirrors.push({ ta: ta, mir: mir });
   });
 
+  // html2canvas klipper toppen av tekst i <input> – speil hver input inn i en div også
+  const inpMirrors = [];
+  pageEl.querySelectorAll('input[type="text"]').forEach(function (inp) {
+    const cs = getComputedStyle(inp);
+    const mir = document.createElement('div');
+    mir.textContent = inp.value;
+    mir.style.cssText = 'width:100%;white-space:nowrap;overflow:hidden;background:transparent;' +
+      'font-family:' + cs.fontFamily + ';font-size:' + cs.fontSize + ';font-weight:' + cs.fontWeight +
+      ';color:' + cs.color + ';line-height:' + cs.lineHeight + ';letter-spacing:' + cs.letterSpacing +
+      ';padding:' + cs.paddingTop + ' ' + cs.paddingRight + ' ' + cs.paddingBottom + ' ' + cs.paddingLeft + ';';
+    inp.style.display = 'none';
+    inp.parentNode.insertBefore(mir, inp);
+    inpMirrors.push({ inp: inp, mir: mir });
+  });
+
   w = Math.max(w, pageEl.scrollWidth);
   pageEl.style.width = w + 'px';
   w = Math.max(w, pageEl.scrollWidth);
@@ -2173,6 +2188,7 @@ function _renderCanvas(type) {
 
   function restore() {
     taMirrors.forEach(function (m) { m.mir.remove(); m.ta.style.display = ''; });
+    inpMirrors.forEach(function (m) { m.mir.remove(); m.inp.style.display = ''; });
     pageEl.classList.remove('pdf-mode');
     pageEl.style.width = prevWidth;
     if (navbar) navbar.style.display = '';
