@@ -449,6 +449,9 @@
     .cbox-num { flex-shrink: 0; }
     .cbox-title { flex: 1; outline: none; text-transform: uppercase; }
     .cbox-title:focus { outline: 2px solid #F7C948; outline-offset: 1px; border-radius: 2px; }
+    /* Faste kategorititler (Storyboard): ikke redigerbare, ingen tekstmarkør */
+    .cbox-title-fast { cursor: default; }
+    .cbox-title-fast:focus { outline: none; }
     /* Placeholder shown only while empty — disappears as soon as you type */
     .cbox-title:empty:before, #ed-hd-title:empty:before {
       content: attr(data-ph); color: rgba(255,255,255,0.6); cursor: text;
@@ -1996,13 +1999,15 @@ function buildStoryboard101() {
     const box = document.createElement('div');
     box.className = 'sbbox';
     box.dataset.ph = prompt;
+    // Storyboard har FASTE kategorititler – de skal ikke kunne endres
+    box.dataset.lockTitle = '1';
 
-    // Header: number + pre-filled category label (burgundy, same as Samlende lerret)
+    // Header: number + fast kategoritittel (ikke redigerbar)
     const hd = document.createElement('div');
     hd.className = 'cbox-hd';
     hd.innerHTML =
       `<span class="cbox-num">${i + 1}.</span>` +
-      `<span class="cbox-title" contenteditable="true" data-ph="Kort overskrift"></span>`;
+      `<span class="cbox-title cbox-title-fast"></span>`;
     box.appendChild(hd);
     hd.querySelector('.cbox-title').textContent = labels[i];
 
@@ -2090,9 +2095,10 @@ const _pdfCfg = {
   // Lean Canvas: side 1 = header + rutenett, side 2 = header + Måltall (så Måltall aldri deles).
   lc:    { page: 'page-lean-canvas',         title: 'lc-title',    name: 'Lean Canvas',             rw: 1500, parts: ['.lc-maltall', '.lc-canvas'] },
   sp:    { page: 'page-sprikende',           title: 'sp-title',    name: 'Sprikende Lerret',        rw: 1700 },
-  sb:    { page: 'page-storyboard',          title: 'sb-title',    name: 'Samlende Lerret',         rw: 1300 },
-  sl:    { page: 'page-samlende-losning',    title: 'sl-title',    name: 'Samlende Lerret Løsning', rw: 1300 },
-  sb101: { page: 'page-innov101-storyboard', title: 'sb101-title', name: 'Storyboard',              rw: 1300 }
+  // rw 1700: bred nok render til at hele lerretet får plass på ÉN A4-side liggende
+  sb:    { page: 'page-storyboard',          title: 'sb-title',    name: 'Samlende Lerret',         rw: 1700 },
+  sl:    { page: 'page-samlende-losning',    title: 'sl-title',    name: 'Samlende Lerret Løsning', rw: 1700 },
+  sb101: { page: 'page-innov101-storyboard', title: 'sb101-title', name: 'Storyboard',              rw: 1700 }
 };
 // Rendrer innholdet til ETT fullt canvas via html2canvas direkte (ingen klipping av høyre kolonne).
 function _renderCanvas(type, hideSel) {
@@ -2193,8 +2199,10 @@ function _renderPages(type) {
 // html2pdf deler bildet i like høye skiver: pageH = bredde * (innerH / innerW).
 // A4 liggende med 8 mm marg  ->  inner 281 x 194 mm.
 function _compositePages(canvases) {
-  if (canvases.length === 1) return canvases[0];
-  const W = Math.max.apply(null, canvases.map(function (c) { return c.width; }));
+  const W0 = Math.max.apply(null, canvases.map(function (c) { return c.width; }));
+  // Én del som allerede får plass på siden brukes uendret
+  if (canvases.length === 1 && canvases[0].height <= Math.floor(W0 * 194 / 281)) return canvases[0];
+  const W = W0;
   const pageH = Math.floor(W * 194 / 281);
   const out = document.createElement('canvas');
   out.width = W;
@@ -2499,7 +2507,12 @@ function openEditor(box, num) {
 
   // Header + description into the modal (title empty -> placeholder shows)
   document.getElementById('ed-hd-num').textContent = numEl.textContent;
-  document.getElementById('ed-hd-title').textContent = titleEl.textContent;
+  const edTitle = document.getElementById('ed-hd-title');
+  edTitle.textContent = titleEl.textContent;
+  // Faste titler (Storyboard) skal heller ikke kunne endres inne i tegne-editoren
+  const laast = box.dataset.lockTitle === '1';
+  edTitle.setAttribute('contenteditable', laast ? 'false' : 'true');
+  edTitle.style.cursor = laast ? 'default' : '';
   const edDesc = document.getElementById('ed-desc');
   edDesc.dataset.placeholder = placeholder;
   edDesc.textContent = (desc.textContent.trim() === placeholder) ? '' : desc.textContent;
@@ -2524,8 +2537,11 @@ function closeEditor() {
   const desc = ed.box.querySelector('.cbox-desc');
   const placeholder = ed.box.dataset.ph || 'Forklar ideen bak illustrasjonen';
 
-  // Save title back to the box (empty -> placeholder reappears via CSS)
-  title.textContent = document.getElementById('ed-hd-title').textContent.trim();
+  // Save title back to the box (empty -> placeholder reappears via CSS).
+  // Faste titler røres ikke.
+  if (ed.box.dataset.lockTitle !== '1') {
+    title.textContent = document.getElementById('ed-hd-title').textContent.trim();
+  }
 
   // Save description
   const newDesc = document.getElementById('ed-desc').textContent.trim();
