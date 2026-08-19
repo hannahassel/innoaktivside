@@ -115,7 +115,8 @@
     .landing-body { flex: 1; }
     .landing-title {
       text-align: center;
-      color: var(--red-dark);
+      /* Samme lyse rødfarge som overskriften på forsiden – gjelder alle emnesidene */
+      color: var(--red);
       font-family: var(--font-sans);
       font-size: 30px;
       font-weight: bold;
@@ -177,8 +178,7 @@
     .double-diamond svg { width: 100%; height: auto; display: block; }
     .dd-caption { text-align: center; font-style: italic; color: #9a8b76; font-size: 13px; margin-top: 8px; }
 
-    /* INNOV102 landing (ny skisse): rød tittel + fase-seksjoner med store kort */
-    #page-innov102 .landing-title { color: var(--red); }
+    /* INNOV102 landing (ny skisse): fase-seksjoner med store kort */
     .dd-cards { display: flex; flex-direction: column; gap: 34px; max-width: 1000px; width: 100%; margin: 52px auto 0; padding: 0 40px; }
     .dd-section-label { display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 18px; }
     .dd-section-label::after { content: ""; flex: 1; height: 1px; background: #e6dccb; }
