@@ -644,9 +644,11 @@
     .dl-pagenum { font-size: 11.5px; color: #8a8078; letter-spacing: 0.4px; }
     .dl-page.dl-top img { object-position: top center; }
     .dl-foot { display: flex; justify-content: flex-end; gap: 12px; padding: 14px 20px; background: #FFF3E6; border-top: 1px solid #f0e2cf; }
-    .dl-cancel { background: #fff; color: var(--red); border: 1.5px solid var(--red); border-radius: 9px; padding: 9px 22px; font-size: 14px; font-weight: bold; cursor: pointer; font-family: inherit; }
+    /* white-space + flex-shrink: knappeteksten skal alltid stå på én linje */
+    .dl-cancel { background: #fff; color: var(--red); border: 1.5px solid var(--red); border-radius: 9px; padding: 9px 22px; font-size: 14px; font-weight: bold; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
     .dl-cancel:hover { background: #fff4f0; }
-    .dl-confirm { display: inline-flex; align-items: center; gap: 8px; background: var(--red); color: #fff; border: none; border-radius: 9px; padding: 9px 22px; font-size: 14px; font-weight: bold; cursor: pointer; font-family: inherit; }
+    .dl-confirm { display: inline-flex; align-items: center; gap: 8px; background: var(--red); color: #fff; border: none; border-radius: 9px; padding: 9px 22px; font-size: 14px; font-weight: bold; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
+    .dl-confirm svg { width: 18px; height: 18px; flex-shrink: 0; }
     .dl-confirm:hover { background: #d4141f; }
     .modal {
       background: white;
