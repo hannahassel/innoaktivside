@@ -635,9 +635,13 @@
     .dl-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f3efe8; border-bottom: 1px solid #e6ded3; font-size: 14px; color: #6f665c; font-weight: 600; }
     .dl-x { background: none; border: none; font-size: 24px; line-height: 1; color: #8a8078; cursor: pointer; padding: 0 4px; }
     .dl-body { flex: 1; overflow: auto; padding: 26px; background: #faf6ef; display: flex; justify-content: center; align-items: flex-start; }
-    .dl-loading { color: #8a8078; font-style: italic; padding: 70px 0; text-align: center; }
     .dl-page { background: #fff; width: 100%; max-width: 840px; aspect-ratio: 297 / 210; box-shadow: 0 6px 24px rgba(0,0,0,0.14); border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     .dl-page img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
+    /* Siderammene vises med spinner med én gang, så boksen ikke hopper når bildet er klart */
+    .dl-spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #ece2d2; border-top-color: var(--red); animation: dl-spin 0.8s linear infinite; }
+    @keyframes dl-spin { to { transform: rotate(360deg); } }
+    .dl-page img { opacity: 0; transition: opacity 0.25s ease; }
+    .dl-page img.dl-klar { opacity: 1; }
     /* Flersides forhåndsvisning: hver side stables, innhold ligger øverst slik som i PDF-en */
     .dl-pages { display: flex; flex-direction: column; gap: 22px; width: 100%; max-width: 840px; }
     .dl-pagewrap { display: flex; flex-direction: column; gap: 6px; }
@@ -1612,7 +1616,6 @@
       <button class="dl-x" title="Lukk" onclick="closeDlPreview()">&times;</button>
     </div>
     <div class="dl-body">
-      <div id="dl-preview-loading" class="dl-loading">Genererer forhåndsvisning &#8230;</div>
       <div class="dl-pages" id="dl-preview-pages"></div>
     </div>
     <div class="dl-foot">
@@ -2237,37 +2240,55 @@ function downloadPDF(type) {
 
 // Forhåndsvisning (A4 stående) som popper opp når man trykker "Last ned"
 let _dlCanvas = null, _dlFilename = null;
+// Bygger tomme A4-rammer (med spinner) som skal fylles med sidebilder
+function _byggSiderammer(wrap, antall) {
+  wrap.innerHTML = '';
+  const rammer = [];
+  for (let i = 0; i < antall; i++) {
+    const pw = document.createElement('div');
+    pw.className = 'dl-pagewrap';
+    if (antall > 1) {
+      const lbl = document.createElement('div');
+      lbl.className = 'dl-pagenum';
+      lbl.textContent = 'Side ' + (i + 1) + ' av ' + antall;
+      pw.appendChild(lbl);
+    }
+    const pg = document.createElement('div');
+    pg.className = 'dl-page' + (antall > 1 ? ' dl-top' : '');
+    pg.appendChild(document.createElement('span')).className = 'dl-spinner';
+    pw.appendChild(pg);
+    wrap.appendChild(pw);
+    rammer.push(pg);
+  }
+  return rammer;
+}
+
 function showDownloadPreview(type) {
   const wrap = document.getElementById('dl-preview-pages');
-  const load = document.getElementById('dl-preview-loading');
   _dlCanvas = null;
-  wrap.innerHTML = '';
-  if (load) load.style.display = 'block';
+
+  // Vi vet antall sider på forhånd, så rammene bygges FØR renderingen.
+  // Da har boksen endelig størrelse med én gang og hopper ikke når bildet er klart.
+  const cfg = _pdfCfg[type];
+  const antall = (cfg && cfg.parts) ? cfg.parts.length : 1;
+  let rammer = _byggSiderammer(wrap, antall);
   document.getElementById('dl-preview-modal').classList.add('open');
 
   _renderPages(type).then(function (r) {
     _dlCanvas = _compositePages(r.canvases);
     _dlFilename = r.filename;
-    const multi = r.canvases.length > 1;
+    // Sikring: skulle antallet avvike, bygg rammene på nytt
+    if (r.canvases.length !== rammer.length) rammer = _byggSiderammer(wrap, r.canvases.length);
     r.canvases.forEach(function (c, i) {
-      const pw = document.createElement('div');
-      pw.className = 'dl-pagewrap';
-      if (multi) {
-        const lbl = document.createElement('div');
-        lbl.className = 'dl-pagenum';
-        lbl.textContent = 'Side ' + (i + 1) + ' av ' + r.canvases.length;
-        pw.appendChild(lbl);
-      }
-      const pg = document.createElement('div');
-      pg.className = 'dl-page' + (multi ? ' dl-top' : '');
+      const pg = rammer[i];
+      if (!pg) return;
       const im = document.createElement('img');
       im.alt = 'Forhåndsvisning side ' + (i + 1);
+      im.onload = function () { im.classList.add('dl-klar'); };
       im.src = c.toDataURL('image/jpeg', 0.92);
+      pg.innerHTML = '';
       pg.appendChild(im);
-      pw.appendChild(pg);
-      wrap.appendChild(pw);
     });
-    if (load) load.style.display = 'none';
   }, function () {
     closeDlPreview();
   });
