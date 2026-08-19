@@ -305,7 +305,7 @@
     /* Lerret header: small phase line + large own-title field */
     .sp-phase { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
     .sp-phase strong { color: var(--red); font-weight: 700; font-size: 18px; letter-spacing: 0.3px; }
-    .sp-phase-help { position: relative; width: 20px; height: 20px; border-radius: 50%; background: var(--red); color: #fff; font-size: 12px; font-weight: bold; line-height: 1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .sp-phase-help { position: relative; width: 20px; height: 20px; border: none; padding: 0; border-radius: 50%; background: var(--red); color: #fff; font-size: 12px; font-weight: bold; line-height: 1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-family: inherit; }
     .sp-phase-tip { position: absolute; left: 0; top: calc(100% + 9px); white-space: nowrap; background: #fff; color: #6f665c; font-size: 14px; font-weight: 400; border: 1px solid #ece3d6; border-radius: 12px; padding: 8px 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.14); opacity: 0; visibility: hidden; transition: opacity .15s; z-index: 60; pointer-events: none; }
     .sp-phase-help:hover .sp-phase-tip, .sp-phase-help:focus .sp-phase-tip { opacity: 1; visibility: visible; }
     .pdf-mode .sp-phase-help { display: none !important; }
@@ -734,7 +734,7 @@
       background: white; border-radius: 6px;
       overflow: hidden; box-shadow: 0 6px 28px rgba(0,0,0,0.18);
       display: flex; flex-direction: column;
-      width: 520px; max-width: 56vw;
+      width: 720px; max-width: 66vw;
     }
     .editor-hd {
       background: var(--red-dark); color: white;
@@ -1424,14 +1424,13 @@
 
   <div class="sp-header">
     <div class="sp-head-left">
-      <h1 class="sp-title">Storyboard
-        <button class="nb-help sp-help" title="Hjelp" onclick="document.getElementById('storyboard-help-modal').classList.add('open')">?</button>
-      </h1>
-      <div class="sp-sub">
-        <input type="text" id="sb101-title" value="Din egen tittel"
-          onfocus="if(this.value==='Din egen tittel')this.value=''"
-          onblur="if(!this.value.trim())this.value='Din egen tittel'">
+      <div class="sp-phase">
+        <strong>Storyboard</strong>
+        <button class="sp-phase-help" title="Hjelp" onclick="document.getElementById('storyboard-help-modal').classList.add('open')">?</button>
       </div>
+      <input class="sp-title-input" type="text" id="sb101-title" value="Din egen tittel"
+        onfocus="if(this.value==='Din egen tittel')this.value=''"
+        onblur="if(!this.value.trim())this.value='Din egen tittel'">
     </div>
     <button class="sp-download" onclick="showDownloadPreview('sb101')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
@@ -1482,14 +1481,13 @@
 
   <div class="sp-header lc-header">
     <div class="sp-head-left">
-      <h1 class="sp-title">Lean canvas
-        <button class="nb-help sp-help" title="Hjelp" onclick="openLcHelp('overview')">?</button>
-      </h1>
-      <div class="sp-sub">
-        <input type="text" id="lc-title" value="Din egen tittel"
-          onfocus="if(this.value==='Din egen tittel')this.value=''"
-          onblur="if(!this.value.trim())this.value='Din egen tittel'">
+      <div class="sp-phase">
+        <strong>Lean Canvas</strong>
+        <button class="sp-phase-help" title="Hjelp" onclick="openLcHelp('overview')">?</button>
       </div>
+      <input class="sp-title-input" type="text" id="lc-title" value="Din egen tittel"
+        onfocus="if(this.value==='Din egen tittel')this.value=''"
+        onblur="if(!this.value.trim())this.value='Din egen tittel'">
     </div>
     <button class="sp-download lc-download" onclick="showDownloadPreview('lc')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 19h16"/></svg>
@@ -1607,7 +1605,7 @@
     <span class="crumb-sep">&#8250;</span>
     <span class="crumb-current">PLAKAT</span>
   </div>
-  <iframe class="embed-frame" src="plakat.html" title="Fra idé til plakat" onload="try{this.contentDocument.head.insertAdjacentHTML('beforeend','&lt;style&gt;footer{display:none!important}&lt;/style&gt;')}catch(e){}"></iframe>
+  <iframe class="embed-frame" src="plakat.html?v=3" title="Fra idé til plakat" onload="try{this.contentDocument.head.insertAdjacentHTML('beforeend','&lt;style&gt;footer{display:none!important}&lt;/style&gt;')}catch(e){}"></iframe>
 
   <div class="footer">
     <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
