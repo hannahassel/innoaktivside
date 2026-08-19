@@ -45,8 +45,8 @@
       background: var(--bg);
       color: var(--text);
       border-bottom: 1px solid #ece0cf;
-      height: 54px;
-      padding: 0 18px;
+      height: 70px;
+      padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -55,7 +55,7 @@
     .nb-left { display: flex; align-items: center; gap: 11px; }
     /* University of Bergen logo (black line art rendered white on the coloured bars) */
     .brand-logo { object-fit: contain; display: block; }
-    .nb-logo-img { width: 40px; height: 40px; }
+    .nb-logo-img { width: 48px; height: 48px; }
     .nb-brand-btn { display: flex; align-items: center; gap: 11px; background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: var(--text); }
     .nb-brand-btn:hover { opacity: 0.85; }
     .footer-logo-img { width: 42px; height: 42px; margin: 0 auto 7px; }
@@ -65,7 +65,8 @@
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .nb-brand { font-weight: bold; font-size: 13px; letter-spacing: 1.8px; }
+    /* INNOAKTIV-ordmerket: Times New Roman i tynn vekt, som UiB-logoen */
+    .nb-brand { font-family: var(--font-serif); font-weight: 400; font-size: 21px; letter-spacing: 3.4px; }
     .nb-right { display: flex; gap: 14px; align-items: center; }
     .nb-btn {
       background: none; border: none; color: white;
@@ -516,36 +517,36 @@
       margin: 0 auto 11px;
       display: flex; align-items: center; justify-content: center;
     }
-    .footer-name { font-weight: bold; letter-spacing: 2px; font-size: 12px; margin-bottom: 5px; }
+    .footer-name { font-family: var(--font-serif); font-weight: 400; letter-spacing: 3.2px; font-size: 16px; margin-bottom: 6px; }
     .footer-credits { font-size: 11px; font-style: italic; opacity: 0.92; line-height: 1.55; }
 
     /* ── Home page ── */
-    .home-body { flex: 1; padding: 52px 44px 44px; max-width: 1060px; margin: 0 auto; width: 100%; }
-    .home-title { font-family: var(--font-sans); font-size: 40px; font-weight: bold; color: var(--red); margin-bottom: 8px; line-height: 1.15; }
-    .home-subtitle { font-size: 15px; color: #9a8b85; margin-bottom: 40px; }
+    .home-body { flex: 1; padding: 62px 44px 54px; max-width: 1180px; margin: 0 auto; width: 100%; }
+    .home-title { font-family: var(--font-sans); font-size: 48px; font-weight: bold; color: var(--red); margin-bottom: 10px; line-height: 1.15; }
+    .home-subtitle { font-size: 18px; color: var(--text); margin-bottom: 46px; }
 
     /* ── Home course rows (full-width list items) ── */
-    .course-rows { display: flex; flex-direction: column; gap: 24px; max-width: 1040px; }
+    .course-rows { display: flex; flex-direction: column; gap: 26px; max-width: 1160px; }
     .course-row {
       display: flex; align-items: stretch; width: 100%; cursor: pointer;
       font-family: inherit; text-align: left; border: none; padding: 0;
       background: #fff; border-radius: 12px; overflow: hidden;
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       transition: background .15s, box-shadow .15s, transform .1s;
-      min-height: 104px;
+      min-height: 122px;
     }
     .course-row:hover { background: var(--pink); box-shadow: 0 6px 18px rgba(0,0,0,0.14); transform: translateY(-1px); }
     .cr-bar { flex: 0 0 11px; align-self: stretch; }
     .cr-mix .cr-bar { background: var(--red-dark); }
     .cr-101 .cr-bar { background: var(--red-dark); }
     .cr-102 .cr-bar { background: var(--red-dark); }
-    .cr-text { flex: 1; padding: 22px 32px; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
-    .cr-code { font-size: 23px; font-weight: bold; letter-spacing: 0.5px; }
+    .cr-text { flex: 1; padding: 26px 38px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+    .cr-code { font-size: 27px; font-weight: bold; letter-spacing: 0.5px; }
     .cr-mix .cr-code { color: var(--red-dark); }
     .cr-101 .cr-code { color: var(--red-dark); }
     .cr-102 .cr-code { color: var(--red-dark); }
-    .cr-title { font-size: 17px; color: var(--text); }
-    .cr-cta { display: flex; align-items: center; gap: 11px; padding: 0 38px; font-size: 13px; font-weight: bold; letter-spacing: 1px; white-space: nowrap; }
+    .cr-title { font-size: 19px; color: var(--text); }
+    .cr-cta { display: flex; align-items: center; gap: 11px; padding: 0 42px; font-size: 15px; font-weight: bold; letter-spacing: 1px; white-space: nowrap; }
     .cr-mix .cr-cta { color: var(--red-dark); }
     .cr-101 .cr-cta { color: var(--red-dark); }
     .cr-102 .cr-cta { color: var(--red-dark); }
