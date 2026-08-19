@@ -73,15 +73,18 @@
       font-size: 22px; cursor: pointer; padding: 2px; line-height: 1;
     }
     /* Help button: light circle with dark question mark (beige header) */
-    .nb-help {
-      width: 30px; height: 30px; border-radius: 50%;
-      background: #fff; color: var(--text);
-      border: 1px solid #dccfbc; cursor: pointer; padding: 0;
-      font-size: 17px; font-weight: bold; line-height: 1;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+    /* ── Hjelpeikon (?) – samme utseende og størrelse i HELE nettsiden ── */
+    .nb-help, .sp-help, .sp-phase-help, .lc-help {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: transparent; color: var(--text);
+      border: 2px solid var(--text); cursor: pointer; padding: 0;
+      font-size: 14px; font-weight: bold; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-family: inherit;
     }
-    .nb-help:hover { background: #f3ece0; }
+    .nb-help:hover, .sp-help:hover, .sp-phase-help:hover, .lc-help:hover {
+      background: rgba(32, 5, 5, 0.09);
+    }
     /* Home button: dark house silhouette, no background */
     .nb-home {
       background: none; border: none; cursor: pointer; padding: 2px;
@@ -299,7 +302,6 @@
     .sp-crumb a { color: var(--red-dark); text-decoration: none; }
     .sp-crumb a:hover { text-decoration: underline; }
     .sp-title { font-family: var(--font-sans); font-size: 30px; font-weight: bold; color: var(--red); line-height: 1.1; display: flex; align-items: center; gap: 12px; }
-    .sp-help { width: 24px; height: 24px; font-size: 13px; }
     .sp-sub { margin-top: 9px; max-width: 460px; border-bottom: 2px dashed #c2b8ac; padding-bottom: 5px; }
     .sp-sub input { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 18px; color: var(--text); }
     .sp-sub input.sp-title-ph { color: #8a8078; }
@@ -307,7 +309,8 @@
     /* Lerret header: small phase line + large own-title field */
     .sp-phase { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
     .sp-phase strong { color: var(--red); font-weight: 700; font-size: 18px; letter-spacing: 0.3px; }
-    .sp-phase-help { position: relative; width: 20px; height: 20px; border: none; padding: 0; border-radius: 50%; background: var(--red); color: #fff; font-size: 12px; font-weight: bold; line-height: 1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-family: inherit; }
+    /* position: relative trengs for hjelpe-tipset – utseendet arves fra fellesregelen */
+    .sp-phase-help { position: relative; }
     .sp-phase-tip { position: absolute; left: 0; top: calc(100% + 9px); white-space: nowrap; background: #fff; color: #6f665c; font-size: 14px; font-weight: 400; border: 1px solid #ece3d6; border-radius: 12px; padding: 8px 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.14); opacity: 0; visibility: hidden; transition: opacity .15s; z-index: 60; pointer-events: none; }
     .sp-phase-help:hover .sp-phase-tip, .sp-phase-help:focus .sp-phase-tip { opacity: 1; visibility: visible; }
     .pdf-mode .sp-phase-help { display: none !important; }
@@ -324,11 +327,9 @@
     }
     .sp-download:hover { background: #d4141f; }
     .sp-download svg { width: 18px; height: 18px; }
-    /* Storyboard (INNOV101/MIX100): last ned + "?" i samme røde som overskriften; hover = kun skalering */
+    /* Storyboard (INNOV101/MIX100): last ned i lyserødt – "?" bruker fellesstilen */
     #page-innov101-storyboard .sp-download { background: var(--red); }
     #page-innov101-storyboard .sp-download:hover { background: #d4141f; }
-    #page-innov101-storyboard .sp-help { background: var(--red); color: #fff; border-color: var(--red); }
-    #page-innov101-storyboard .sp-help:hover { background: #d4141f; }
     #page-innov101-storyboard .sbbox { transition: transform .15s, box-shadow .15s; }
     #page-innov101-storyboard .sbbox:hover { transform: scale(1.02); box-shadow: 0 8px 22px rgba(130,10,18,0.14); }
 
@@ -410,8 +411,8 @@
     .lc-ta { flex: 1; width: 100%; margin-top: 12px; border: none; outline: none; resize: none; font-family: inherit; font-size: 14px; line-height: 1.6; color: var(--text); background: transparent; cursor: text; }
     .lc-ta::placeholder { color: #c8c0b6; font-style: italic; }
     .lc-box, .lc-maltall-box { cursor: text; }
-    .lc-help { position: absolute; top: 14px; right: 14px; width: 22px; height: 22px; border-radius: 50%; background: #fff; color: #000; border: 1px solid #e5dccb; cursor: pointer; font-size: 12px; font-weight: bold; line-height: 1; display: flex; align-items: center; justify-content: center; font-family: inherit; }
-    .lc-help:hover { background: #f0e9dd; }
+    /* Kun plassering – utseendet arves fra fellesregelen for hjelpeikoner */
+    .lc-help { position: absolute; top: 12px; right: 12px; }
     /* Lean Canvas download button is the strong red (matches the design) */
     .lc-download { background: var(--red); }
     .lc-download:hover { background: #d4141f; }
