@@ -404,6 +404,10 @@
        so give them a visible outline in the PDF so the boxes show up. */
     .pdf-mode .lc-box, .pdf-mode .lc-maltall-box { border: 1px solid #cdbfab !important; box-shadow: none; }
 
+    /* Plakat: samme header-linje som de andre verktøyene (rød etikett + "?") */
+    .pk-header { display: flex; align-items: center; gap: 9px; padding: 4px 40px 12px; flex-shrink: 0; }
+    .pk-header strong { color: var(--red); font-weight: 700; font-size: 18px; letter-spacing: 0.3px; }
+
     /* Embedded design pages (Plakat) shown in an iframe */
     .embed-page { height: 100vh; }
     .embed-frame { flex: 1 1 auto; width: 100%; min-height: 0; border: 0; display: block; background: var(--bg); }
@@ -1587,7 +1591,13 @@
     <span class="crumb-sep">&#8250;</span>
     <a class="crumb-link crumb-course" onclick="courseBack()">INNOV101</a>
     <span class="crumb-sep">&#8250;</span>
-    <span class="crumb-current">PLAKAT</span>
+    <span class="crumb-current" id="pk-crumb-plakat">PLAKAT</span>
+    <span class="crumb-sep" id="pk-crumb-sep" style="display:none">&#8250;</span>
+    <span class="crumb-current" id="pk-crumb-steg" style="display:none">REDIGER</span>
+  </div>
+  <div class="pk-header">
+    <strong>Plakat</strong>
+    <button class="sp-phase-help" title="Hjelp" onclick="pkHjelp()">?</button>
   </div>
   <iframe class="embed-frame" src="plakat.html?v=3" title="Fra idé til plakat" onload="try{this.contentDocument.head.insertAdjacentHTML('beforeend','&lt;style&gt;footer{display:none!important}&lt;/style&gt;')}catch(e){}"></iframe>
 
@@ -2316,6 +2326,78 @@ function confirmDownload() {
 function closeDlPreview() {
   document.getElementById('dl-preview-modal').classList.remove('open');
 }
+
+// ══════════════════════ PLAKAT: rydder verktøyets topprad ══════════════════════
+// Plakat-verktøyet ligger i en iframe (samme origin). Vi skjuler "Tilbake til start",
+// tar bort den hvite banner-stripen slik at format-velgeren og "Lagre plakat" havner
+// et hakk ned, og speiler hvilket steg man er på i brødsmulestien.
+function _pkDok() {
+  const f = document.querySelector('#page-plakat .embed-frame');
+  try { return f && f.contentDocument; } catch (e) { return null; }
+}
+function _pkRad(d) {
+  const t = [...d.querySelectorAll('button')].find(b => b.textContent.trim() === 'Tilbake til start');
+  return t ? { rad: t.parentElement, tilbake: t } : null;
+}
+function pkTilbakeTilFormat() {
+  const d = _pkDok(); if (!d) return;
+  const r = _pkRad(d); if (r) r.tilbake.click();
+}
+function pkHjelp() {
+  const d = _pkDok(); if (!d) return;
+  const r = _pkRad(d); if (!r) return;
+  // Hjelpeknappen er den eneste knappen i raden uten tekst
+  const h = [...r.rad.querySelectorAll('button')].find(b => !b.textContent.trim());
+  if (h) h.click();
+}
+function _pkOppdater() {
+  if (!document.getElementById('page-plakat').classList.contains('active')) return;
+  const d = _pkDok(); if (!d) return;
+  const plakat = document.getElementById('pk-crumb-plakat');
+  const sep = document.getElementById('pk-crumb-sep');
+  const steg = document.getElementById('pk-crumb-steg');
+  if (!plakat) return;
+  const r = _pkRad(d);
+  if (r) {
+    // Vi er i editoren: skjul "Tilbake til start" og fjern banner-stripen, slik at
+    // format-velgeren og "Lagre plakat" havner et hakk ned i selve arbeidsflaten.
+    r.tilbake.style.visibility = 'hidden';
+    r.rad.style.background = 'transparent';
+    r.rad.style.borderBottom = 'none';
+    const barn = [...r.rad.children];
+    if (barn[1]) barn[1].style.margin = '0 auto';       // format-velgeren midtstilles
+    if (barn[2]) {
+      // Verktøyets eget "?" skjules – headeren over har det nå.
+      // NB: format-knappene har heller ingen tekst, så vi ser bare i denne kolonnen.
+      const h = [...barn[2].querySelectorAll('button')].find(b => !b.textContent.trim());
+      if (h) h.style.display = 'none';
+      const lagre = [...barn[2].querySelectorAll('button')].find(b => b.textContent.trim() === 'Lagre plakat');
+      if (lagre) lagre.style.whiteSpace = 'nowrap';
+    }
+    plakat.className = 'crumb-link';
+    plakat.onclick = pkTilbakeTilFormat;
+    sep.style.display = '';
+    steg.style.display = '';
+  } else {
+    plakat.className = 'crumb-current';
+    plakat.onclick = null;
+    sep.style.display = 'none';
+    steg.style.display = 'none';
+  }
+  // Eksportskjermen: høyrestill knappene og gi "Rediger igjen" samme omriss-stil
+  // som "Avbryt" i forhåndsvisningen ellers på siden.
+  const red = [...d.querySelectorAll('button')].find(b => b.textContent.trim() === 'Rediger igjen');
+  if (red && !red.dataset.pkStil) {
+    red.dataset.pkStil = '1';
+    if (red.parentElement) {
+      red.parentElement.style.justifyContent = 'flex-end';
+      red.parentElement.style.gap = '12px';
+    }
+    red.style.cssText += ';background:#fff;color:#FF2130;border:1.5px solid #FF2130;' +
+      'border-radius:9px;padding:9px 22px;font-weight:bold;white-space:nowrap;';
+  }
+}
+setInterval(_pkOppdater, 400);
 
 // ── Trippeldiamanten: hover på et kort uthever samme etikett i diagrammet ──
 document.querySelectorAll('#page-innov102 .dd-card2[data-seg]').forEach(function (kort) {
