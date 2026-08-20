@@ -187,6 +187,12 @@
     .double-diamond { margin-top: 10px; }
     .double-diamond svg { width: 100%; height: auto; display: block; }
     .dd-caption { text-align: center; font-style: italic; color: #9a8b76; font-size: 13px; margin-top: 8px; }
+    /* Trippeldiamanten: fase-etikettene er svarte til de hovres – eller til man hovrer
+       det tilhørende kortet under. Problem/Idé/Prototype er alltid uthevet (satt i SVG-en). */
+    .dd-seg { fill: var(--text); font-weight: bold; transition: fill 0.15s; }
+    .dd-seg.dd-f-problem:hover,   .dd-seg.dd-f-problem.dd-aktiv   { fill: #C25A4E; }
+    .dd-seg.dd-f-ide:hover,       .dd-seg.dd-f-ide.dd-aktiv       { fill: #A2131D; }
+    .dd-seg.dd-f-prototype:hover, .dd-seg.dd-f-prototype.dd-aktiv { fill: #E08A3C; }
 
     /* INNOV102 landing (ny skisse): fase-seksjoner med store kort */
     .dd-cards { display: flex; flex-direction: column; gap: 34px; max-width: 1000px; width: 100%; margin: 52px auto 0; padding: 0 40px; }
@@ -1158,22 +1164,16 @@
           <path d="M520 160 L735 42 L950 160"   fill="none" stroke="#A2131D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
           <path d="M950 160 L1165 42 L1380 160" fill="none" stroke="#E08A3C" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
           <path d="M1380 160 L1520 160"         fill="none" stroke="#E08A3C" stroke-width="2.2" stroke-linecap="round"/>
-          <!-- beige knockouts so the process line does not cut through the labels -->
-          <g fill="#FFF9F0">
-            <rect x="165" y="99" width="130" height="24"/>
-            <rect x="334" y="99" width="92" height="24"/>
-            <rect x="610" y="99" width="100" height="24"/>
-            <rect x="779" y="99" width="62" height="24"/>
-            <rect x="1019" y="99" width="142" height="24"/>
-            <rect x="1188" y="99" width="104" height="24"/>
-          </g>
-          <g font-size="12.5" font-weight="bold" text-anchor="middle" letter-spacing="0.2">
-            <text x="230"  y="112" fill="#C25A4E">Problemutvikling</text>
-            <text x="380"  y="112" fill="#C25A4E">Problemvalg</text>
-            <text x="660"  y="112" fill="#A2131D">Id&#233;utvikling</text>
-            <text x="810"  y="112" fill="#A2131D">Id&#233;valg</text>
-            <text x="1090" y="112" fill="#E08A3C">Prototypeutvikling</text>
-            <text x="1240" y="112" fill="#E08A3C">Prototypevalg</text>
+          <!-- Fase-etikettene står PÅ SKRÅ langs linjen, litt over den.
+               Da trengs ingen beige "hull" bak teksten, og linjen brytes aldri.
+               Vinkelen følger linjens stigning: dx 215, dy -118  ->  28.75 grader. -->
+          <g font-size="12.5" text-anchor="middle" letter-spacing="0.2">
+            <text class="dd-seg dd-f-problem"   data-seg="problemutvikling"   transform="rotate(-28.75 197.5 101)"  x="197.5"  y="101" dy="-9">Problemutvikling</text>
+            <text class="dd-seg dd-f-problem"   data-seg="problemvalg"        transform="rotate(28.75 412.5 101)"   x="412.5"  y="101" dy="-9">Problemvalg</text>
+            <text class="dd-seg dd-f-ide"       data-seg="ideutvikling"       transform="rotate(-28.75 627.5 101)"  x="627.5"  y="101" dy="-9">Id&#233;utvikling</text>
+            <text class="dd-seg dd-f-ide"       data-seg="idevalg"            transform="rotate(28.75 842.5 101)"   x="842.5"  y="101" dy="-9">Id&#233;valg</text>
+            <text class="dd-seg dd-f-prototype" data-seg="prototypeutvikling" transform="rotate(-28.75 1057.5 101)" x="1057.5" y="101" dy="-9">Prototypeutvikling</text>
+            <text class="dd-seg dd-f-prototype" data-seg="prototypevalg"      transform="rotate(28.75 1272.5 101)"  x="1272.5" y="101" dy="-9">Prototypevalg</text>
           </g>
           <!-- end nodes (open) -->
           <circle cx="90" cy="160" r="9" fill="#fff" stroke="#C25A4E" stroke-width="2.5"/>
@@ -1200,12 +1200,12 @@
         <div class="dd-section pair-problem">
           <div class="dd-section-label">Problem</div>
           <div class="dd-row">
-            <button class="dd-card2" onclick="openLerret('page-sprikende','PROBLEMUTVIKLING')">
+            <button class="dd-card2" onclick="openLerret('page-sprikende','PROBLEMUTVIKLING')" data-seg="problemutvikling">
               <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span class="dd-card2-title">Problemutvikling</span></span>
               <span class="dd-card2-desc">Her skal du presentere 8 problemer.</span>
               <span class="dd-card2-cta">Gå til lerret <svg class="dd-card2-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M12 5l7 7-7 7"/></svg></span>
             </button>
-            <button class="dd-card2" onclick="openLerret('page-storyboard','PROBLEMVALG')">
+            <button class="dd-card2" onclick="openLerret('page-storyboard','PROBLEMVALG')" data-seg="problemvalg">
               <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span class="dd-card2-title">Problemvalg</span></span>
               <span class="dd-card2-desc">Her skal du formidle det valgte problemet.</span>
               <span class="dd-card2-cta">Gå til lerret <svg class="dd-card2-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M12 5l7 7-7 7"/></svg></span>
@@ -1216,12 +1216,12 @@
         <div class="dd-section pair-ide">
           <div class="dd-section-label">Id&#233;</div>
           <div class="dd-row">
-            <button class="dd-card2" onclick="openLerret('page-sprikende','IDÉUTVIKLING')">
+            <button class="dd-card2" onclick="openLerret('page-sprikende','IDÉUTVIKLING')" data-seg="ideutvikling">
               <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span class="dd-card2-title">Id&#233;utvikling</span></span>
               <span class="dd-card2-desc">Her skal du presentere 8 id&#233;er.</span>
               <span class="dd-card2-cta">Gå til lerret <svg class="dd-card2-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M12 5l7 7-7 7"/></svg></span>
             </button>
-            <button class="dd-card2" onclick="openLerret('page-storyboard','IDÉVALG')">
+            <button class="dd-card2" onclick="openLerret('page-storyboard','IDÉVALG')" data-seg="idevalg">
               <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span class="dd-card2-title">Id&#233;valg</span></span>
               <span class="dd-card2-desc">Her skal du formidle den valgte ideen.</span>
               <span class="dd-card2-cta">Gå til lerret <svg class="dd-card2-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M12 5l7 7-7 7"/></svg></span>
@@ -1232,12 +1232,12 @@
         <div class="dd-section pair-losning">
           <div class="dd-section-label">Prototype</div>
           <div class="dd-row">
-            <button class="dd-card2" onclick="openLerret('page-sprikende','PROTOTYPEUTVIKLING')">
+            <button class="dd-card2" onclick="openLerret('page-sprikende','PROTOTYPEUTVIKLING')" data-seg="prototypeutvikling">
               <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5C17.7 10.2 18 9 18 7.5a6 6 0 1 0-12 0c0 1.5.4 2.7 1.5 4 .8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg><span class="dd-card2-title">Prototypeutvikling</span></span>
               <span class="dd-card2-desc">Her skal du presentere 4 prototyper.</span>
               <span class="dd-card2-cta">Gå til lerret <svg class="dd-card2-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M12 5l7 7-7 7"/></svg></span>
             </button>
-            <button class="dd-card2" onclick="openLerret('page-storyboard','PROTOTYPEVALG')">
+            <button class="dd-card2" onclick="openLerret('page-storyboard','PROTOTYPEVALG')" data-seg="prototypevalg">
               <span class="dd-card2-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg><span class="dd-card2-title">Prototypevalg</span></span>
               <span class="dd-card2-desc">Her skal du formidle den valgte prototypen.</span>
               <span class="dd-card2-cta">Gå til lerret <svg class="dd-card2-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M12 5l7 7-7 7"/></svg></span>
@@ -2311,6 +2311,16 @@ function confirmDownload() {
 function closeDlPreview() {
   document.getElementById('dl-preview-modal').classList.remove('open');
 }
+
+// ── Trippeldiamanten: hover på et kort uthever samme etikett i diagrammet ──
+document.querySelectorAll('#page-innov102 .dd-card2[data-seg]').forEach(function (kort) {
+  const merke = document.querySelector('#page-innov102 .dd-seg[data-seg="' + kort.dataset.seg + '"]');
+  if (!merke) return;
+  kort.addEventListener('mouseenter', function () { merke.classList.add('dd-aktiv'); });
+  kort.addEventListener('mouseleave', function () { merke.classList.remove('dd-aktiv'); });
+  kort.addEventListener('focus', function () { merke.classList.add('dd-aktiv'); });
+  kort.addEventListener('blur', function () { merke.classList.remove('dd-aktiv'); });
+});
 
 // ── Egen tittel: grå standardtekst, svart når brukeren skriver sitt eget ──
 const _TITLE_PH = 'Din egen tittel';
