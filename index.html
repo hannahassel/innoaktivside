@@ -2182,10 +2182,36 @@ function _renderCanvas(type, hideSel) {
   pageEl.style.width = w + 'px';
   const h = Math.max(pageEl.scrollHeight, pageEl.offsetHeight) + 20;
 
+  // html2canvas støtter IKKE object-fit: contain – det tegner bildet slik at det
+  // fyller hele elementet, så tegningen ble strukket til boksens form i PDF-en.
+  // Vi regner derfor ut den innpassede størrelsen selv og midtstiller bildet, slik
+  // at nedlastingen blir identisk med det man ser på skjermen.
+  // NB: gjøres etter at bredden er endelig satt, ellers måler vi feil boks.
+  const bildeStiler = [];
+  pageEl.querySelectorAll('.cbox-img img').forEach(function (im) {
+    const boks = im.parentElement;
+    const bw = boks.clientWidth, bh = boks.clientHeight;
+    const nw = im.naturalWidth, nh = im.naturalHeight;
+    if (!bw || !bh || !nw || !nh) return;
+    const s = Math.min(bw / nw, bh / nh);
+    const dw = Math.round(nw * s), dh = Math.round(nh * s);
+    bildeStiler.push({ im: im, prev: im.getAttribute('style') });
+    im.style.objectFit = 'fill';
+    im.style.width = dw + 'px';
+    im.style.height = dh + 'px';
+    im.style.left = Math.round((bw - dw) / 2) + 'px';
+    im.style.top = Math.round((bh - dh) / 2) + 'px';
+    im.style.right = 'auto';
+    im.style.bottom = 'auto';
+  });
+
   function restore() {
     taMirrors.forEach(function (m) { m.mir.remove(); m.ta.style.display = ''; });
     inpMirrors.forEach(function (m) { m.mir.remove(); m.inp.style.display = ''; });
     hiddenEls.forEach(function (h) { h.el.style.display = h.prev; });
+    bildeStiler.forEach(function (b) {
+      if (b.prev === null) b.im.removeAttribute('style'); else b.im.setAttribute('style', b.prev);
+    });
     pageEl.classList.remove('pdf-mode');
     pageEl.style.width = prevWidth;
     if (navbar) navbar.style.display = '';
