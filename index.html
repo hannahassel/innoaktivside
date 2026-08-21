@@ -427,7 +427,24 @@
     .lc-ta::placeholder { color: #c8c0b6; font-style: italic; }
     .lc-box, .lc-maltall-box { cursor: text; }
     /* Kun plassering – utseendet arves fra fellesregelen for hjelpeikoner */
-    .lc-help { position: absolute; top: 12px; right: 12px; }
+    /* Lean Canvas: "?" i boksene er mørkerøde og litt mindre, så de ligger på linje
+       med overskriften i boksen og tydelig hører til den. */
+    .lc-help {
+      position: absolute; top: 14px; right: 14px;
+      width: 22px; height: 22px; font-size: 12px;
+      color: var(--red-dark); border-color: var(--red-dark);
+    }
+    .lc-help:hover, .lc-help.aktiv { background: rgba(130, 10, 18, 0.09); }
+    /* Hjelpetekst som boble ved siden av boksen – man kan skrive videre med den åpen */
+    .lc-boble {
+      position: absolute; left: calc(100% + 12px); top: 6px; width: 320px; z-index: 40;
+      background: #fff; border: 1px solid #ece3d6; border-radius: 12px;
+      padding: 16px 18px; box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+      font-size: 13.5px; line-height: 1.6; color: var(--text);
+      font-weight: 400; letter-spacing: 0; text-transform: none; cursor: default;
+    }
+    .lc-boble.venstre { left: auto; right: calc(100% + 12px); }
+    .pdf-mode .lc-boble { display: none !important; }
     /* Lean Canvas download button is the strong red (matches the design) */
     .lc-download { background: var(--red); }
     .lc-download:hover { background: #d4141f; }
@@ -676,6 +693,7 @@
     .dl-confirm svg { width: 18px; height: 18px; flex-shrink: 0; }
     .dl-confirm:hover { background: #d4141f; }
     .modal {
+      position: relative;
       background: white;
       border-radius: 16px;
       padding: 40px 36px 32px;
@@ -683,6 +701,17 @@
       width: 90%;
       box-shadow: 0 8px 40px rgba(0,0,0,0.18);
     }
+    /* Kryss for å lukke. Ligger i hjørnet av selve modalen – ikke inne i innholdet –
+       så det blir stående synlig også når innholdet er høyt og må scrolles. */
+    .modal-x {
+      position: absolute; top: 10px; right: 12px; z-index: 2;
+      background: none; border: none; cursor: pointer;
+      font-size: 26px; line-height: 1; color: #8a8078;
+      padding: 2px 8px; border-radius: 8px; font-family: inherit;
+    }
+    .modal-x:hover { color: var(--text); background: rgba(32, 5, 5, 0.07); }
+    /* Brukes når innholdet i en modal må kunne scrolle uten at krysset følger med */
+    .modal-rull { max-height: 90vh; overflow: auto; padding: 40px 36px 32px; }
     .modal h2 {
       font-size: 18px;
       font-weight: bold;
@@ -1492,7 +1521,7 @@
     <div class="lc-grid">
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openLcHelp('problem')">?</button>
+        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'problem')">?</button>
         <div class="lc-title">1. PROBLEM</div>
         <div class="lc-desc">Situasjoner/behov som oppleves lite hensiktsmessige, tidskrevende eller problematiske</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1500,7 +1529,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openLcHelp('losning')">?</button>
+        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'losning')">?</button>
         <div class="lc-title">2. LØSNING</div>
         <div class="lc-desc">Hva består løsningen av, og hvilke funksjoner har systemet eller tjenesten?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1508,7 +1537,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openLcHelp('verdiforslag')">?</button>
+        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'verdiforslag')">?</button>
         <div class="lc-title">3. VERDIFORSLAG</div>
         <div class="lc-desc">Slagord. PR. Kommunikasjon</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1516,7 +1545,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openLcHelp('kanal')">?</button>
+        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'kanal')">?</button>
         <div class="lc-title">4. KANAL</div>
         <div class="lc-desc">Hvordan når man brukerne?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1524,7 +1553,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="openLcHelp('bruker')">?</button>
+        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'bruker')">?</button>
         <div class="lc-title">5. BRUKER</div>
         <div class="lc-desc">Hvem har problemet og vil verdsette løsningen?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1532,7 +1561,7 @@
       </div>
 
       <div class="lc-box lc-wide">
-        <button class="lc-help" title="Hjelp" onclick="openLcHelp('kostnader')">?</button>
+        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'kostnader')">?</button>
         <div class="lc-title">6. KOSTNADER</div>
         <div class="lc-desc">De viktigste kostnadene knyttet til utvikling, drift og videreføring av tjenesten</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1540,7 +1569,7 @@
       </div>
 
       <div class="lc-box lc-wide">
-        <button class="lc-help" title="Hjelp" onclick="openLcHelp('inntekter')">?</button>
+        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'inntekter')">?</button>
         <div class="lc-title">7. INNTEKTER</div>
         <div class="lc-desc">Redegjør for hvilke verdier eller inntekter løsningen genererer</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1554,7 +1583,7 @@
     <div class="lc-maltall-inner">
       <div class="lc-maltall-label">MÅLTALL</div>
       <div class="lc-maltall-box">
-        <button class="lc-help" title="Hjelp" onclick="openLcHelp('maltall')">?</button>
+        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'maltall')">?</button>
         <textarea class="lc-ta" data-limit="300" placeholder="Fyll inn måltall her..." oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 300 ord</div>
       </div>
@@ -1599,6 +1628,7 @@
 <!-- ════════════════════ HELP MODAL ════════════════════ -->
 <div class="modal-overlay" id="help-modal" onclick="closeModal(event)">
   <div class="modal">
+    <button class="modal-x" title="Lukk" aria-label="Lukk" onclick="document.getElementById('help-modal').classList.remove('open')">&times;</button>
     <h2>Velkommen til Innoaktiv siden !</h2>
     <p>Denne siden er ditt digitale verktøy (<strong>Innoaktiv</strong>) hvor du finner interaktive oppgaver til innovasjonsemner på UiB.</p>
     <p>NB: Dette er en prototype under utvikling. Dersom du oppdager feil eller mangler, vennligst send en tilbakemelding til: hanna.hassel@uib.no.</p>
@@ -1609,6 +1639,7 @@
 <!-- Context-specific help modal for the lerret tools (Problem / Idé / Prototype) -->
 <div class="modal-overlay" id="lerret-help-modal" onclick="closeModal(event)">
   <div class="modal">
+    <button class="modal-x" title="Lukk" aria-label="Lukk" onclick="document.getElementById('lerret-help-modal').classList.remove('open')">&times;</button>
     <div id="lh-eyebrow" style="font-size:12px;font-weight:bold;letter-spacing:0.4px;color:var(--red-dark);margin-bottom:6px;"></div>
     <h2 id="lh-title" style="text-transform:none;"></h2>
     <p id="lh-body"></p>
@@ -1618,10 +1649,13 @@
 
 <!-- Storyboard example modal (INNOV101 Storyboard "?" beside the heading) -->
 <div class="modal-overlay" id="storyboard-help-modal" onclick="closeModal(event)">
-  <div class="modal" style="max-width:1150px;width:94vw;max-height:90vh;overflow:auto;">
-    <h2 style="text-transform:none;">Eksempel storyboard</h2>
-    <img src="storyboard-eksempel.png" alt="Eksempel på et utfylt storyboard: Broddene som redder dagen" style="width:100%;height:auto;border-radius:8px;display:block;margin:0 0 12px;">
-    <button class="modal-ok" onclick="document.getElementById('storyboard-help-modal').classList.remove('open')">OK</button>
+  <div class="modal" style="max-width:1150px;width:94vw;padding:0;">
+    <button class="modal-x" title="Lukk" aria-label="Lukk" onclick="document.getElementById('storyboard-help-modal').classList.remove('open')">&times;</button>
+    <div class="modal-rull">
+      <h2 style="text-transform:none;margin-bottom:6px;">Eksempel storyboard</h2>
+      <p style="margin-bottom:20px;">Visualiser brukerreisen steg for steg.</p>
+      <img src="storyboard-eksempel.png" alt="Eksempel på et utfylt storyboard: Broddene som redder dagen" style="width:100%;height:auto;border-radius:8px;display:block;margin:0;">
+    </div>
   </div>
 </div>
 
@@ -1648,6 +1682,7 @@
 <!-- Go-home confirmation modal -->
 <div class="modal-overlay" id="home-confirm-modal" onclick="closeModal(event)">
   <div class="modal">
+    <button class="modal-x" title="Lukk" aria-label="Lukk" onclick="document.getElementById('home-confirm-modal').classList.remove('open')">&times;</button>
     <h2 style="text-transform:none;">Gå til forsiden?</h2>
     <p>Er du sikker på at du vil gå hjem?</p>
     <div style="display:flex; gap:10px; margin-top:4px;">
@@ -1660,6 +1695,7 @@
 <!-- Lean Canvas help modal (heading + the 8 boxes) -->
 <div class="modal-overlay" id="lc-help-modal" onclick="closeModal(event)">
   <div class="modal">
+    <button class="modal-x" title="Lukk" aria-label="Lukk" onclick="document.getElementById('lc-help-modal').classList.remove('open')">&times;</button>
     <h2 id="lch-title" style="text-transform:none;"></h2>
     <p id="lch-body"></p>
     <button class="modal-ok" onclick="document.getElementById('lc-help-modal').classList.remove('open')">OK</button>
@@ -1788,6 +1824,37 @@ const LC_HELP = {
   inntekter:    { title: '7. Inntekter',     body: 'Her beskriver du hva du får igjen for løsningen. Dette kan være økonomiske inntekter (abonnementer, engangsbetalinger, annonser) eller andre målbare verdier som spart tid, økt effektivitet eller oppmerksomhet.' },
   maltall:      { title: 'Måltall',          body: 'Her kan du skrive inntil 300 ord om ditt Lean Canvas. Beskriv målene dine, viktige måltall eller andre tanker om prosjektet som ikke passer inn i de andre boksene.' }
 };
+// ── Lean Canvas: hjelpetekst som boble ved boksen, så man kan lese mens man skriver ──
+// Overskriftens "?" bruker fortsatt modalen (den teksten gjelder hele verktøyet).
+let _lcBoble = null;
+function lcLukkBoble() {
+  if (_lcBoble) { _lcBoble.remove(); _lcBoble = null; }
+  document.querySelectorAll('.lc-help.aktiv').forEach(function (b) { b.classList.remove('aktiv'); });
+}
+function lcBoble(btn, key) {
+  const varAapen = btn.classList.contains('aktiv');
+  lcLukkBoble();
+  if (varAapen) return;                       // samme "?" igjen -> lukk
+  const boks = btn.closest('.lc-box, .lc-maltall-box');
+  if (!boks) return;
+  const c = LC_HELP[key] || LC_HELP.overview;
+  const b = document.createElement('div');
+  b.className = 'lc-boble';
+  b.textContent = c.body;
+  boks.appendChild(b);
+  // Bytt til venstre side hvis det ikke er plass til høyre for boksen
+  const r = boks.getBoundingClientRect();
+  if (r.right + 12 + b.offsetWidth > window.innerWidth - 16) b.classList.add('venstre');
+  btn.classList.add('aktiv');
+  _lcBoble = b;
+}
+document.addEventListener('click', function (e) {
+  if (!_lcBoble) return;
+  if (e.target.closest('.lc-boble') || e.target.closest('.lc-help')) return;
+  lcLukkBoble();
+});
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lcLukkBoble(); });
+
 function openLcHelp(key) {
   const c = LC_HELP[key] || LC_HELP.overview;
   document.getElementById('lch-title').textContent = c.title;
@@ -2764,7 +2831,7 @@ wireDescWordLimits();
 // Lean Canvas: click anywhere in a box to put the cursor in its text field
 document.querySelectorAll('#page-lean-canvas .lc-box, #page-lean-canvas .lc-maltall-box').forEach(function (b) {
   b.addEventListener('mousedown', function (e) {
-    if (e.target.tagName === 'TEXTAREA' || e.target.closest('.lc-help')) return;
+    if (e.target.tagName === 'TEXTAREA' || e.target.closest('.lc-help') || e.target.closest('.lc-boble')) return;
     e.preventDefault();
     var ta = b.querySelector('.lc-ta');
     if (ta) ta.focus();
