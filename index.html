@@ -419,6 +419,9 @@
     /* top: -15px lar linjen møte streken under PRODUKT/MARKED (14px margin) uten hakk */
     .lc-grid::before { content: ""; position: absolute; top: -15px; bottom: -10px; left: 50%; width: 2px; margin-left: -1px; background: #dccfc0; z-index: 0; }
     .lc-grid > .lc-box { z-index: 1; }
+    /* Boksen som har hjelpeboblen åpen må heves over nabo-boksene, ellers
+       forsvinner boblen bak boksen til høyre/venstre (de deler stabel-nivå). */
+    .lc-grid > .lc-box.lc-boks-aktiv, .lc-maltall-box.lc-boks-aktiv { z-index: 50; }
     .lc-box { grid-column: span 2; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); padding: 16px 16px 28px; position: relative; display: flex; flex-direction: column; min-height: 420px; }
     .lc-box.lc-wide { grid-column: span 5; min-height: 260px; }
     .lc-title { font-size: 14.5px; font-weight: bold; color: var(--red-dark); letter-spacing: 0.4px; padding-right: 26px; text-transform: uppercase; }
@@ -1830,6 +1833,7 @@ let _lcBoble = null;
 function lcLukkBoble() {
   if (_lcBoble) { _lcBoble.remove(); _lcBoble = null; }
   document.querySelectorAll('.lc-help.aktiv').forEach(function (b) { b.classList.remove('aktiv'); });
+  document.querySelectorAll('.lc-boks-aktiv').forEach(function (bx) { bx.classList.remove('lc-boks-aktiv'); });
 }
 function lcBoble(btn, key) {
   const varAapen = btn.classList.contains('aktiv');
@@ -1842,6 +1846,7 @@ function lcBoble(btn, key) {
   b.className = 'lc-boble';
   b.textContent = c.body;
   boks.appendChild(b);
+  boks.classList.add('lc-boks-aktiv');         // hev boksen over nabo-boksene så boblen ikke skjules
   // Bytt til venstre side hvis det ikke er plass til høyre for boksen
   const r = boks.getBoundingClientRect();
   if (r.right + 12 + b.offsetWidth > window.innerWidth - 16) b.classList.add('venstre');
