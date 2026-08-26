@@ -326,7 +326,7 @@
     .sp-phase strong { color: var(--red); font-weight: 700; font-size: 18px; letter-spacing: 0.3px; }
     /* position: relative trengs for hjelpe-tipset – utseendet arves fra fellesregelen */
     .sp-phase-help { position: relative; }
-    .sp-phase-tip { position: absolute; left: 0; top: calc(100% + 9px); white-space: nowrap; background: #fff; color: #6f665c; font-size: 14px; font-weight: 400; border: 1px solid #ece3d6; border-radius: 12px; padding: 8px 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.14); opacity: 0; visibility: hidden; transition: opacity .15s; z-index: 60; pointer-events: none; }
+    .sp-phase-tip { position: absolute; left: calc(100% + 9px); top: 50%; transform: translateY(-50%); white-space: nowrap; background: #fff; color: #6f665c; font-size: 14px; font-weight: 400; border: 1px solid #ece3d6; border-radius: 12px; padding: 8px 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.14); opacity: 0; visibility: hidden; transition: opacity .15s; z-index: 60; pointer-events: none; }
     .sp-phase-help:hover .sp-phase-tip, .sp-phase-help:focus .sp-phase-tip { opacity: 1; visibility: visible; }
     .pdf-mode .sp-phase-help { display: none !important; }
     /* Egen tittel: svart når man har skrevet noe, grå så lenge standardteksten står */
