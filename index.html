@@ -2622,29 +2622,64 @@ function edMove(e) {
 
 function edUp() { ed.drawing = false; }
 
-// Figurene tegnes som de samme SVG-formene som i plakat-verktøyet (skalert
-// til dra-rektangelet), rastrert inn på lerretet — så alle 9 formene ser
-// nøyaktig ut som i plakat, i stedet for bare de 4 vi tegnet med canvas-API-et før.
-const _edShapeImgCache = {};
-function edShapeImage(kind, color) {
-  const key = kind + '|' + color;
-  if (_edShapeImgCache[key]) return _edShapeImgCache[key];
-  const attrs = 'fill="none" stroke="' + color + '" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"';
-  const inner = (SHAPES[kind] || SHAPES.rect)(attrs);
-  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">' + inner + '</svg>';
-  const img = new Image();
-  img.src = 'data:image/svg+xml;base64,' + btoa(svg);
-  _edShapeImgCache[key] = img;
-  return img;
+// Figurene tegnes med samme geometri som i plakat-verktøyet (punktene fra
+// SHAPES-oppslaget over, skalert til dra-rektangelet), men rett med canvas-
+// linjer/kurver — ikke som et rastrert/strekket bilde. Det gir en konstant,
+// tynn strektykkelse uansett hvor stor figuren dras ut, akkurat som Tegn/
+// Viskelær — i stedet for streken som ble stadig tykkere ved store figurer.
+function edShapePath(kind, x0, y0, w, h) {
+  const ctx = ed.ctx;
+  const sx = nx => x0 + (nx / 100) * w;
+  const sy = ny => y0 + (ny / 100) * h;
+  const line = pts => pts.forEach(([px, py], i) => (i === 0 ? ctx.moveTo : ctx.lineTo).call(ctx, sx(px), sy(py)));
+  ctx.beginPath();
+  if (kind === 'rect') {
+    ctx.rect(sx(6), sy(6), sx(94) - sx(6), sy(94) - sy(6));
+  } else if (kind === 'triangle') {
+    line([[50, 6], [94, 94], [6, 94]]); ctx.closePath();
+  } else if (kind === 'ellipse') {
+    ctx.ellipse(sx(50), sy(50), Math.abs(sx(94) - sx(50)), Math.abs(sy(94) - sy(50)), 0, 0, Math.PI * 2);
+  } else if (kind === 'arrow') {
+    line([[6, 50], [82, 50]]);
+    line([[62, 30], [88, 50], [62, 70]]);
+  } else if (kind === 'line') {
+    line([[6, 50], [94, 50]]);
+  } else if (kind === 'star') {
+    line([[50, 6], [61, 38], [95, 38], [68, 59], [79, 93], [50, 72], [21, 93], [32, 59], [5, 38], [39, 38]]);
+    ctx.closePath();
+  } else if (kind === 'heart') {
+    ctx.moveTo(sx(50), sy(90));
+    ctx.bezierCurveTo(sx(10), sy(60), sx(10), sy(20), sx(38), sy(20));
+    ctx.bezierCurveTo(sx(46), sy(20), sx(50), sy(28), sx(50), sy(33));
+    ctx.bezierCurveTo(sx(50), sy(28), sx(54), sy(20), sx(62), sy(20));
+    ctx.bezierCurveTo(sx(90), sy(20), sx(90), sy(60), sx(50), sy(90));
+    ctx.closePath();
+  } else if (kind === 'thumb') {
+    line([[20, 44], [10, 44], [6, 48], [6, 88], [10, 92], [20, 92]]); ctx.closePath();
+    line([[20, 44], [40, 12]]);
+    ctx.bezierCurveTo(sx(42), sy(8), sx(50), sy(8), sx(52), sy(14));
+    ctx.bezierCurveTo(sx(54), sy(20), sx(50), sy(34), sx(48), sy(40));
+    ctx.lineTo(sx(82), sy(40)); ctx.lineTo(sx(89), sy(51)); ctx.lineTo(sx(83), sy(84));
+    ctx.lineTo(sx(75), sy(92)); ctx.lineTo(sx(20), sy(92)); ctx.closePath();
+  } else if (kind === 'bubble') {
+    line([[14, 14], [86, 14], [94, 22], [94, 62], [86, 70], [42, 70], [24, 90], [28, 70], [14, 70], [6, 62], [6, 22]]);
+    ctx.closePath();
+  } else {
+    ctx.rect(sx(6), sy(6), sx(94) - sx(6), sy(94) - sy(6));
+  }
 }
 
 function edDrawShape(a, b) {
-  const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+  const x0 = Math.min(a.x, b.x), y0 = Math.min(a.y, b.y);
   const w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y);
   if (w < 1 || h < 1) return;
-  const img = edShapeImage(ed.shape, ed.color);
-  const draw = () => ed.ctx.drawImage(img, x, y, w, h);
-  if (img.complete) draw(); else img.onload = draw;
+  const ctx = ed.ctx;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = ed.color;
+  ctx.lineWidth = 3;
+  edShapePath(ed.shape, x0, y0, w, h);
+  ctx.stroke();
 }
 
 function setTool(t) {
