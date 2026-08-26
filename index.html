@@ -1776,10 +1776,10 @@
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
         Tegn
       </button>
-      <button class="etool" id="t-color" title="Farge" onclick="pickColor()">
+      <label class="etool" id="t-color" for="ed-color-input" title="Farge" onclick="pickColor()">
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2.7l5.66 5.66a8 8 0 1 1-11.31 0L12 2.7z" fill="currentColor"/></svg>
         Farge
-      </button>
+      </label>
       <button class="etool" id="t-erase" title="Viskelær" onclick="setTool('erase')">
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M15.14 3c-.51 0-1.02.2-1.41.59L2.59 14.73a2 2 0 0 0 0 2.83L5.03 20h5.66l10.72-10.72a2 2 0 0 0 0-2.83l-3.86-3.86A1.99 1.99 0 0 0 15.14 3zM7.05 18l-2.02-2.02 6.36-6.36 2.02 2.02L7.05 18z" fill="currentColor"/><path d="M6 22h16v-2H6z" fill="currentColor"/></svg>
         Viskelær
@@ -2575,6 +2575,7 @@ function initEditor() {
   window.addEventListener('pointerup', edUp);
 
   document.getElementById('ed-file').addEventListener('change', edInsertImage);
+  ensureColorInput();
   renderShapeGrid();
 }
 
@@ -2715,7 +2716,7 @@ function updatePropsBar() {
       '<span class="pb-grp"><span class="pb-grp-label">Tykkelse</span>' + widths + '</span>' +
       '<span class="pb-sep"></span>' +
       '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
-      '<button class="pb-chip" onclick="pickColor()">Flere farger</button>';
+      '<label class="pb-chip" for="ed-color-input" onclick="pickColor()">Flere farger</label>';
   } else if (ed.tool === 'erase') {
     bar.innerHTML =
       '<span class="pb-label">Viskelær</span><span class="pb-sep"></span>' +
@@ -2737,7 +2738,7 @@ function updatePropsBar() {
           '<button class="pb-step-btn" onclick="setShapeStroke(1)">+</button>' +
         '</span><span class="pb-sep"></span>' +
         '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
-        '<button class="pb-chip" onclick="pickColor()">Flere farger</button>';
+        '<label class="pb-chip" for="ed-color-input" onclick="pickColor()">Flere farger</label>';
     }
   } else {
     bar.innerHTML = '';
@@ -2758,35 +2759,45 @@ function setDrawColor(hex) {
   updatePropsBar();
 }
 
-function pickColor() {
+function ensureColorInput() {
   let inp = document.getElementById('ed-color-input');
-  if (!inp) {
-    inp = document.createElement('input');
-    inp.type = 'color';
-    inp.id = 'ed-color-input';
-    inp.style.position = 'absolute';
-    inp.style.width = '1px';
-    inp.style.height = '1px';
-    inp.style.opacity = '0';
-    inp.style.overflow = 'hidden';
-    inp.style.pointerEvents = 'none';
-    inp.addEventListener('input', e => {
-      if (ed.tool === 'shape' && ed.shapeObj) {
-        ed.shapeObj.color = e.target.value;
-        ed.color = e.target.value;
-        renderShapeObj();
-        updatePropsBar();
-      } else {
-        ed.color = e.target.value;
-        ed.tool = 'draw';
-        highlightTool();
-        updatePropsBar();
-      }
-    });
-    document.body.appendChild(inp);
-  }
+  if (inp) return inp;
+  inp = document.createElement('input');
+  inp.type = 'color';
+  inp.id = 'ed-color-input';
+  inp.style.position = 'absolute';
+  inp.style.width = '1px';
+  inp.style.height = '1px';
+  inp.style.opacity = '0';
+  inp.style.overflow = 'hidden';
+  inp.style.pointerEvents = 'none';
+  inp.addEventListener('input', e => {
+    if (ed.tool === 'shape' && ed.shapeObj) {
+      ed.shapeObj.color = e.target.value;
+      ed.color = e.target.value;
+      renderShapeObj();
+      updatePropsBar();
+    } else {
+      ed.color = e.target.value;
+      ed.tool = 'draw';
+      highlightTool();
+      updatePropsBar();
+    }
+  });
+  document.body.appendChild(inp);
+  return inp;
+}
+
+// Kalles fra onclick på "Farge"/"Flere farger" (nå <label for="ed-color-input">)
+// for å sette riktig startfarge FØR nettleseren åpner fargevelgeren via den
+// innebygde label→input-klikk-videresendingen. Vi bruker ikke lenger et
+// skriptet .click()-kall her, siden Safari ikke alltid åpner fargevelgeren
+// pålitelig ved et programmatisk klikk på et skjult input-element — en ekte
+// <label for="..."> er en nettleser-innebygd mekanisme og fungerer likt i
+// alle nettlesere.
+function pickColor() {
+  const inp = ensureColorInput();
   inp.value = (ed.tool === 'shape' && ed.shapeObj) ? ed.shapeObj.color : ed.color;
-  inp.click();
 }
 
 // ── "Legg til form" — 3x3 rutenett med alle 9 figurene, som i plakat ──
