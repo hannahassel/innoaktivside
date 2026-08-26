@@ -818,6 +818,10 @@
       display: block; width: 100%; height: auto;
       touch-action: none; cursor: crosshair; background: white;
     }
+    .shape-obj-layer { position: absolute; inset: 0; pointer-events: none; }
+    .shape-obj { position: absolute; box-sizing: border-box; cursor: move; pointer-events: auto; box-shadow: 0 0 0 2px #820A12; }
+    .shape-obj svg { width: 100%; height: 100%; display: block; overflow: visible; pointer-events: none; }
+    .shape-obj-handle { position: absolute; right: -7px; bottom: -7px; width: 14px; height: 14px; background: #fff; border: 2px solid #820A12; border-radius: 3px; cursor: nwse-resize; pointer-events: auto; z-index: 2; }
     .editor-desc {
       background: var(--bg-blue); padding: 12px;
       font-size: 12px; color: #444; min-height: 48px;
@@ -899,6 +903,9 @@
       background: #fff; color: #200505; cursor: pointer; font-size: 13px; font-family: inherit;
     }
     .pb-chip:hover { background: #f4f4f4; }
+    .pb-step-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(0,0,0,.16); background: #fff; cursor: pointer; font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; color: #200505; font-family: inherit; }
+    .pb-step-btn:hover { background: #f4f4f4; }
+    .pb-step-val { min-width: 26px; text-align: center; font-size: 14px; color: #200505; }
 
     @media (max-width: 640px) {
       .editor-wrap { display: flex; flex-direction: column; align-items: center; }
@@ -1787,7 +1794,7 @@
           <div class="shape-menu-grid" id="shape-menu-grid"></div>
         </div>
       </div>
-      <button class="etool" id="t-image" title="Bilde" onclick="document.getElementById('ed-file').click()">
+      <button class="etool" id="t-image" title="Bilde" onclick="edCommitShapeObj();document.getElementById('ed-file').click()">
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm2 12l4-5 3 4 2-2 3 3V6H6z" fill="currentColor"/></svg>
         Bilde
       </button>
@@ -1811,6 +1818,7 @@
         </div>
         <div class="editor-canvas-wrap">
           <canvas id="ed-canvas" width="1000" height="640"></canvas>
+          <div class="shape-obj-layer" id="shape-obj-layer"></div>
         </div>
         <div class="editor-desc" id="ed-desc" contenteditable="true" data-placeholder="Forklar ideen bak illustrasjonen"></div>
       </div>
@@ -2530,13 +2538,16 @@ const SHAPE_LABELS = {
   star: 'Stjerne', heart: 'Hjerte', thumb: 'Tommel opp', bubble: 'Snakkeboble'
 };
 
+const SHAPE_SIZE = { rect: [180, 180], triangle: [195, 165], ellipse: [180, 180], arrow: [235, 125], line: [305, 85], star: [180, 180], heart: [180, 165], thumb: [165, 180], bubble: [250, 180] };
+
 const ed = {
   canvas: null, ctx: null,
   box: null, imgArea: null,
   tool: 'draw', color: '#820A12', width: 4, shape: 'rect',
   drawing: false, dirty: false,
   snapshot: null, start: null, last: null,
-  undoStack: []
+  undoStack: [],
+  shapeObj: null
 };
 
 // Save the canvas state before an action so it can be undone
@@ -2547,6 +2558,7 @@ function edPushUndo() {
   } catch (e) {}
 }
 function edUndo() {
+  if (ed.shapeObj) { edDiscardShapeObj(); return; }
   if (!ed.undoStack.length) return;
   ed.ctx.globalCompositeOperation = 'source-over';
   ed.ctx.putImageData(ed.undoStack.pop(), 0, 0);
@@ -2590,34 +2602,25 @@ function edStrokeStyle() {
 }
 
 function edDown(e) {
+  if (ed.tool === 'shape') return; // form-figurer plasseres via "Legg til form"-panelet, ikke ved å dra på lerretet
   e.preventDefault();
   edPushUndo();
   ed.drawing = true; ed.dirty = true;
   const p = edPos(e);
   edStrokeStyle();
-  if (ed.tool === 'shape') {
-    ed.start = p;
-    ed.snapshot = ed.ctx.getImageData(0, 0, ed.canvas.width, ed.canvas.height);
-  } else {
-    ed.ctx.beginPath();
-    ed.ctx.moveTo(p.x, p.y);
-    ed.ctx.lineTo(p.x + 0.1, p.y + 0.1);
-    ed.ctx.stroke();
-    ed.last = p;
-  }
+  ed.ctx.beginPath();
+  ed.ctx.moveTo(p.x, p.y);
+  ed.ctx.lineTo(p.x + 0.1, p.y + 0.1);
+  ed.ctx.stroke();
+  ed.last = p;
 }
 
 function edMove(e) {
   if (!ed.drawing) return;
   const p = edPos(e);
-  if (ed.tool === 'shape') {
-    ed.ctx.putImageData(ed.snapshot, 0, 0);
-    edDrawShape(ed.start, p);
-  } else {
-    ed.ctx.lineTo(p.x, p.y);
-    ed.ctx.stroke();
-    ed.last = p;
-  }
+  ed.ctx.lineTo(p.x, p.y);
+  ed.ctx.stroke();
+  ed.last = p;
 }
 
 function edUp() { ed.drawing = false; }
@@ -2683,6 +2686,7 @@ function edDrawShape(a, b) {
 }
 
 function setTool(t) {
+  if (t !== 'shape') edCommitShapeObj();
   ed.tool = t;
   document.getElementById('shape-menu').classList.remove('open');
   highlightTool();
@@ -2716,6 +2720,25 @@ function updatePropsBar() {
     bar.innerHTML =
       '<span class="pb-label">Viskelær</span><span class="pb-sep"></span>' +
       '<span class="pb-hint">Klikk og dra over strekene for å viske dem ut.</span>';
+  } else if (ed.tool === 'shape') {
+    if (!ed.shapeObj) {
+      bar.innerHTML =
+        '<span class="pb-label">Form</span><span class="pb-sep"></span>' +
+        '<span class="pb-hint">Velg en figur i menyen for å legge den til.</span>';
+    } else {
+      const so = ed.shapeObj;
+      const swatches = DRAW_COLORS.map(c =>
+        '<button class="pb-swatch' + (so.color.toLowerCase() === c ? ' active' : '') + '" style="background:' + c + '" title="' + c + '" onclick="setShapeColor(\'' + c + '\')"></button>').join('');
+      bar.innerHTML =
+        '<span class="pb-label">Form</span><span class="pb-sep"></span>' +
+        '<span class="pb-grp"><span class="pb-grp-label">Tykkelse</span>' +
+          '<button class="pb-step-btn" onclick="setShapeStroke(-1)">−</button>' +
+          '<span class="pb-step-val">' + so.strokeWidth + '</span>' +
+          '<button class="pb-step-btn" onclick="setShapeStroke(1)">+</button>' +
+        '</span><span class="pb-sep"></span>' +
+        '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
+        '<button class="pb-chip" onclick="pickColor()">Flere farger</button>';
+    }
   } else {
     bar.innerHTML = '';
   }
@@ -2741,16 +2764,28 @@ function pickColor() {
     inp = document.createElement('input');
     inp.type = 'color';
     inp.id = 'ed-color-input';
-    inp.style.display = 'none';
+    inp.style.position = 'absolute';
+    inp.style.width = '1px';
+    inp.style.height = '1px';
+    inp.style.opacity = '0';
+    inp.style.overflow = 'hidden';
+    inp.style.pointerEvents = 'none';
     inp.addEventListener('input', e => {
-      ed.color = e.target.value;
-      ed.tool = 'draw';
-      highlightTool();
-      updatePropsBar();
+      if (ed.tool === 'shape' && ed.shapeObj) {
+        ed.shapeObj.color = e.target.value;
+        ed.color = e.target.value;
+        renderShapeObj();
+        updatePropsBar();
+      } else {
+        ed.color = e.target.value;
+        ed.tool = 'draw';
+        highlightTool();
+        updatePropsBar();
+      }
     });
     document.body.appendChild(inp);
   }
-  inp.value = ed.color;
+  inp.value = (ed.tool === 'shape' && ed.shapeObj) ? ed.shapeObj.color : ed.color;
   inp.click();
 }
 
@@ -2780,17 +2815,135 @@ function toggleShapeMenu() {
 }
 
 function setShape(s) {
+  edCommitShapeObj();
+  const sz = SHAPE_SIZE[s] || [180, 180];
+  const w = sz[0], h = sz[1];
   ed.shape = s;
   ed.tool = 'shape';
+  ed.shapeObj = {
+    kind: s,
+    x: (ed.canvas.width - w) / 2,
+    y: (ed.canvas.height - h) / 2,
+    w: w, h: h,
+    color: ed.color,
+    strokeWidth: 4
+  };
   highlightTool();
   updateShapeGridActive();
+  updatePropsBar();
   document.getElementById('shape-menu').classList.remove('open');
+  renderShapeObj();
+}
+
+function setShapeColor(c) {
+  if (!ed.shapeObj) return;
+  ed.shapeObj.color = c;
+  ed.color = c;
+  renderShapeObj();
+  updatePropsBar();
+}
+
+function setShapeStroke(delta) {
+  if (!ed.shapeObj) return;
+  ed.shapeObj.strokeWidth = Math.max(1, Math.min(24, ed.shapeObj.strokeWidth + delta));
+  renderShapeObj();
+  updatePropsBar();
+}
+
+// ── Form-figuren settes inn i fast standardstørrelse og kan flyttes/endre
+// størrelse med et håndtak i hjørnet — akkurat som elementene i
+// plakat-verktøyet — helt til den forpliktes ("bakes") inn i lerretet.
+function edCanvasScale() {
+  const r = ed.canvas.getBoundingClientRect();
+  return r.width / ed.canvas.width || 1;
+}
+
+function edShapeObjSvg() {
+  const so = ed.shapeObj;
+  const k = edCanvasScale();
+  const strokeCss = Math.max(0.5, so.strokeWidth * k);
+  const attr = 'fill="none" stroke="' + so.color + '" stroke-width="' + strokeCss +
+    '" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"';
+  return '<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible;pointer-events:none">' +
+    SHAPES[so.kind](attr) + '</svg>';
+}
+
+function renderShapeObj() {
+  const layer = document.getElementById('shape-obj-layer');
+  if (!layer) return;
+  if (!ed.shapeObj) { layer.innerHTML = ''; return; }
+  const so = ed.shapeObj;
+  const leftPct = (so.x / ed.canvas.width) * 100;
+  const topPct = (so.y / ed.canvas.height) * 100;
+  const wPct = (so.w / ed.canvas.width) * 100;
+  const hPct = (so.h / ed.canvas.height) * 100;
+  layer.innerHTML =
+    '<div class="shape-obj" id="shape-obj-el" style="left:' + leftPct + '%;top:' + topPct + '%;width:' + wPct + '%;height:' + hPct + '%;">' +
+      edShapeObjSvg() +
+      '<div class="shape-obj-handle" id="shape-obj-handle"></div>' +
+    '</div>';
+  document.getElementById('shape-obj-el').addEventListener('pointerdown', startShapeDrag);
+  document.getElementById('shape-obj-handle').addEventListener('pointerdown', startShapeResize);
+}
+
+function startShapeDrag(e) {
+  if (!ed.shapeObj) return;
+  e.preventDefault(); e.stopPropagation();
+  const so = ed.shapeObj, k = edCanvasScale();
+  const sx = e.clientX, sy = e.clientY, ox = so.x, oy = so.y;
+  const move = ev => {
+    so.x = ox + (ev.clientX - sx) / k;
+    so.y = oy + (ev.clientY - sy) / k;
+    renderShapeObj();
+  };
+  const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+}
+
+function startShapeResize(e) {
+  if (!ed.shapeObj) return;
+  e.preventDefault(); e.stopPropagation();
+  const so = ed.shapeObj, k = edCanvasScale();
+  const sx = e.clientX, sy = e.clientY, ow = so.w, oh = so.h;
+  const move = ev => {
+    so.w = Math.max(20, ow + (ev.clientX - sx) / k);
+    so.h = Math.max(20, oh + (ev.clientY - sy) / k);
+    renderShapeObj();
+  };
+  const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); };
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+}
+
+function edCommitShapeObj() {
+  if (!ed.shapeObj) return;
+  const so = ed.shapeObj;
+  edPushUndo();
+  const ctx = ed.ctx;
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = so.color;
+  ctx.lineWidth = so.strokeWidth;
+  edShapePath(so.kind, so.x, so.y, so.w, so.h);
+  ctx.stroke();
+  ed.dirty = true;
+  ed.shapeObj = null;
+  renderShapeObj();
+}
+
+function edDiscardShapeObj() {
+  ed.shapeObj = null;
+  renderShapeObj();
 }
 
 function clearCanvas() {
   edPushUndo();
   ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
   ed.dirty = true;
+  ed.shapeObj = null;
+  renderShapeObj();
 }
 
 function edInsertImage(e) {
@@ -2849,6 +3002,8 @@ function openEditor(box, num) {
   ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
   ed.dirty = false;
   ed.undoStack = [];
+  ed.shapeObj = null;
+  renderShapeObj();
   if (box.dataset.drawing) {
     const img = new Image();
     img.onload = () => ed.ctx.drawImage(img, 0, 0, ed.canvas.width, ed.canvas.height);
@@ -2861,6 +3016,7 @@ function openEditor(box, num) {
 
 function closeEditor() {
   if (!ed.box) return;
+  edCommitShapeObj();
   const title = ed.box.querySelector('.cbox-title');
   const desc = ed.box.querySelector('.cbox-desc');
   const placeholder = ed.box.dataset.ph || 'Forklar ideen bak illustrasjonen';
