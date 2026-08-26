@@ -800,6 +800,7 @@
       transform: translate(-50%, -50%);
     }
     .editor-card {
+      position: relative;
       background: white; border-radius: 6px;
       overflow: hidden; box-shadow: 0 6px 28px rgba(0,0,0,0.18);
       display: flex; flex-direction: column;
@@ -843,21 +844,61 @@
     .editor-save svg { width: 22px; height: 22px; }
     .editor-save:hover { color: #000; }
 
+    /* "Legg til form"-meny — samme panel-/rutenett-oppsett som i plakat-
+       verktøyet: tittel + 3x3 rutenett med figur-kort. Funksjonen er som før
+       (dra på lerretet for å tegne valgt form), bare presentasjonen matcher plakat. */
     .etool-shape { position: relative; }
     .shape-menu {
       display: none; position: absolute; left: calc(100% + 6px); top: 0;
-      flex-direction: column; gap: 4px; z-index: 3;
-      background: white; border-radius: 8px; padding: 5px;
-      box-shadow: 0 4px 22px rgba(0,0,0,0.18);
+      z-index: 3; background: white; border-radius: 12px; padding: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.22); width: 226px;
     }
-    .shape-menu.open { display: flex; }
-    .shape-menu button {
-      background: #f4f4f4; border: 1.5px solid #ddd; border-radius: 6px;
-      cursor: pointer; padding: 5px; width: 40px;
+    .shape-menu.open { display: block; }
+    .shape-menu-title { font-weight: 700; font-size: 14px; margin-bottom: 10px; color: #200505; }
+    .shape-menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .shape-menu-grid button {
+      background: #fff9f0; border: 1px solid rgba(0,0,0,.12); border-radius: 8px;
+      cursor: pointer; padding: 10px 2px 6px;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      font-size: 10px; color: #200505; font-family: inherit;
+    }
+    .shape-menu-grid button svg { width: 26px; height: 26px; }
+    .shape-menu-grid button.active { border-color: var(--red); box-shadow: 0 0 0 1px var(--red) inset; }
+
+    /* Kontekstlinje over lerretet — samme mønster som i plakat-verktøyet:
+       viser tykkelse + fargevalg når du tegner, hint-tekst når du visker ut. */
+    .props-bar {
+      position: absolute; bottom: calc(100% + 12px); left: 50%;
+      transform: translateX(-50%); max-width: 92%;
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; row-gap: 10px; flex-wrap: wrap;
+      background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 10px;
+      padding: 10px 18px; box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      white-space: nowrap; font-family: inherit;
+    }
+    .props-bar:empty { display: none; }
+    .pb-label { font-weight: 700; font-size: 14px; color: #004281; }
+    .pb-hint { font-size: 13px; color: #7b7b7b; white-space: normal; }
+    .pb-sep { width: 1px; align-self: stretch; background: rgba(0,0,0,.1); margin: 2px 0; }
+    .pb-grp { display: flex; align-items: center; gap: 8px; }
+    .pb-grp-label { font-size: 13px; color: #7b7b7b; }
+    .pb-width-btn {
+      width: 30px; height: 28px; border-radius: 6px; padding: 0;
+      border: 1px solid rgba(0,0,0,.16); background: #fff; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
     }
-    .shape-menu button svg { width: 18px; height: 18px; }
-    .shape-menu button.active { border-color: var(--red); background: var(--pink); }
+    .pb-width-btn.active { border-color: #004281; background: #b0deff; }
+    .pb-width-bar { display: block; width: 16px; background: #200505; border-radius: 4px; }
+    .pb-swatch {
+      width: 28px; height: 28px; border-radius: 7px; padding: 0;
+      border: 2px solid rgba(0,0,0,.15); cursor: pointer;
+    }
+    .pb-swatch.active { border: 3px solid #200505; }
+    .pb-chip {
+      padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(0,0,0,.16);
+      background: #fff; color: #200505; cursor: pointer; font-size: 13px; font-family: inherit;
+    }
+    .pb-chip:hover { background: #f4f4f4; }
 
     @media (max-width: 640px) {
       .editor-wrap { display: flex; flex-direction: column; align-items: center; }
@@ -871,7 +912,8 @@
         position: static; height: auto; flex-direction: row;
         justify-content: space-between; width: 92vw; margin-top: 10px;
       }
-      .shape-menu { position: static; left: auto; box-shadow: none; padding: 4px 0; }
+      .shape-menu { position: static; left: auto; box-shadow: none; padding: 4px 0; width: auto; }
+      .props-bar { position: static; transform: none; margin: 0 auto 10px; max-width: 100%; }
     }
 
     @media (max-width: 620px) {
@@ -1741,10 +1783,8 @@
           Form
         </button>
         <div class="shape-menu" id="shape-menu">
-          <button data-shape="rect" title="Rektangel" onclick="event.stopPropagation();setShape('rect')"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="1"/></svg></button>
-          <button data-shape="ellipse" title="Sirkel" onclick="event.stopPropagation();setShape('ellipse')"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><ellipse cx="12" cy="12" rx="9" ry="7"/></svg></button>
-          <button data-shape="triangle" title="Trekant" onclick="event.stopPropagation();setShape('triangle')"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linejoin="round"><path d="M12 4 L21 20 L3 20 Z"/></svg></button>
-          <button data-shape="line" title="Linje" onclick="event.stopPropagation();setShape('line')"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"><line x1="4" y1="20" x2="20" y2="4"/></svg></button>
+          <div class="shape-menu-title">Legg til form</div>
+          <div class="shape-menu-grid" id="shape-menu-grid"></div>
         </div>
       </div>
       <button class="etool" id="t-image" title="Bilde" onclick="document.getElementById('ed-file').click()">
@@ -1763,6 +1803,7 @@
 
     <!-- Card + side controls -->
     <div class="editor-cardcol">
+      <div class="props-bar" id="props-bar"></div>
       <div class="editor-card">
         <div class="editor-hd" id="ed-header">
           <span id="ed-hd-num"></span>
@@ -2469,10 +2510,30 @@ document.querySelectorAll('.sp-title-input, .sp-sub input').forEach(function (in
 });
 
 // ══════════════════════ DRAWING EDITOR ══════════════════════
+// Verktøyene (tykkelse, farger, figurer) speiler plakat-verktøyets egne
+// verdier og figurdefinisjoner, slik at funksjonen blir den samme.
+const DRAW_WIDTHS = [2, 4, 8, 14];
+const DRAW_COLORS = ['#820a12', '#ff2130', '#004281', '#00a2ff', '#200505'];
+const SHAPES = {
+  rect:     s => '<rect x="6" y="6" width="88" height="88" ' + s + '/>',
+  triangle: s => '<polygon points="50,6 94,94 6,94" ' + s + '/>',
+  ellipse:  s => '<ellipse cx="50" cy="50" rx="44" ry="44" ' + s + '/>',
+  arrow:    s => '<path d="M6 50 H82 M62 30 L88 50 L62 70" ' + s + '/>',
+  line:     s => '<line x1="6" y1="50" x2="94" y2="50" ' + s + '/>',
+  star:     s => '<polygon points="50,6 61,38 95,38 68,59 79,93 50,72 21,93 32,59 5,38 39,38" ' + s + '/>',
+  heart:    s => '<path d="M50 90 C 10 60 10 20 38 20 C 46 20 50 28 50 33 C 50 28 54 20 62 20 C 90 20 90 60 50 90 Z" ' + s + '/>',
+  thumb:    s => '<path d="M20 44 H10 A4 4 0 0 0 6 48 V88 A4 4 0 0 0 10 92 H20 Z M20 44 L40 12 C42 8 50 8 52 14 C54 20 50 34 48 40 H82 A8 8 0 0 1 89 51 L83 84 A8 8 0 0 1 75 92 H20 Z" ' + s + '/>',
+  bubble:   s => '<path d="M14 14 H86 A8 8 0 0 1 94 22 V62 A8 8 0 0 1 86 70 H42 L24 90 L28 70 H14 A8 8 0 0 1 6 62 V22 A8 8 0 0 1 14 14 Z" ' + s + '/>'
+};
+const SHAPE_LABELS = {
+  rect: 'Firkant', triangle: 'Trekant', ellipse: 'Sirkel', arrow: 'Pil', line: 'Strek',
+  star: 'Stjerne', heart: 'Hjerte', thumb: 'Tommel opp', bubble: 'Snakkeboble'
+};
+
 const ed = {
   canvas: null, ctx: null,
   box: null, imgArea: null,
-  tool: 'draw', color: '#820A12', shape: 'rect',
+  tool: 'draw', color: '#820A12', width: 4, shape: 'rect',
   drawing: false, dirty: false,
   snapshot: null, start: null, last: null,
   undoStack: []
@@ -2502,6 +2563,7 @@ function initEditor() {
   window.addEventListener('pointerup', edUp);
 
   document.getElementById('ed-file').addEventListener('change', edInsertImage);
+  renderShapeGrid();
 }
 
 function edPos(e) {
@@ -2523,7 +2585,7 @@ function edStrokeStyle() {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = ed.color;
     ctx.fillStyle = ed.color;
-    ctx.lineWidth = ed.tool === 'shape' ? 3 : 4;
+    ctx.lineWidth = ed.tool === 'shape' ? 3 : ed.width;
   }
 }
 
@@ -2560,33 +2622,36 @@ function edMove(e) {
 
 function edUp() { ed.drawing = false; }
 
+// Figurene tegnes som de samme SVG-formene som i plakat-verktøyet (skalert
+// til dra-rektangelet), rastrert inn på lerretet — så alle 9 formene ser
+// nøyaktig ut som i plakat, i stedet for bare de 4 vi tegnet med canvas-API-et før.
+const _edShapeImgCache = {};
+function edShapeImage(kind, color) {
+  const key = kind + '|' + color;
+  if (_edShapeImgCache[key]) return _edShapeImgCache[key];
+  const attrs = 'fill="none" stroke="' + color + '" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"';
+  const inner = (SHAPES[kind] || SHAPES.rect)(attrs);
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">' + inner + '</svg>';
+  const img = new Image();
+  img.src = 'data:image/svg+xml;base64,' + btoa(svg);
+  _edShapeImgCache[key] = img;
+  return img;
+}
+
 function edDrawShape(a, b) {
-  const ctx = ed.ctx;
-  ctx.beginPath();
-  if (ed.shape === 'rect') {
-    ctx.rect(a.x, a.y, b.x - a.x, b.y - a.y);
-    ctx.stroke();
-  } else if (ed.shape === 'ellipse') {
-    ctx.ellipse((a.x + b.x) / 2, (a.y + b.y) / 2,
-      Math.abs(b.x - a.x) / 2, Math.abs(b.y - a.y) / 2, 0, 0, Math.PI * 2);
-    ctx.stroke();
-  } else if (ed.shape === 'triangle') {
-    ctx.moveTo((a.x + b.x) / 2, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.lineTo(a.x, b.y);
-    ctx.closePath();
-    ctx.stroke();
-  } else if (ed.shape === 'line') {
-    ctx.moveTo(a.x, a.y);
-    ctx.lineTo(b.x, b.y);
-    ctx.stroke();
-  }
+  const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+  const w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y);
+  if (w < 1 || h < 1) return;
+  const img = edShapeImage(ed.shape, ed.color);
+  const draw = () => ed.ctx.drawImage(img, x, y, w, h);
+  if (img.complete) draw(); else img.onload = draw;
 }
 
 function setTool(t) {
   ed.tool = t;
   document.getElementById('shape-menu').classList.remove('open');
   highlightTool();
+  updatePropsBar();
 }
 
 function highlightTool() {
@@ -2595,6 +2660,44 @@ function highlightTool() {
   });
   const map = { draw: 't-draw', erase: 't-erase', shape: 't-shape' };
   if (map[ed.tool]) document.getElementById(map[ed.tool]).classList.add('active');
+}
+
+// ── Kontekstlinje over lerretet (samme oppsett som "propsBar" i plakat) ──
+function updatePropsBar() {
+  const bar = document.getElementById('props-bar');
+  if (ed.tool === 'draw') {
+    const widths = DRAW_WIDTHS.map(w =>
+      '<button class="pb-width-btn' + (ed.width === w ? ' active' : '') + '" title="' + w + ' px" onclick="setDrawWidth(' + w + ')">' +
+      '<span class="pb-width-bar" style="height:' + Math.max(2, w / 1.4) + 'px"></span></button>').join('');
+    const swatches = DRAW_COLORS.map(c =>
+      '<button class="pb-swatch' + (ed.color.toLowerCase() === c ? ' active' : '') + '" style="background:' + c + '" title="' + c + '" onclick="setDrawColor(\'' + c + '\')"></button>').join('');
+    bar.innerHTML =
+      '<span class="pb-label">Tegn</span><span class="pb-sep"></span>' +
+      '<span class="pb-grp"><span class="pb-grp-label">Tykkelse</span>' + widths + '</span>' +
+      '<span class="pb-sep"></span>' +
+      '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
+      '<button class="pb-chip" onclick="pickColor()">Flere farger</button>';
+  } else if (ed.tool === 'erase') {
+    bar.innerHTML =
+      '<span class="pb-label">Viskelær</span><span class="pb-sep"></span>' +
+      '<span class="pb-hint">Klikk og dra over strekene for å viske dem ut.</span>';
+  } else {
+    bar.innerHTML = '';
+  }
+}
+
+function setDrawWidth(w) {
+  ed.width = w;
+  ed.tool = 'draw';
+  highlightTool();
+  updatePropsBar();
+}
+
+function setDrawColor(hex) {
+  ed.color = hex;
+  ed.tool = 'draw';
+  highlightTool();
+  updatePropsBar();
 }
 
 function pickColor() {
@@ -2608,6 +2711,7 @@ function pickColor() {
       ed.color = e.target.value;
       ed.tool = 'draw';
       highlightTool();
+      updatePropsBar();
     });
     document.body.appendChild(inp);
   }
@@ -2615,9 +2719,28 @@ function pickColor() {
   inp.click();
 }
 
+// ── "Legg til form" — 3x3 rutenett med alle 9 figurene, som i plakat ──
+function renderShapeGrid() {
+  const grid = document.getElementById('shape-menu-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.keys(SHAPES).map(k => {
+    const icon = SHAPES[k]('fill="none" stroke="#820a12" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"');
+    return '<button data-shape="' + k + '" title="' + SHAPE_LABELS[k] + '" onclick="event.stopPropagation();setShape(\'' + k + '\')">' +
+      '<svg viewBox="0 0 100 100">' + icon + '</svg>' + SHAPE_LABELS[k] + '</button>';
+  }).join('');
+  updateShapeGridActive();
+}
+
+function updateShapeGridActive() {
+  document.querySelectorAll('#shape-menu-grid button').forEach(b => {
+    b.classList.toggle('active', b.dataset.shape === ed.shape);
+  });
+}
+
 function toggleShapeMenu() {
   ed.tool = 'shape';
   highlightTool();
+  updatePropsBar();
   document.getElementById('shape-menu').classList.toggle('open');
 }
 
@@ -2625,9 +2748,8 @@ function setShape(s) {
   ed.shape = s;
   ed.tool = 'shape';
   highlightTool();
-  document.querySelectorAll('#shape-menu button').forEach(b => {
-    b.classList.toggle('active', b.dataset.shape === s);
-  });
+  updateShapeGridActive();
+  document.getElementById('shape-menu').classList.remove('open');
 }
 
 function clearCanvas() {
