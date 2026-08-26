@@ -775,23 +775,24 @@
       flex: 1; position: relative; overflow: auto;
       padding: 6px 18px 28px;
     }
-    /* Tools pinned to the far left, vertically centred */
+    /* Verktøylinje i samme stil som plakat-verktøyet: lyseblå panel,
+       tett inntil lerretet (24px gap fra kortets venstrekant), vertikalt sentrert. */
     .editor-tools {
-      position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
-      background: white; border-radius: 10px;
-      padding: 8px 6px; display: flex; flex-direction: column; gap: 4px;
-      box-shadow: 0 4px 22px rgba(0,0,0,0.16); z-index: 2;
+      position: absolute; left: calc(50% - min(360px, 33vw) - 122px); top: 50%; transform: translateY(-50%);
+      background: #f0fbfd; border-radius: 20px;
+      padding: 14px 10px; display: flex; flex-direction: column; gap: 6px;
+      width: 98px; z-index: 2;
     }
     .etool {
       position: relative;
-      background: none; border: none; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-      padding: 9px 6px; border-radius: 8px; font-size: 10px;
-      color: #333; width: 56px; font-family: inherit;
+      background: transparent; border: none; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 11px 4px; border-radius: 12px; font-size: 13px;
+      color: #00102c; width: 100%; font-family: inherit;
     }
-    .etool svg { width: 20px; height: 20px; }
-    .etool:hover { background: #f1f1f1; }
-    .etool.active { background: var(--pink); color: var(--red); }
+    .etool svg { width: 24px; height: 24px; }
+    .etool:hover { background: #b0deff; }
+    .etool.active { background: #b0deff; color: #004281; font-weight: 700; }
 
     /* Card absolutely centred in the viewport; side controls float to its right */
     .editor-cardcol {
@@ -1723,25 +1724,20 @@
     <!-- Tool strip -->
     <div class="editor-tools">
       <button class="etool" id="t-draw" title="Tegn" onclick="setTool('draw')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
         Tegn
       </button>
       <button class="etool" id="t-color" title="Farge" onclick="pickColor()">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.3C12 2.3 4.8 10 4.8 15.2a7.2 7.2 0 0 0 14.4 0C19.2 10 12 2.3 12 2.3z"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2.7l5.66 5.66a8 8 0 1 1-11.31 0L12 2.7z" fill="currentColor"/></svg>
         Farge
       </button>
-      <button class="etool" id="t-erase" title="Fjern" onclick="setTool('erase')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H7L3 16a2 2 0 0 1 0-3l9-9a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3l-7 8"/><path d="M6 11l6 6"/></svg>
-        Fjern
+      <button class="etool" id="t-erase" title="Viskelær" onclick="setTool('erase')">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M15.14 3c-.51 0-1.02.2-1.41.59L2.59 14.73a2 2 0 0 0 0 2.83L5.03 20h5.66l10.72-10.72a2 2 0 0 0 0-2.83l-3.86-3.86A1.99 1.99 0 0 0 15.14 3zM7.05 18l-2.02-2.02 6.36-6.36 2.02 2.02L7.05 18z" fill="currentColor"/><path d="M6 22h16v-2H6z" fill="currentColor"/></svg>
+        Viskelær
       </button>
       <div class="etool-shape">
         <button class="etool" id="t-shape" title="Form" onclick="toggleShapeMenu()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <rect x="2" y="3" width="8" height="8" rx="1"/>
-            <circle cx="18" cy="7" r="4.3"/>
-            <path d="M6 22 L2 15 L10 15 Z"/>
-            <path d="M18 13.5 v8 M14 17.5 h8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" width="24" height="24"><rect x="3" y="3" width="8" height="8" rx="1" fill="currentColor"/><circle cx="17.5" cy="7" r="4" fill="currentColor"/><path d="M7 13l4 8H3z" fill="currentColor"/><path d="M17 13v8M13 17h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           Form
         </button>
         <div class="shape-menu" id="shape-menu">
@@ -1752,11 +1748,11 @@
         </div>
       </div>
       <button class="etool" id="t-image" title="Bilde" onclick="document.getElementById('ed-file').click()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm2 12l4-5 3 4 2-2 3 3V6H6z" fill="currentColor"/></svg>
         Bilde
       </button>
       <button class="etool" id="t-clear" title="Slett" onclick="clearCanvas()">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 2.5h5a1 1 0 0 1 1 1V5H20v2H4V5h4.5V3.5a1 1 0 0 1 1-1zM6 8h12l-1 12.2a2 2 0 0 1-2 1.8H9a2 2 0 0 1-2-1.8L6 8z"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M7 4V3h6v1h4v2H3V4h4zM5 7h12l-1 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 7z" fill="currentColor"/></svg>
         Slett
       </button>
       <button class="etool" id="t-undo" title="Angre" onclick="edUndo()">
