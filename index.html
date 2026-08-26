@@ -869,6 +869,44 @@
     .shape-menu-grid button svg { width: 26px; height: 26px; }
     .shape-menu-grid button.active { border-color: var(--red); box-shadow: 0 0 0 1px var(--red) inset; }
 
+    /* Skjult fargevelger-input som gjenbrukes to steder: som usynlig mål for
+       "Farge"/"Flere farger" (utenfor "Velg farge"-panelet), og flyttet inn i
+       fargehjulet (.cp-wheel) mens panelet er åpent, akkurat som i plakat. */
+    #ed-color-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none; }
+    #ed-color-input.cp-wheel-input {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      opacity: 0; overflow: visible; pointer-events: auto; cursor: pointer; border: none; padding: 0;
+    }
+
+    /* "Velg farge"-panel — fargehjul + hurtigfarger + Ferdig, som i plakat-verktøyet */
+    .color-panel {
+      display: none; position: absolute; left: calc(100% + 6px); top: 50px;
+      z-index: 4; background: #fff; border-radius: 12px; padding: 18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.22); width: 300px;
+    }
+    .color-panel.open { display: block; }
+    .color-panel-title { font-weight: 700; font-size: 15px; margin-bottom: 12px; color: #200505; }
+    .cp-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .cp-wheel {
+      position: relative; width: 54px; height: 54px; border-radius: 50%;
+      cursor: pointer; flex-shrink: 0; display: block;
+      background: conic-gradient(red,orange,yellow,lime,cyan,blue,magenta,red);
+      box-shadow: 0 0 0 3px #fff, 0 0 0 4px rgba(0,0,0,.15);
+    }
+    .cp-wheel-swatch { position: absolute; inset: 16px; border-radius: 50%; box-shadow: inset 0 0 0 2px rgba(255,255,255,.8); pointer-events: none; }
+    .cp-wheel-label { font-size: 14px; font-weight: 700; color: #200505; }
+    .cp-wheel-sub { font-size: 13px; color: #7b7b7b; margin-top: 2px; }
+    .cp-hex { font-size: 12px; color: #7b7b7b; margin-top: 4px; font-family: monospace; }
+    .cp-quick-label { font-size: 12px; color: #7b7b7b; margin: 0 0 8px; }
+    .cp-quick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 14px; }
+    .cp-quick-grid button { width: 34px; height: 34px; border-radius: 7px; padding: 0; cursor: pointer; border: 2px solid rgba(0,0,0,.15); }
+    .cp-quick-grid button.active { border: 3px solid #200505; }
+    .cp-done {
+      display: block; width: 100%; padding: 10px; border: none; border-radius: 8px;
+      background: #004281; color: #fff; cursor: pointer; font-size: 15px; font-family: inherit;
+    }
+    .cp-done:hover { background: #002d5c; }
+
     /* Kontekstlinje over lerretet — samme mønster som i plakat-verktøyet:
        viser tykkelse + fargevalg når du tegner, hint-tekst når du visker ut. */
     .props-bar {
@@ -920,6 +958,7 @@
         justify-content: space-between; width: 92vw; margin-top: 10px;
       }
       .shape-menu { position: static; left: auto; box-shadow: none; padding: 4px 0; width: auto; }
+      .color-panel { position: static; left: auto; box-shadow: none; padding: 10px 0; width: auto; }
       .props-bar { position: static; transform: none; margin: 0 auto 10px; max-width: 100%; }
     }
 
@@ -1776,10 +1815,26 @@
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
         Tegn
       </button>
-      <label class="etool" id="t-color" for="ed-color-input" title="Farge" onclick="pickColor()">
+      <button class="etool" id="t-color" title="Farge" onclick="openColorPanel()">
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2.7l5.66 5.66a8 8 0 1 1-11.31 0L12 2.7z" fill="currentColor"/></svg>
         Farge
-      </label>
+      </button>
+      <div class="color-panel" id="color-panel">
+        <div class="color-panel-title">Velg farge</div>
+        <div class="cp-top">
+          <div class="cp-wheel" id="cp-wheel">
+            <span class="cp-wheel-swatch" id="cp-wheel-swatch"></span>
+          </div>
+          <div>
+            <div class="cp-wheel-label">Fargehjul</div>
+            <div class="cp-wheel-sub">Klikk sirkelen for alle nyanser</div>
+            <div class="cp-hex" id="cp-hex"></div>
+          </div>
+        </div>
+        <div class="cp-quick-label">Hurtigfarger</div>
+        <div class="cp-quick-grid" id="cp-quick-grid"></div>
+        <button class="cp-done" onclick="closeColorPanel()">Ferdig</button>
+      </div>
       <button class="etool" id="t-erase" title="Viskelær" onclick="setTool('erase')">
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M15.14 3c-.51 0-1.02.2-1.41.59L2.59 14.73a2 2 0 0 0 0 2.83L5.03 20h5.66l10.72-10.72a2 2 0 0 0 0-2.83l-3.86-3.86A1.99 1.99 0 0 0 15.14 3zM7.05 18l-2.02-2.02 6.36-6.36 2.02 2.02L7.05 18z" fill="currentColor"/><path d="M6 22h16v-2H6z" fill="currentColor"/></svg>
         Viskelær
@@ -2522,6 +2577,8 @@ document.querySelectorAll('.sp-title-input, .sp-sub input').forEach(function (in
 // verdier og figurdefinisjoner, slik at funksjonen blir den samme.
 const DRAW_WIDTHS = [2, 4, 8, 14];
 const DRAW_COLORS = ['#820a12', '#ff2130', '#004281', '#00a2ff', '#200505'];
+// 9-fargers "Hurtigfarger"-palett i "Velg farge"-panelet, samme sett som i plakat-verktøyet
+const PALETTE = ['#ff2130', '#820a12', '#004281', '#00a2ff', '#00a75f', '#fff0a4', '#200505', '#7b7b7b', '#ffffff'];
 const SHAPES = {
   rect:     s => '<rect x="6" y="6" width="88" height="88" ' + s + '/>',
   triangle: s => '<polygon points="50,6 94,94 6,94" ' + s + '/>',
@@ -2690,6 +2747,7 @@ function setTool(t) {
   if (t !== 'shape') edCommitShapeObj();
   ed.tool = t;
   document.getElementById('shape-menu').classList.remove('open');
+  closeColorPanel();
   highlightTool();
   updatePropsBar();
 }
@@ -2716,7 +2774,7 @@ function updatePropsBar() {
       '<span class="pb-grp"><span class="pb-grp-label">Tykkelse</span>' + widths + '</span>' +
       '<span class="pb-sep"></span>' +
       '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
-      '<label class="pb-chip" for="ed-color-input" onclick="pickColor()">Flere farger</label>';
+      '<button class="pb-chip" onclick="openColorPanel()">Flere farger</button>';
   } else if (ed.tool === 'erase') {
     bar.innerHTML =
       '<span class="pb-label">Viskelær</span><span class="pb-sep"></span>' +
@@ -2738,7 +2796,7 @@ function updatePropsBar() {
           '<button class="pb-step-btn" onclick="setShapeStroke(1)">+</button>' +
         '</span><span class="pb-sep"></span>' +
         '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
-        '<label class="pb-chip" for="ed-color-input" onclick="pickColor()">Flere farger</label>';
+        '<button class="pb-chip" onclick="openColorPanel()">Flere farger</button>';
     }
   } else {
     bar.innerHTML = '';
@@ -2765,39 +2823,79 @@ function ensureColorInput() {
   inp = document.createElement('input');
   inp.type = 'color';
   inp.id = 'ed-color-input';
-  inp.style.position = 'absolute';
-  inp.style.width = '1px';
-  inp.style.height = '1px';
-  inp.style.opacity = '0';
-  inp.style.overflow = 'hidden';
-  inp.style.pointerEvents = 'none';
-  inp.addEventListener('input', e => {
-    if (ed.tool === 'shape' && ed.shapeObj) {
-      ed.shapeObj.color = e.target.value;
-      ed.color = e.target.value;
-      renderShapeObj();
-      updatePropsBar();
-    } else {
-      ed.color = e.target.value;
-      ed.tool = 'draw';
-      highlightTool();
-      updatePropsBar();
-    }
-  });
+  // Utseendet styres av CSS (#ed-color-input / #ed-color-input.cp-wheel-input) —
+  // ikke inline stiler — slik at klassen kan endres når input flyttes inn i
+  // fargehjulet (se openColorPanel/closeColorPanel).
+  inp.addEventListener('input', e => { applyPickedColor(e.target.value); });
   document.body.appendChild(inp);
   return inp;
 }
 
-// Kalles fra onclick på "Farge"/"Flere farger" (nå <label for="ed-color-input">)
-// for å sette riktig startfarge FØR nettleseren åpner fargevelgeren via den
-// innebygde label→input-klikk-videresendingen. Vi bruker ikke lenger et
-// skriptet .click()-kall her, siden Safari ikke alltid åpner fargevelgeren
-// pålitelig ved et programmatisk klikk på et skjult input-element — en ekte
-// <label for="..."> er en nettleser-innebygd mekanisme og fungerer likt i
-// alle nettlesere.
-function pickColor() {
+// ── "Velg farge"-panel: fargehjul + hex + hurtigfarger + Ferdig, som i plakat ──
+// Farge-knappen og "Flere farger" åpner nå dette panelet i stedet for å gå
+// rett til den innebygde fargevelgeren — akkurat som i plakat-verktøyet, der
+// "Fargehjul"-sirkelen er ett ekstra klikk unna selve OS-fargevelgeren.
+function currentPickerColor() {
+  return (ed.tool === 'shape' && ed.shapeObj) ? ed.shapeObj.color : ed.color;
+}
+
+function applyPickedColor(c) {
+  if (ed.tool === 'shape' && ed.shapeObj) {
+    ed.shapeObj.color = c;
+    ed.color = c;
+    renderShapeObj();
+    updatePropsBar();
+  } else {
+    ed.color = c;
+    ed.tool = 'draw';
+    highlightTool();
+    updatePropsBar();
+  }
+  updateColorPanelPreview();
+}
+
+function renderColorQuickGrid() {
+  const grid = document.getElementById('cp-quick-grid');
+  if (!grid) return;
+  const cur = currentPickerColor().toLowerCase();
+  grid.innerHTML = PALETTE.map(c =>
+    '<button data-color="' + c + '" class="' + (c.toLowerCase() === cur ? 'active' : '') + '" style="background:' + c + '" title="' + c + '" onclick="applyPickedColor(\'' + c + '\')"></button>'
+  ).join('');
+}
+
+function updateColorPanelPreview() {
+  const panel = document.getElementById('color-panel');
+  if (!panel || !panel.classList.contains('open')) return;
+  const c = currentPickerColor();
+  document.getElementById('cp-wheel-swatch').style.background = c;
+  document.getElementById('cp-hex').textContent = c.toUpperCase();
+  const inp = document.getElementById('ed-color-input');
+  if (inp) inp.value = c;
+  document.querySelectorAll('#cp-quick-grid button').forEach(b => {
+    b.classList.toggle('active', b.dataset.color.toLowerCase() === c.toLowerCase());
+  });
+}
+
+function openColorPanel() {
+  document.getElementById('shape-menu').classList.remove('open');
   const inp = ensureColorInput();
-  inp.value = (ed.tool === 'shape' && ed.shapeObj) ? ed.shapeObj.color : ed.color;
+  const wheel = document.getElementById('cp-wheel');
+  inp.classList.add('cp-wheel-input');
+  wheel.appendChild(inp);
+  inp.value = currentPickerColor();
+  renderColorQuickGrid();
+  document.getElementById('color-panel').classList.add('open');
+  updateColorPanelPreview();
+}
+
+function closeColorPanel() {
+  const panel = document.getElementById('color-panel');
+  if (panel) panel.classList.remove('open');
+  const inp = document.getElementById('ed-color-input');
+  if (inp && inp.classList.contains('cp-wheel-input')) {
+    inp.classList.remove('cp-wheel-input');
+    document.body.appendChild(inp);
+  }
 }
 
 // ── "Legg til form" — 3x3 rutenett med alle 9 figurene, som i plakat ──
@@ -2819,6 +2917,7 @@ function updateShapeGridActive() {
 }
 
 function toggleShapeMenu() {
+  closeColorPanel();
   ed.tool = 'shape';
   highlightTool();
   updatePropsBar();
@@ -3015,6 +3114,7 @@ function openEditor(box, num) {
   ed.undoStack = [];
   ed.shapeObj = null;
   renderShapeObj();
+  closeColorPanel();
   if (box.dataset.drawing) {
     const img = new Image();
     img.onload = () => ed.ctx.drawImage(img, 0, 0, ed.canvas.width, ed.canvas.height);
