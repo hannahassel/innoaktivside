@@ -39,6 +39,7 @@
     /* ── Pages ── */
     .page { display: none; flex-direction: column; min-height: 100vh; }
     .page.active { display: flex; }
+    .landing-wrap { display: flex; flex-direction: column; min-height: 100vh; }
 
     /* ── Navbar ── */
     .navbar {
@@ -115,8 +116,8 @@
       padding-left: 68px; padding-right: 68px;
     }
     .pdf-mode .crumbbar { display: none !important; }
-    .crumb-back { display: inline-flex; align-items: center; justify-content: center; background: none; border: none; padding: 4px; margin-right: -6px; border-radius: 6px; cursor: pointer; color: var(--text-light); }
-    .crumb-back svg { width: 21px; height: 21px; }
+    .crumb-back { display: inline-flex; align-items: center; justify-content: center; background: none; border: none; padding: 4px; margin-right: -3px; border-radius: 6px; cursor: pointer; color: #000; }
+    .crumb-back svg { width: 23px; height: 23px; }
     .crumb-back:hover { background: rgba(130,10,18,0.08); color: var(--red-dark); }
     .crumb-link { display: inline-flex; align-items: center; gap: 5px; color: var(--red-dark); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; font-weight: 600; }
     .crumb-link:hover { color: var(--red); }
@@ -164,12 +165,12 @@
     .dd-pair .dd-t { font-size: 17px; }
     .dd-pair .dd-sub { font-size: 14px; }
     .dd-pair .dd-d { font-size: 12px; }
-    .pair-problem  .dd-card { border-top-color: #C25A4E; }
-    .pair-problem  .dd-ic, .pair-problem  .dd-sub { color: #C25A4E; }
-    .pair-ide      .dd-card { border-top-color: #A2131D; }
-    .pair-ide      .dd-ic, .pair-ide      .dd-sub { color: #A2131D; }
-    .pair-losning  .dd-card { border-top-color: #E08A3C; }
-    .pair-losning  .dd-ic, .pair-losning  .dd-sub { color: #E08A3C; }
+    .pair-problem  .dd-card { border-top-color: #FF6F5E; }
+    .pair-problem  .dd-ic, .pair-problem  .dd-sub { color: #FF6F5E; }
+    .pair-ide      .dd-card { border-top-color: #A83226; }
+    .pair-ide      .dd-ic, .pair-ide      .dd-sub { color: #A83226; }
+    .pair-losning  .dd-card { border-top-color: #FC924F; }
+    .pair-losning  .dd-ic, .pair-losning  .dd-sub { color: #FC924F; }
     .triple-diamond { margin-top: 14px; }
     .triple-diamond svg { width: 100%; height: auto; display: block; }
     @media (max-width: 900px) { .tool-cards-6 { flex-wrap: wrap; } .dd-pair { flex: 1 1 46%; } }
@@ -192,13 +193,15 @@
     .dd-arrow { position: absolute; right: 18px; bottom: 14px; color: var(--red-dark); font-size: 22px; line-height: 1; }
     .double-diamond { margin-top: 10px; }
     .double-diamond svg { width: 100%; height: auto; display: block; }
-    .dd-caption { text-align: center; font-style: italic; color: #9a8b76; font-size: 13px; margin-top: 8px; }
+    .dd-caption { text-align: center; font-style: italic; color: #9a8b76; font-size: 14px; margin-top: 8px; }
     /* Trippeldiamanten: fase-etikettene er svarte til de hovres – eller til man hovrer
        det tilhørende kortet under. Problem/Idé/Prototype er alltid uthevet (satt i SVG-en). */
-    .dd-seg { fill: var(--text); font-weight: bold; transition: fill 0.15s; }
-    .dd-seg.dd-f-problem:hover,   .dd-seg.dd-f-problem.dd-aktiv   { fill: #C25A4E; }
-    .dd-seg.dd-f-ide:hover,       .dd-seg.dd-f-ide.dd-aktiv       { fill: #A2131D; }
-    .dd-seg.dd-f-prototype:hover, .dd-seg.dd-f-prototype.dd-aktiv { fill: #E08A3C; }
+    .dd-seg { fill: var(--text); font-weight: 500; font-size: 15.5px; letter-spacing: 0.2px; transition: fill 0.15s, font-size 0.15s, font-weight 0.15s, letter-spacing 0.15s; }
+    .dd-seg.dd-f-problem:hover,   .dd-seg.dd-f-problem.dd-aktiv   { fill: #FF6F5E; font-weight: 700; font-size: 15.5px; letter-spacing: 0.35px; }
+    .dd-seg.dd-f-ide:hover,       .dd-seg.dd-f-ide.dd-aktiv       { fill: #A83226; font-weight: 700; font-size: 15.5px; letter-spacing: 0.35px; }
+    .dd-seg.dd-f-prototype:hover, .dd-seg.dd-f-prototype.dd-aktiv { fill: #FC924F; font-weight: 700; font-size: 15.5px; letter-spacing: 0.35px; }
+    .dd-line { transition: stroke-width 0.15s; }
+    .dd-line:hover, .dd-line.dd-aktiv { stroke-width: 6.5; }
 
     /* INNOV102 landing (ny skisse): fase-seksjoner med store kort */
     .dd-cards { display: flex; flex-direction: column; gap: 34px; max-width: 1000px; width: 100%; margin: 52px auto 0; padding: 0 40px; }
@@ -214,24 +217,24 @@
     .dd-card2-cta { align-self: flex-end; margin-top: auto; padding-top: 6px; font-size: 13px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; gap: 6px; }
     /* Ingen egen farge: pilen arver fargen fra "Gå til lerret"-teksten (currentColor) */
     .dd-card2-arrow { text-decoration: none; width: 19px; height: 19px; flex-shrink: 0; }
-    .pair-problem .dd-card2 { border-top-color: #C25A4E; }
-    .pair-problem .dd-section-label, .pair-problem .dd-card2-cta { color: #C25A4E; }
-    .pair-ide .dd-card2 { border-top-color: #A2131D; }
-    .pair-ide .dd-section-label, .pair-ide .dd-card2-cta { color: #A2131D; }
-    .pair-losning .dd-card2 { border-top-color: #E08A3C; }
-    .pair-losning .dd-section-label, .pair-losning .dd-card2-cta { color: #E08A3C; }
+    .pair-problem .dd-card2 { border-top-color: #FF6F5E; }
+    .pair-problem .dd-section-label, .pair-problem .dd-card2-cta { color: #FF6F5E; }
+    .pair-ide .dd-card2 { border-top-color: #A83226; }
+    .pair-ide .dd-section-label, .pair-ide .dd-card2-cta { color: #A83226; }
+    .pair-losning .dd-card2 { border-top-color: #FC924F; }
+    .pair-losning .dd-section-label, .pair-losning .dd-card2-cta { color: #FC924F; }
     /* Hover: korttittel får kortets fasefarge */
     /* Ved hover får BÅDE tittelen og ikonet fasefargen, som "Gå til lerret"-teksten */
-    .pair-problem .dd-card2:hover .dd-card2-title,
-    .pair-problem .dd-card2:hover .dd-card2-head svg { color: #C25A4E; }
-    .pair-ide .dd-card2:hover .dd-card2-title,
-    .pair-ide .dd-card2:hover .dd-card2-head svg { color: #A2131D; }
-    .pair-losning .dd-card2:hover .dd-card2-title,
-    .pair-losning .dd-card2:hover .dd-card2-head svg { color: #E08A3C; }
+    .pair-problem .dd-card2:hover .dd-card2-title, .pair-problem .dd-card2.dd-kort-aktiv .dd-card2-title,
+    .pair-problem .dd-card2:hover .dd-card2-head svg, .pair-problem .dd-card2.dd-kort-aktiv .dd-card2-head svg { color: #FF6F5E; }
+    .pair-ide .dd-card2:hover .dd-card2-title, .pair-ide .dd-card2.dd-kort-aktiv .dd-card2-title,
+    .pair-ide .dd-card2:hover .dd-card2-head svg, .pair-ide .dd-card2.dd-kort-aktiv .dd-card2-head svg { color: #A83226; }
+    .pair-losning .dd-card2:hover .dd-card2-title, .pair-losning .dd-card2.dd-kort-aktiv .dd-card2-title,
+    .pair-losning .dd-card2:hover .dd-card2-head svg, .pair-losning .dd-card2.dd-kort-aktiv .dd-card2-head svg { color: #FC924F; }
     @media (max-width: 820px) { .dd-row { flex-direction: column; } }
 
     /* ── INNOV101 landing cards (hover -> pink) ── */
-    .i101-cards { display: flex; gap: 28px; max-width: 1200px; margin: 46px auto 266px; padding: 0 30px; align-items: stretch; }
+    .i101-cards { display: flex; gap: 28px; max-width: 1200px; margin: 46px auto 90px; padding: 0 30px; align-items: stretch; }
     .i101-card {
       flex: 1 1 0; min-width: 0; position: relative; cursor: pointer; text-align: left; font-family: inherit;
       background: #fff; border: none; border-top: 7px solid var(--red-dark); border-radius: 18px;
@@ -446,7 +449,7 @@
     .lc-box { grid-column: span 2; background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); padding: 16px 16px 28px; position: relative; display: flex; flex-direction: column; min-height: 420px; }
     .lc-box.lc-wide { grid-column: span 5; min-height: 260px; }
     .lc-title { font-size: 14.5px; font-weight: bold; color: var(--red-dark); letter-spacing: 0.4px; padding-right: 26px; text-transform: uppercase; }
-    .lc-desc { font-size: 12.5px; color: #8a8a8a; line-height: 1.5; margin: 8px 0 8px; }
+    .lc-desc { font-size: 14px; color: #a89f92; font-style: italic; line-height: 1.7; margin: 8px 0 8px; }
     .lc-ta { flex: 1; width: 100%; margin-top: 12px; border: none; outline: none; resize: none; font-family: inherit; font-size: 14px; line-height: 1.6; color: var(--text); background: transparent; cursor: text; }
     .lc-ta::placeholder { color: #c8c0b6; font-style: italic; }
     .lc-box, .lc-maltall-box { cursor: text; }
@@ -467,6 +470,8 @@
       font-size: 13.5px; line-height: 1.6; color: var(--text);
       font-weight: 400; letter-spacing: 0; text-transform: none; cursor: default;
     }
+    .lc-boble p { margin: 0 0 10px; }
+    .lc-boble p:last-child { margin-bottom: 0; }
     .lc-boble.venstre { left: auto; right: calc(100% + 12px); }
     .pdf-mode .lc-boble { display: none !important; }
     /* Lean Canvas download button is the strong red (matches the design) */
@@ -1053,6 +1058,7 @@
 
 <!-- ════════════════════ INNOV101 PLACEHOLDER ════════════════════ -->
 <div class="page" id="page-innov101">
+  <div class="landing-wrap">
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
@@ -1164,6 +1170,7 @@
     </div>
   </div>
 
+  </div>
   <div class="footer">
     <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
     <div class="footer-name">INNOAKTIV</div>
@@ -1174,6 +1181,7 @@
 
 <!-- ════════════════════ MIX100 LANDING ════════════════════ -->
 <div class="page" id="page-mix100">
+  <div class="landing-wrap">
   <nav class="navbar">
     <div class="nb-left">
       <button class="nb-brand-btn" title="Til forsiden" onclick="goHome()">
@@ -1285,6 +1293,7 @@
     </div>
   </div>
 
+  </div>
   <div class="footer">
     <img class="brand-logo footer-logo-img" src="emblem-white.png" alt="Universitetet i Bergen">
     <div class="footer-name">INNOAKTIV</div>
@@ -1322,43 +1331,45 @@
     <div class="dd-panel">
 
       <div class="triple-diamond">
-        <svg viewBox="0 0 1600 310" xmlns="http://www.w3.org/2000/svg" font-family="'Open Sans', Arial, sans-serif">
+        <svg viewBox="-70 0 1670 310" xmlns="http://www.w3.org/2000/svg" font-family="'Open Sans', Arial, sans-serif">
           <!-- faint lower diamond edges (symmetric with the peaks) -->
-          <g fill="none" stroke="#D8CBB4" stroke-width="1.5" stroke-linejoin="round">
-            <path d="M90 160 L305 278 L520 160"/>
-            <path d="M520 160 L735 278 L950 160"/>
-            <path d="M950 160 L1165 278 L1380 160"/>
+          <g fill="none" stroke="#C2B49C" stroke-width="2.2" stroke-linejoin="round">
+            <path d="M100.5 165.8 L305 278 L509.5 165.8"/>
+            <path d="M530.5 165.8 L735 278 L939.5 165.8"/>
+            <path d="M960.5 165.8 L1165 278 L1369.5 165.8"/>
           </g>
           <!-- bold process line, three coloured phases -->
-          <path d="M90 160 L305 42 L520 160"    fill="none" stroke="#C25A4E" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M520 160 L735 42 L950 160"   fill="none" stroke="#A2131D" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M950 160 L1165 42 L1380 160" fill="none" stroke="#E08A3C" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M1380 160 L1520 160"         fill="none" stroke="#E08A3C" stroke-width="2.2" stroke-linecap="round"/>
+          <path class="dd-line dd-f-problem"   data-seg="problemutvikling"   d="M90 160 L305 42"     fill="none" stroke="#FF6F5E" stroke-width="4" stroke-linecap="round"/>
+          <path class="dd-line dd-f-problem"   data-seg="problemvalg"        d="M305 42 L520 160"    fill="none" stroke="#FF6F5E" stroke-width="4" stroke-linecap="round"/>
+          <path class="dd-line dd-f-ide"       data-seg="ideutvikling"       d="M520 160 L735 42"    fill="none" stroke="#A83226" stroke-width="4" stroke-linecap="round"/>
+          <path class="dd-line dd-f-ide"       data-seg="idevalg"            d="M735 42 L950 160"    fill="none" stroke="#A83226" stroke-width="4" stroke-linecap="round"/>
+          <path class="dd-line dd-f-prototype" data-seg="prototypeutvikling" d="M950 160 L1165 42"   fill="none" stroke="#FC924F" stroke-width="4" stroke-linecap="round"/>
+          <path class="dd-line dd-f-prototype" data-seg="prototypevalg"      d="M1165 42 L1380 160"  fill="none" stroke="#FC924F" stroke-width="4" stroke-linecap="round"/>
+          <path d="M1380 160 L1520 160"         fill="none" stroke="#FC924F" stroke-width="2.2" stroke-linecap="round"/>
           <!-- Fase-etikettene står PÅ SKRÅ langs linjen, litt over den.
                Da trengs ingen beige "hull" bak teksten, og linjen brytes aldri.
                Vinkelen følger linjens stigning: dx 215, dy -118  ->  28.75 grader. -->
           <g font-size="12.5" text-anchor="middle" letter-spacing="0.2">
-            <text class="dd-seg dd-f-problem"   data-seg="problemutvikling"   transform="rotate(-28.75 197.5 101)"  x="197.5"  y="101" dy="-9">Problemutvikling</text>
-            <text class="dd-seg dd-f-problem"   data-seg="problemvalg"        transform="rotate(28.75 412.5 101)"   x="412.5"  y="101" dy="-9">Problemvalg</text>
-            <text class="dd-seg dd-f-ide"       data-seg="ideutvikling"       transform="rotate(-28.75 627.5 101)"  x="627.5"  y="101" dy="-9">Id&#233;utvikling</text>
-            <text class="dd-seg dd-f-ide"       data-seg="idevalg"            transform="rotate(28.75 842.5 101)"   x="842.5"  y="101" dy="-9">Id&#233;valg</text>
-            <text class="dd-seg dd-f-prototype" data-seg="prototypeutvikling" transform="rotate(-28.75 1057.5 101)" x="1057.5" y="101" dy="-9">Prototypeutvikling</text>
-            <text class="dd-seg dd-f-prototype" data-seg="prototypevalg"      transform="rotate(28.75 1272.5 101)"  x="1272.5" y="101" dy="-9">Prototypevalg</text>
+            <text class="dd-seg dd-f-problem"   data-seg="problemutvikling"   transform="rotate(-28.75 197.5 101)"  x="197.5"  y="101" dy="-12">Problemutvikling</text>
+            <text class="dd-seg dd-f-problem"   data-seg="problemvalg"        transform="rotate(28.75 412.5 101)"   x="412.5"  y="101" dy="-12">Problemvalg</text>
+            <text class="dd-seg dd-f-ide"       data-seg="ideutvikling"       transform="rotate(-28.75 627.5 101)"  x="627.5"  y="101" dy="-12">Id&#233;utvikling</text>
+            <text class="dd-seg dd-f-ide"       data-seg="idevalg"            transform="rotate(28.75 842.5 101)"   x="842.5"  y="101" dy="-12">Id&#233;valg</text>
+            <text class="dd-seg dd-f-prototype" data-seg="prototypeutvikling" transform="rotate(-28.75 1057.5 101)" x="1057.5" y="101" dy="-12">Prototypeutvikling</text>
+            <text class="dd-seg dd-f-prototype" data-seg="prototypevalg"      transform="rotate(28.75 1272.5 101)"  x="1272.5" y="101" dy="-12">Prototypevalg</text>
           </g>
           <!-- end nodes (open) -->
-          <circle cx="90" cy="160" r="9" fill="#fff" stroke="#C25A4E" stroke-width="2.5"/>
-          <circle cx="1520" cy="160" r="9" fill="#fff" stroke="#E08A3C" stroke-width="2.5"/>
+          <circle cx="90" cy="160" r="9" fill="#fff" stroke="#a89f92" stroke-width="2.5"/>
+          <circle cx="1520" cy="160" r="9" fill="#fff" stroke="#a89f92" stroke-width="2.5"/>
           <!-- phase nodes (filled) -->
-          <circle cx="520" cy="160" r="8" fill="#C25A4E"/>
-          <circle cx="950" cy="160" r="8" fill="#A2131D"/>
-          <circle cx="1380" cy="160" r="8" fill="#E08A3C"/>
+          <circle cx="520" cy="160" r="8" fill="#FF6F5E"/>
+          <circle cx="950" cy="160" r="8" fill="#A83226"/>
+          <circle cx="1380" cy="160" r="8" fill="#FC924F"/>
           <!-- node labels -->
-          <g fill="#200505" font-size="15" font-weight="600" text-anchor="middle">
-            <text x="74" y="156" text-anchor="end">Utgangs-</text>
-            <text x="74" y="174" text-anchor="end">punkt</text>
-            <text x="520" y="185" fill="#C25A4E" font-weight="700">Problem</text>
-            <text x="950" y="185" fill="#A2131D" font-weight="700">Id&#233;</text>
-            <text x="1380" y="185" fill="#E08A3C" font-weight="700">Prototype</text>
+          <g fill="#200505" font-size="15" text-anchor="middle">
+            <text x="74" y="165" text-anchor="end">Utgangspunkt</text>
+            <text x="520" y="197" fill="#FF6F5E" font-weight="700">Problem</text>
+            <text x="950" y="197" fill="#A83226" font-weight="700">Id&#233;</text>
+            <text x="1380" y="197" fill="#FC924F" font-weight="700">Prototype</text>
             <text x="1520" y="185">M&#229;l</text>
           </g>
         </svg>
@@ -1662,7 +1673,7 @@
     <div class="lc-grid">
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'problem')">?</button>
+        <button class="lc-help" title="Hjelp" data-lc-key="problem" onclick="lcBoble(this,'problem')">?</button>
         <div class="lc-title">1. PROBLEM</div>
         <div class="lc-desc">Situasjoner/behov som oppleves lite hensiktsmessige, tidskrevende eller problematiske</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1670,7 +1681,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'losning')">?</button>
+        <button class="lc-help" title="Hjelp" data-lc-key="losning" onclick="lcBoble(this,'losning')">?</button>
         <div class="lc-title">2. LØSNING</div>
         <div class="lc-desc">Hva består løsningen av, og hvilke funksjoner har systemet eller tjenesten?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1678,7 +1689,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'verdiforslag')">?</button>
+        <button class="lc-help" title="Hjelp" data-lc-key="verdiforslag" onclick="lcBoble(this,'verdiforslag')">?</button>
         <div class="lc-title">3. VERDIFORSLAG</div>
         <div class="lc-desc">Slagord. PR. Kommunikasjon</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1686,7 +1697,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'kanal')">?</button>
+        <button class="lc-help" title="Hjelp" data-lc-key="kanal" onclick="lcBoble(this,'kanal')">?</button>
         <div class="lc-title">4. KANAL</div>
         <div class="lc-desc">Hvordan når man brukerne?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1694,7 +1705,7 @@
       </div>
 
       <div class="lc-box">
-        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'bruker')">?</button>
+        <button class="lc-help" title="Hjelp" data-lc-key="bruker" onclick="lcBoble(this,'bruker')">?</button>
         <div class="lc-title">5. BRUKER</div>
         <div class="lc-desc">Hvem har problemet og vil verdsette løsningen?</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1702,7 +1713,7 @@
       </div>
 
       <div class="lc-box lc-wide">
-        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'kostnader')">?</button>
+        <button class="lc-help" title="Hjelp" data-lc-key="kostnader" onclick="lcBoble(this,'kostnader')">?</button>
         <div class="lc-title">6. KOSTNADER</div>
         <div class="lc-desc">De viktigste kostnadene knyttet til utvikling, drift og videreføring av tjenesten</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1710,7 +1721,7 @@
       </div>
 
       <div class="lc-box lc-wide">
-        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'inntekter')">?</button>
+        <button class="lc-help" title="Hjelp" data-lc-key="inntekter" onclick="lcBoble(this,'inntekter')">?</button>
         <div class="lc-title">7. INNTEKTER</div>
         <div class="lc-desc">Redegjør for hvilke verdier eller inntekter løsningen genererer</div>
         <textarea class="lc-ta" data-limit="50" placeholder="" oninput="lcInput(this)"></textarea>
@@ -1724,8 +1735,9 @@
     <div class="lc-maltall-inner">
       <div class="lc-maltall-label">MÅLTALL</div>
       <div class="lc-maltall-box">
-        <button class="lc-help" title="Hjelp" onclick="lcBoble(this,'maltall')">?</button>
-        <textarea class="lc-ta" data-limit="300" placeholder="Fyll inn måltall her..." oninput="lcInput(this)"></textarea>
+        <button class="lc-help" title="Hjelp" data-lc-key="maltall" onclick="lcBoble(this,'maltall')">?</button>
+        <div class="lc-desc">Fyll inn måltall, mål eller andre tanker om prosjektet</div>
+        <textarea class="lc-ta" data-limit="300" placeholder="" oninput="lcInput(this)"></textarea>
         <div class="lc-count">0 / 300 ord</div>
       </div>
     </div>
@@ -1838,7 +1850,7 @@
   <div class="modal">
     <button class="modal-x" title="Lukk" aria-label="Lukk" onclick="document.getElementById('lc-help-modal').classList.remove('open')">&times;</button>
     <h2 id="lch-title" style="text-transform:none;"></h2>
-    <p id="lch-body"></p>
+    <div id="lch-body"></div>
     <button class="modal-ok" onclick="document.getElementById('lc-help-modal').classList.remove('open')">OK</button>
   </div>
 </div>
@@ -1966,45 +1978,101 @@ function openLerretHelp() {
 
 // Lean Canvas help (heading + each of the 8 boxes)
 const LC_HELP = {
-  overview:     { title: 'Lean canvas',      body: 'Lean canvas er et verktøy for å oppsummere forretningsideen din på én side. De syv boksene henger sammen, og vi anbefaler derfor å fylle ut boksene i rekkefølge fra 1 til 7, da de bygger på hverandre.' },
-  problem:      { title: '1. Problem',       body: 'Her beskriver du problemet du ønsker å løse. Det kan være noe som ikke fungerer som det burde, noe som tar unødvendig mye tid, eller noe som oppleves som frustrerende eller irriterende for brukeren. Fokuser på situasjonen slik den er i dag, og hvilke utfordringer eller smertepunkter som faktisk eksisterer.' },
-  losning:      { title: '2. Løsning',       body: 'Her beskriver du hva løsningen består av. Forklar hvilke funksjoner systemet eller tjenesten har, og hvordan den håndterer problemet. Fokuser på hva løsningen gjør, ikke hvordan den er bygget eller implementert.' },
-  verdiforslag: { title: '3. Verdiforslag',  body: 'Her beskriver du verdien løsningen gir. Formuler et tydelig og kort budskap som forklarer hvorfor løsningen er nyttig og hva som gjør den attraktiv. Dette kan være et slagord eller en enkel setning som kommuniserer hovedfordelen til brukeren.' },
-  kanal:        { title: '4. Kanal',         body: 'Her beskriver du hvordan du planlegger å nå brukerne. Forklar hvilke kanaler som brukes for å komme i kontakt med målgruppen og gjøre løsningen tilgjengelig, enten det er digitale plattformer, direkte salg, samarbeidspartnere eller andre distribusjonsformer.' },
-  bruker:       { title: '5. Bruker',        body: 'Her beskriver du hvem som opplever problemet. Hvem er personen eller gruppen som har utfordringen, og som vil ha glede av løsningen? Beskriv brukeren slik de er i dag, med utgangspunkt i rolle, behov eller situasjon.' },
-  kostnader:    { title: '6. Kostnader',     body: 'Her beskriver du hvilke kostnader som er knyttet til løsningen. Dette kan være utgifter til lønn, leie, lisenser, drift eller andre nødvendige ressurser for å utvikle, drifte og levere varen eller tjenesten.' },
-  inntekter:    { title: '7. Inntekter',     body: 'Her beskriver du hva du får igjen for løsningen. Dette kan være økonomiske inntekter (abonnementer, engangsbetalinger, annonser) eller andre målbare verdier som spart tid, økt effektivitet eller oppmerksomhet.' },
-  maltall:      { title: 'Måltall',          body: 'Her kan du skrive inntil 300 ord om ditt Lean Canvas. Beskriv målene dine, viktige måltall eller andre tanker om prosjektet som ikke passer inn i de andre boksene.' }
+  overview:     { title: 'Lean canvas',      body: [
+    'Lean canvas er et verktøy for å oppsummere forretningsideen din på én side.',
+    'De syv boksene henger sammen, og vi anbefaler derfor å fylle ut boksene i rekkefølge fra 1 til 7, da de bygger på hverandre.'
+  ] },
+  problem:      { title: '1. Problem',       body: [
+    'Her beskriver du problemet du ønsker å løse.',
+    'Det kan være noe som ikke fungerer som det burde, noe som tar unødvendig mye tid, eller noe som oppleves som frustrerende eller irriterende for brukeren. Fokuser på situasjonen slik den er i dag, og hvilke utfordringer eller smertepunkter som faktisk eksisterer.'
+  ] },
+  losning:      { title: '2. Løsning',       body: [
+    'Her beskriver du hva løsningen består av.',
+    'Forklar hvilke funksjoner systemet eller tjenesten har, og hvordan den håndterer problemet. Fokuser på hva løsningen gjør, ikke hvordan den er bygget eller implementert.'
+  ] },
+  verdiforslag: { title: '3. Verdiforslag',  body: [
+    'Her beskriver du verdien løsningen gir.',
+    'Formuler et tydelig og kort budskap som forklarer hvorfor løsningen er nyttig og hva som gjør den attraktiv. Dette kan være et slagord eller en enkel setning som kommuniserer hovedfordelen til brukeren.'
+  ] },
+  kanal:        { title: '4. Kanal',         body: [
+    'Her beskriver du hvordan du planlegger å nå brukerne.',
+    'Forklar hvilke kanaler som brukes for å komme i kontakt med målgruppen og gjøre løsningen tilgjengelig, enten det er digitale plattformer, direkte salg, samarbeidspartnere eller andre distribusjonsformer.'
+  ] },
+  bruker:       { title: '5. Bruker',        body: [
+    'Her beskriver du hvem som opplever problemet.',
+    'Hvem er personen eller gruppen som har utfordringen, og som vil ha glede av løsningen? Beskriv brukeren slik de er i dag, med utgangspunkt i rolle, behov eller situasjon.'
+  ] },
+  kostnader:    { title: '6. Kostnader',     body: [
+    'Her beskriver du hvilke kostnader som er knyttet til løsningen.',
+    'Dette kan være utgifter til lønn, leie, lisenser, drift eller andre nødvendige ressurser for å utvikle, drifte og levere varen eller tjenesten.'
+  ] },
+  inntekter:    { title: '7. Inntekter',     body: [
+    'Her beskriver du hva du får igjen for løsningen.',
+    'Dette kan være økonomiske inntekter (abonnementer, engangsbetalinger, annonser) eller andre målbare verdier som spart tid, økt effektivitet eller oppmerksomhet.'
+  ] },
+  maltall:      { title: 'Måltall',          body: [
+    'Her kan du skrive inntil 300 ord om ditt Lean Canvas.',
+    'Beskriv målene dine, viktige måltall eller andre tanker om prosjektet som ikke passer inn i de andre boksene.'
+  ] }
 };
 // ── Lean Canvas: hjelpetekst som boble ved boksen, så man kan lese mens man skriver ──
 // Overskriftens "?" bruker fortsatt modalen (den teksten gjelder hele verktøyet).
 let _lcBoble = null;
+let _lcBobleBoks = null;
+let _lcHoverBoble = null;
+function lcLagBoble(boks, key) {
+  const c = LC_HELP[key] || LC_HELP.overview;
+  const b = document.createElement('div');
+  b.className = 'lc-boble';
+  b.innerHTML = c.body.map(function (avsnitt) { return '<p>' + avsnitt + '</p>'; }).join('');
+  boks.appendChild(b);
+  // Bytt til venstre side hvis det ikke er plass til høyre for boksen
+  const r = boks.getBoundingClientRect();
+  if (r.right + 12 + b.offsetWidth > window.innerWidth - 16) b.classList.add('venstre');
+  return b;
+}
 function lcLukkBoble() {
   if (_lcBoble) { _lcBoble.remove(); _lcBoble = null; }
+  _lcBobleBoks = null;
   document.querySelectorAll('.lc-help.aktiv').forEach(function (b) { b.classList.remove('aktiv'); });
-  document.querySelectorAll('.lc-boks-aktiv').forEach(function (bx) { bx.classList.remove('lc-boks-aktiv'); });
+  if (!_lcHoverBoble) document.querySelectorAll('.lc-boks-aktiv').forEach(function (bx) { bx.classList.remove('lc-boks-aktiv'); });
+}
+function lcFjernHoverBoble() {
+  if (_lcHoverBoble) {
+    const boks = _lcHoverBoble.parentElement;
+    _lcHoverBoble.remove(); _lcHoverBoble = null;
+    if (boks && boks !== _lcBobleBoks) boks.classList.remove('lc-boks-aktiv');
+  }
 }
 function lcBoble(btn, key) {
   const varAapen = btn.classList.contains('aktiv');
+  lcFjernHoverBoble();
   lcLukkBoble();
   if (varAapen) return;                       // samme "?" igjen -> lukk
   const boks = btn.closest('.lc-box, .lc-maltall-box');
   if (!boks) return;
-  const c = LC_HELP[key] || LC_HELP.overview;
-  const b = document.createElement('div');
-  b.className = 'lc-boble';
-  b.textContent = c.body;
-  boks.appendChild(b);
+  const b = lcLagBoble(boks, key);
   boks.classList.add('lc-boks-aktiv');         // hev boksen over nabo-boksene så boblen ikke skjules
-  // Bytt til venstre side hvis det ikke er plass til høyre for boksen
-  const r = boks.getBoundingClientRect();
-  if (r.right + 12 + b.offsetWidth > window.innerWidth - 16) b.classList.add('venstre');
   btn.classList.add('aktiv');
   _lcBoble = b;
+  _lcBobleBoks = boks;
 }
+// Rask forhåndsvisning: hold musen over "?" for å vise hjelpeteksten et øyeblikk
+document.querySelectorAll('#page-lean-canvas .lc-help[data-lc-key]').forEach(function (btn) {
+  btn.addEventListener('mouseenter', function () {
+    if (btn.classList.contains('aktiv')) return;   // allerede festet åpen ved klikk
+    const boks = btn.closest('.lc-box, .lc-maltall-box');
+    if (!boks) return;
+    _lcHoverBoble = lcLagBoble(boks, btn.dataset.lcKey);
+    boks.classList.add('lc-boks-aktiv');
+  });
+  btn.addEventListener('mouseleave', lcFjernHoverBoble);
+});
 document.addEventListener('click', function (e) {
   if (!_lcBoble) return;
   if (e.target.closest('.lc-boble') || e.target.closest('.lc-help')) return;
+  // Hold hjelpeboblen åpen når man klikker for å skrive i SAMME boks
+  if (_lcBobleBoks && e.target.closest('.lc-box, .lc-maltall-box') === _lcBobleBoks) return;
   lcLukkBoble();
 });
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lcLukkBoble(); });
@@ -2012,7 +2080,7 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lcLu
 function openLcHelp(key) {
   const c = LC_HELP[key] || LC_HELP.overview;
   document.getElementById('lch-title').textContent = c.title;
-  document.getElementById('lch-body').textContent = c.body;
+  document.getElementById('lch-body').innerHTML = c.body.map(function (avsnitt) { return '<p>' + avsnitt + '</p>'; }).join('');
   document.getElementById('lc-help-modal').classList.add('open');
 }
 
@@ -2593,14 +2661,29 @@ window.addEventListener('message', function (ev) {
   }
 });
 
-// ── Trippeldiamanten: hover på et kort uthever samme etikett i diagrammet ──
+// ── Trippeldiamanten: hover på et kort uthever samme etikett OG linjestykke i diagrammet ──
 document.querySelectorAll('#page-innov102 .dd-card2[data-seg]').forEach(function (kort) {
   const merke = document.querySelector('#page-innov102 .dd-seg[data-seg="' + kort.dataset.seg + '"]');
+  const linje = document.querySelector('#page-innov102 .dd-line[data-seg="' + kort.dataset.seg + '"]');
   if (!merke) return;
-  kort.addEventListener('mouseenter', function () { merke.classList.add('dd-aktiv'); });
-  kort.addEventListener('mouseleave', function () { merke.classList.remove('dd-aktiv'); });
-  kort.addEventListener('focus', function () { merke.classList.add('dd-aktiv'); });
-  kort.addEventListener('blur', function () { merke.classList.remove('dd-aktiv'); });
+  kort.addEventListener('mouseenter', function () { merke.classList.add('dd-aktiv'); if (linje) linje.classList.add('dd-aktiv'); });
+  kort.addEventListener('mouseleave', function () { merke.classList.remove('dd-aktiv'); if (linje) linje.classList.remove('dd-aktiv'); });
+  kort.addEventListener('focus', function () { merke.classList.add('dd-aktiv'); if (linje) linje.classList.add('dd-aktiv'); });
+  kort.addEventListener('blur', function () { merke.classList.remove('dd-aktiv'); if (linje) linje.classList.remove('dd-aktiv'); });
+});
+// Samme kobling andre veien: hovrer man selve fase-teksten (eller linjestykket) i trippeldiamanten,
+// blir det tilhørende kortet uthevet, og hele linjestykket teksten står over blir tykkere.
+document.querySelectorAll('#page-innov102 .dd-seg[data-seg]').forEach(function (merke) {
+  const kort = document.querySelector('#page-innov102 .dd-card2[data-seg="' + merke.dataset.seg + '"]');
+  const linje = document.querySelector('#page-innov102 .dd-line[data-seg="' + merke.dataset.seg + '"]');
+  merke.addEventListener('mouseenter', function () { if (kort) kort.classList.add('dd-kort-aktiv'); if (linje) linje.classList.add('dd-aktiv'); });
+  merke.addEventListener('mouseleave', function () { if (kort) kort.classList.remove('dd-kort-aktiv'); if (linje) linje.classList.remove('dd-aktiv'); });
+});
+document.querySelectorAll('#page-innov102 .dd-line[data-seg]').forEach(function (linje) {
+  const merke = document.querySelector('#page-innov102 .dd-seg[data-seg="' + linje.dataset.seg + '"]');
+  const kort = document.querySelector('#page-innov102 .dd-card2[data-seg="' + linje.dataset.seg + '"]');
+  linje.addEventListener('mouseenter', function () { if (merke) merke.classList.add('dd-aktiv'); if (kort) kort.classList.add('dd-kort-aktiv'); });
+  linje.addEventListener('mouseleave', function () { if (merke) merke.classList.remove('dd-aktiv'); if (kort) kort.classList.remove('dd-kort-aktiv'); });
 });
 
 // ── Egen tittel: grå standardtekst, svart når brukeren skriver sitt eget ──
@@ -3237,9 +3320,12 @@ function lcInput(ta) {
 }
 
 // Kulepunkt i Lean Canvas-boksene: starter med "• ", Enter lager nytt punkt
-document.querySelectorAll('#page-lean-canvas .lc-box .lc-ta').forEach(function (ta) {
+document.querySelectorAll('#page-lean-canvas .lc-box .lc-ta, #page-lean-canvas .lc-maltall-box .lc-ta').forEach(function (ta) {
   ta.addEventListener('focus', function () {
     if (ta.value === '') { ta.value = '• '; ta.selectionStart = ta.selectionEnd = ta.value.length; }
+    const box = ta.closest('.lc-box, .lc-maltall-box');
+    const desc = box && box.querySelector('.lc-desc');
+    if (desc) desc.style.display = 'none';
   });
   ta.addEventListener('blur', function () {
     if (ta.value.replace(/•/g, '').trim() === '') { ta.value = ''; lcInput(ta); }
