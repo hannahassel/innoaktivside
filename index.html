@@ -123,12 +123,14 @@
 
     /* ── Landing page ── */
     .landing-body { flex: 1; }
+    /* Push MIX100/INNOV101 content down toward the middle of the page (INNOV102 untouched) */
+    #page-mix100 .landing-body, #page-innov101 .landing-body { padding-top: 40px; }
     .landing-title {
       text-align: center;
       /* Samme lyse rødfarge som overskriften på forsiden – gjelder alle emnesidene */
       color: var(--red);
       font-family: var(--font-sans);
-      font-size: 30px;
+      font-size: 34px;
       font-weight: bold;
       padding: 26px 20px 22px;
       line-height: 1.3;
@@ -147,6 +149,7 @@
       background: transparent;
       padding: 4px 20px 30px;
       max-width: 1400px;
+      width: 100%;
       margin: 0 auto 40px;
     }
     .tool-cards-4 { display: flex; gap: 18px; }
@@ -225,21 +228,25 @@
     @media (max-width: 820px) { .dd-row { flex-direction: column; } }
 
     /* ── INNOV101 landing cards (hover -> pink) ── */
-    .i101-cards { display: flex; gap: 28px; max-width: 1180px; margin: 20px auto 320px; padding: 0 30px; align-items: stretch; }
+    .i101-cards { display: flex; gap: 28px; max-width: 1200px; margin: 46px auto 266px; padding: 0 30px; align-items: stretch; }
     .i101-card {
       flex: 1 1 0; min-width: 0; position: relative; cursor: pointer; text-align: left; font-family: inherit;
-      background: #fff; border: none; border-top: 6px solid var(--red-dark); border-radius: 16px;
-      padding: 30px 30px 64px; box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+      background: #fff; border: none; border-top: 7px solid var(--red-dark); border-radius: 18px;
+      padding: 32px 32px 54px; box-shadow: 0 3px 14px rgba(0,0,0,0.08);
       display: flex; flex-direction: column;
       transition: background .15s, box-shadow .15s, transform .1s;
     }
     .i101-card:hover { background: var(--pink); box-shadow: 0 7px 22px rgba(0,0,0,0.15); transform: translateY(-3px); }
+    .i101-card { --plakat-bg: #fff; }
+    .i101-card:hover { --plakat-bg: var(--pink); }
+    .plakat-front { fill: var(--plakat-bg, #fff); transition: fill .15s; }
     .i101-ic { display: none; }
-    .i101-t { font-size: 24px; font-weight: bold; color: #200505; margin-bottom: 7px; }
-    .i101-d { font-size: 14.5px; color: var(--text-light); line-height: 1.5; margin-bottom: 22px; }
-    .i101-prev { margin-top: auto; color: #C25A4E; }
+    .i101-t { font-size: 25px; font-weight: bold; color: #200505; margin-bottom: 6px; }
+    .i101-d { font-size: 14.5px; color: var(--text-light); line-height: 1.5; margin-bottom: 18px; }
+    .i101-prev { margin-top: auto; color: #FF6F5E; }
+    .i101-prev-story { margin-bottom: 18px; }
     .i101-prev svg { width: 100%; height: auto; display: block; }
-    .i101-arrow { position: absolute; right: 28px; bottom: 18px; width: 32px; height: 32px; color: var(--red-dark); }
+    .i101-arrow { position: absolute; right: 34px; bottom: 24px; width: 38px; height: 38px; color: var(--red-dark); }
     @media (max-width: 820px) { .i101-cards { flex-wrap: wrap; } .i101-card { flex: 1 1 45%; } }
 
     @media (max-width: 900px) {
@@ -1063,24 +1070,24 @@
         <span class="i101-t">Lean Canvas</span>
         <span class="i101-d">Fyll ut forretningsmodellen i sju ruter.</span>
         <span class="i101-prev">
-          <svg viewBox="0 0 200 84" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke="currentColor" stroke-width="1.3">
-              <rect x="2" y="4" width="36" height="40" rx="3"/>
-              <rect x="42" y="4" width="36" height="40" rx="3"/>
-              <rect x="82" y="4" width="36" height="40" rx="3"/>
-              <rect x="122" y="4" width="36" height="40" rx="3"/>
-              <rect x="162" y="4" width="36" height="40" rx="3"/>
-              <rect x="2" y="50" width="96" height="30" rx="3"/>
-              <rect x="102" y="50" width="96" height="30" rx="3"/>
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="5" y="5" width="34" height="58" rx="4"/>
+              <rect x="45" y="5" width="34" height="58" rx="4"/>
+              <rect x="85" y="5" width="34" height="58" rx="4"/>
+              <rect x="125" y="5" width="34" height="58" rx="4"/>
+              <rect x="165" y="5" width="34" height="58" rx="4"/>
+              <rect x="5" y="71" width="92" height="42" rx="4"/>
+              <rect x="103" y="71" width="92" height="42" rx="4"/>
             </g>
-            <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <line x1="5" y1="6" x2="35" y2="6"/>
-              <line x1="45" y1="6" x2="75" y2="6"/>
-              <line x1="85" y1="6" x2="115" y2="6"/>
-              <line x1="125" y1="6" x2="155" y2="6"/>
-              <line x1="165" y1="6" x2="195" y2="6"/>
-              <line x1="5" y1="52" x2="95" y2="52"/>
-              <line x1="105" y1="52" x2="195" y2="52"/>
+            <g fill="currentColor" stroke="none">
+              <path d="M5,7 L5,9 A4,4 0 0 1 9,5 L35,5 A4,4 0 0 1 39,9 L39,7 Z"/>
+              <path d="M45,7 L45,9 A4,4 0 0 1 49,5 L75,5 A4,4 0 0 1 79,9 L79,7 Z"/>
+              <path d="M85,7 L85,9 A4,4 0 0 1 89,5 L115,5 A4,4 0 0 1 119,9 L119,7 Z"/>
+              <path d="M125,7 L125,9 A4,4 0 0 1 129,5 L155,5 A4,4 0 0 1 159,9 L159,7 Z"/>
+              <path d="M165,7 L165,9 A4,4 0 0 1 169,5 L195,5 A4,4 0 0 1 199,9 L199,7 Z"/>
+              <path d="M5,73 L5,75 A4,4 0 0 1 9,71 L93,71 A4,4 0 0 1 97,75 L97,73 Z"/>
+              <path d="M103,73 L103,75 A4,4 0 0 1 107,71 L191,71 A4,4 0 0 1 195,75 L195,73 Z"/>
             </g>
           </svg>
         </span>
@@ -1092,14 +1099,24 @@
         <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="7" width="5.5" height="10" rx="1"/><rect x="9.25" y="7" width="5.5" height="10" rx="1"/><rect x="16.5" y="7" width="5.5" height="10" rx="1"/></svg></span>
         <span class="i101-t">Storyboard</span>
         <span class="i101-d">Visualiser brukerreisen steg for steg.</span>
-        <span class="i101-prev">
-          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="2" y="2" width="62" height="34" rx="2"/>
-            <rect x="69" y="2" width="62" height="34" rx="2"/>
-            <rect x="136" y="2" width="62" height="34" rx="2"/>
-            <rect x="2" y="42" width="62" height="34" rx="2"/>
-            <rect x="69" y="42" width="62" height="34" rx="2"/>
-            <rect x="136" y="42" width="62" height="34" rx="2"/>
+        <span class="i101-prev i101-prev-story">
+          <svg viewBox="0 0 200 108" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="2" y="3" width="62" height="48" rx="3"/>
+              <rect x="69" y="3" width="62" height="48" rx="3"/>
+              <rect x="136" y="3" width="62" height="48" rx="3"/>
+              <rect x="2" y="58" width="62" height="48" rx="3"/>
+              <rect x="69" y="58" width="62" height="48" rx="3"/>
+              <rect x="136" y="58" width="62" height="48" rx="3"/>
+            </g>
+            <g fill="currentColor" stroke="none">
+              <path d="M2,4.7 L2,6 A3,3 0 0 1 5,3 L61,3 A3,3 0 0 1 64,6 L64,4.7 Z"/>
+              <path d="M69,4.7 L69,6 A3,3 0 0 1 72,3 L128,3 A3,3 0 0 1 131,6 L131,4.7 Z"/>
+              <path d="M136,4.7 L136,6 A3,3 0 0 1 139,3 L195,3 A3,3 0 0 1 198,6 L198,4.7 Z"/>
+              <path d="M2,59.7 L2,61 A3,3 0 0 1 5,58 L61,58 A3,3 0 0 1 64,61 L64,59.7 Z"/>
+              <path d="M69,59.7 L69,61 A3,3 0 0 1 72,58 L128,58 A3,3 0 0 1 131,61 L131,59.7 Z"/>
+              <path d="M136,59.7 L136,61 A3,3 0 0 1 139,58 L195,58 A3,3 0 0 1 198,61 L198,59.7 Z"/>
+            </g>
           </svg>
         </span>
         <svg class="i101-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M12 5l7 7-7 7"/></svg>
@@ -1111,19 +1128,19 @@
         <span class="i101-t">Plakat</span>
         <span class="i101-d">Velg format og lag en plakat.</span>
         <span class="i101-prev">
-          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 215 130" xmlns="http://www.w3.org/2000/svg">
             <!-- left dashed placeholder: kvadratisk format (1:1) -->
-            <rect x="36" y="32" width="38" height="38" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
-            <!-- right dashed placeholder: liggende format (A4 liggende, 297 x 210 mm) -->
-            <rect x="126" y="32" width="54" height="38" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <rect x="14" y="50" width="64" height="64" rx="1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 4"/>
+            <!-- duplicate placeholder: samme format som valgt, liggende, ligger bak -->
+            <rect x="120" y="52" width="92" height="64" rx="1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 4"/>
             <!-- selected format: stående (A4 stående, 210 x 297 mm) -->
-            <rect x="80" y="11" width="40" height="56" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect class="plakat-front" x="90" y="12" width="64" height="92" rx="0.5" fill="#fff" stroke="currentColor" stroke-width="1.3" stroke-opacity="0.85"/>
             <!-- filled corner handles -->
-            <g fill="currentColor">
-              <rect x="76" y="7" width="8" height="8"/>
-              <rect x="116" y="7" width="8" height="8"/>
-              <rect x="76" y="63" width="8" height="8"/>
-              <rect x="116" y="63" width="8" height="8"/>
+            <g fill="currentColor" opacity="0.85">
+              <rect x="86.5" y="8.5" width="7" height="7"/>
+              <rect x="150.5" y="8.5" width="7" height="7"/>
+              <rect x="86.5" y="100.5" width="7" height="7"/>
+              <rect x="150.5" y="100.5" width="7" height="7"/>
             </g>
           </svg>
         </span>
@@ -1174,24 +1191,24 @@
         <span class="i101-t">Lean Canvas</span>
         <span class="i101-d">Fyll ut forretningsmodellen i sju ruter.</span>
         <span class="i101-prev">
-          <svg viewBox="0 0 200 84" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke="currentColor" stroke-width="1.3">
-              <rect x="2" y="4" width="36" height="40" rx="3"/>
-              <rect x="42" y="4" width="36" height="40" rx="3"/>
-              <rect x="82" y="4" width="36" height="40" rx="3"/>
-              <rect x="122" y="4" width="36" height="40" rx="3"/>
-              <rect x="162" y="4" width="36" height="40" rx="3"/>
-              <rect x="2" y="50" width="96" height="30" rx="3"/>
-              <rect x="102" y="50" width="96" height="30" rx="3"/>
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="5" y="5" width="34" height="58" rx="4"/>
+              <rect x="45" y="5" width="34" height="58" rx="4"/>
+              <rect x="85" y="5" width="34" height="58" rx="4"/>
+              <rect x="125" y="5" width="34" height="58" rx="4"/>
+              <rect x="165" y="5" width="34" height="58" rx="4"/>
+              <rect x="5" y="71" width="92" height="42" rx="4"/>
+              <rect x="103" y="71" width="92" height="42" rx="4"/>
             </g>
-            <g stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-              <line x1="5" y1="6" x2="35" y2="6"/>
-              <line x1="45" y1="6" x2="75" y2="6"/>
-              <line x1="85" y1="6" x2="115" y2="6"/>
-              <line x1="125" y1="6" x2="155" y2="6"/>
-              <line x1="165" y1="6" x2="195" y2="6"/>
-              <line x1="5" y1="52" x2="95" y2="52"/>
-              <line x1="105" y1="52" x2="195" y2="52"/>
+            <g fill="currentColor" stroke="none">
+              <path d="M5,7 L5,9 A4,4 0 0 1 9,5 L35,5 A4,4 0 0 1 39,9 L39,7 Z"/>
+              <path d="M45,7 L45,9 A4,4 0 0 1 49,5 L75,5 A4,4 0 0 1 79,9 L79,7 Z"/>
+              <path d="M85,7 L85,9 A4,4 0 0 1 89,5 L115,5 A4,4 0 0 1 119,9 L119,7 Z"/>
+              <path d="M125,7 L125,9 A4,4 0 0 1 129,5 L155,5 A4,4 0 0 1 159,9 L159,7 Z"/>
+              <path d="M165,7 L165,9 A4,4 0 0 1 169,5 L195,5 A4,4 0 0 1 199,9 L199,7 Z"/>
+              <path d="M5,73 L5,75 A4,4 0 0 1 9,71 L93,71 A4,4 0 0 1 97,75 L97,73 Z"/>
+              <path d="M103,73 L103,75 A4,4 0 0 1 107,71 L191,71 A4,4 0 0 1 195,75 L195,73 Z"/>
             </g>
           </svg>
         </span>
@@ -1203,14 +1220,24 @@
         <span class="i101-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="7" width="5.5" height="10" rx="1"/><rect x="9.25" y="7" width="5.5" height="10" rx="1"/><rect x="16.5" y="7" width="5.5" height="10" rx="1"/></svg></span>
         <span class="i101-t">Storyboard</span>
         <span class="i101-d">Visualiser brukerreisen steg for steg.</span>
-        <span class="i101-prev">
-          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="2" y="2" width="62" height="34" rx="2"/>
-            <rect x="69" y="2" width="62" height="34" rx="2"/>
-            <rect x="136" y="2" width="62" height="34" rx="2"/>
-            <rect x="2" y="42" width="62" height="34" rx="2"/>
-            <rect x="69" y="42" width="62" height="34" rx="2"/>
-            <rect x="136" y="42" width="62" height="34" rx="2"/>
+        <span class="i101-prev i101-prev-story">
+          <svg viewBox="0 0 200 108" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="2" y="3" width="62" height="48" rx="3"/>
+              <rect x="69" y="3" width="62" height="48" rx="3"/>
+              <rect x="136" y="3" width="62" height="48" rx="3"/>
+              <rect x="2" y="58" width="62" height="48" rx="3"/>
+              <rect x="69" y="58" width="62" height="48" rx="3"/>
+              <rect x="136" y="58" width="62" height="48" rx="3"/>
+            </g>
+            <g fill="currentColor" stroke="none">
+              <path d="M2,4.7 L2,6 A3,3 0 0 1 5,3 L61,3 A3,3 0 0 1 64,6 L64,4.7 Z"/>
+              <path d="M69,4.7 L69,6 A3,3 0 0 1 72,3 L128,3 A3,3 0 0 1 131,6 L131,4.7 Z"/>
+              <path d="M136,4.7 L136,6 A3,3 0 0 1 139,3 L195,3 A3,3 0 0 1 198,6 L198,4.7 Z"/>
+              <path d="M2,59.7 L2,61 A3,3 0 0 1 5,58 L61,58 A3,3 0 0 1 64,61 L64,59.7 Z"/>
+              <path d="M69,59.7 L69,61 A3,3 0 0 1 72,58 L128,58 A3,3 0 0 1 131,61 L131,59.7 Z"/>
+              <path d="M136,59.7 L136,61 A3,3 0 0 1 139,58 L195,58 A3,3 0 0 1 198,61 L198,59.7 Z"/>
+            </g>
           </svg>
         </span>
         <svg class="i101-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"/><path d="M12 5l7 7-7 7"/></svg>
@@ -1222,19 +1249,19 @@
         <span class="i101-t">Plakat</span>
         <span class="i101-d">Velg format og lag en plakat.</span>
         <span class="i101-prev">
-          <svg viewBox="0 0 200 78" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 215 130" xmlns="http://www.w3.org/2000/svg">
             <!-- left dashed placeholder: kvadratisk format (1:1) -->
-            <rect x="36" y="32" width="38" height="38" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
-            <!-- right dashed placeholder: liggende format (A4 liggende, 297 x 210 mm) -->
-            <rect x="126" y="32" width="54" height="38" rx="2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <rect x="14" y="50" width="64" height="64" rx="1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 4"/>
+            <!-- duplicate placeholder: samme format som valgt, liggende, ligger bak -->
+            <rect x="120" y="52" width="92" height="64" rx="1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 4"/>
             <!-- selected format: stående (A4 stående, 210 x 297 mm) -->
-            <rect x="80" y="11" width="40" height="56" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect class="plakat-front" x="90" y="12" width="64" height="92" rx="0.5" fill="#fff" stroke="currentColor" stroke-width="1.3" stroke-opacity="0.85"/>
             <!-- filled corner handles -->
-            <g fill="currentColor">
-              <rect x="76" y="7" width="8" height="8"/>
-              <rect x="116" y="7" width="8" height="8"/>
-              <rect x="76" y="63" width="8" height="8"/>
-              <rect x="116" y="63" width="8" height="8"/>
+            <g fill="currentColor" opacity="0.85">
+              <rect x="86.5" y="8.5" width="7" height="7"/>
+              <rect x="150.5" y="8.5" width="7" height="7"/>
+              <rect x="86.5" y="100.5" width="7" height="7"/>
+              <rect x="150.5" y="100.5" width="7" height="7"/>
             </g>
           </svg>
         </span>
