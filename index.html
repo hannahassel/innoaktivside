@@ -710,10 +710,10 @@
     .dl-box { background: #fff; border-radius: 16px; width: 960px; max-width: 95vw; max-height: 93vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
     .dl-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f3efe8; border-bottom: 1px solid #e6ded3; font-size: 14px; color: #6f665c; font-weight: 600; }
     .dl-x { background: none; border: none; font-size: 24px; line-height: 1; color: #8a8078; cursor: pointer; padding: 0 4px; }
-    .dl-body { flex: 1; overflow: auto; padding: 26px; background: #faf6ef; display: flex; justify-content: center; align-items: flex-start; }
+    .dl-body { flex: 1; overflow: auto; padding: 26px; background: #fff; display: flex; justify-content: center; align-items: flex-start; }
     .dl-page { background: #fff; width: 100%; max-width: 840px; aspect-ratio: 297 / 210; box-shadow: 0 6px 24px rgba(0,0,0,0.14); border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
     /* Stående A4 (f.eks. Lean Canvas) - motsatt sideforhold av standard-boksen over */
-    .dl-page.dl-portrait { aspect-ratio: 210 / 297; max-width: 594px; }
+    .dl-page.dl-portrait { aspect-ratio: 210 / 297; max-width: 780px; }
     .dl-page img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
     /* Siderammene vises med spinner med én gang, så boksen ikke hopper når bildet er klart */
     .dl-spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #ece2d2; border-top-color: var(--red); animation: dl-spin 0.8s linear infinite; }
@@ -2455,7 +2455,7 @@ const _pdfCfg = {
   // side i stedet for å bli delt i to liggende sider.
   // rw 1140: smal nok til at siden blir stående (høyere enn bred), men fremdeles bredere
   // enn 1100px-grensa der rutenettet ellers hopper over til det smale mobiloppsettet.
-  lc:    { page: 'page-lean-canvas',         title: 'lc-title',    name: 'Lean Canvas',             rw: 1140, orientation: 'portrait' },
+  lc:    { page: 'page-lean-canvas',         title: 'lc-title',    name: 'Lean Canvas',             rw: 1140, orientation: 'portrait', pageBg: '#ffffff' },
   sp:    { page: 'page-sprikende',           title: 'sp-title',    name: 'Sprikende Lerret',        rw: 1700 },
   // rw 1700: bred nok render til at hele lerretet får plass på ÉN A4-side liggende
   sb:    { page: 'page-storyboard',          title: 'sb-title',    name: 'Samlende Lerret',         rw: 1700 },
@@ -2557,7 +2557,7 @@ function _renderCanvas(type, hideSel) {
     if (navbar) navbar.style.display = '';
     if (footer) footer.style.display = '';
   }
-  return window.html2canvas(pageEl, { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollX: 0, scrollY: 0, x: 0, backgroundColor: '#FFF9F0' })
+  return window.html2canvas(pageEl, { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollX: 0, scrollY: 0, x: 0, backgroundColor: cfg.pageBg || '#FFF9F0' })
     .then(function (canvas) { restore(); return { canvas: canvas, filename: filename }; },
           function (err) { restore(); throw err; });
 }
@@ -2587,7 +2587,7 @@ function _renderPages(type) {
 // html2pdf deler bildet i like høye skiver: pageH = bredde * (innerH / innerW).
 // A4 liggende med 8 mm marg  ->  inner 281 x 194 mm (ratio 194/281).
 // A4 stående  med 8 mm marg  ->  inner 194 x 281 mm (ratio 281/194 - motsatt vei).
-function _compositePages(canvases, orientation) {
+function _compositePages(canvases, orientation, pageBg) {
   const innerRatio = orientation === 'portrait' ? (281 / 194) : (194 / 281);
   const W0 = Math.max.apply(null, canvases.map(function (c) { return c.width; }));
   // Én del som allerede får plass på siden brukes uendret
@@ -2598,7 +2598,7 @@ function _compositePages(canvases, orientation) {
   out.width = W;
   out.height = pageH * canvases.length;
   const ctx = out.getContext('2d');
-  ctx.fillStyle = '#FFF9F0';
+  ctx.fillStyle = pageBg || '#FFF9F0';
   ctx.fillRect(0, 0, out.width, out.height);
   canvases.forEach(function (c, i) {
     let dw = W, dh = c.height * (W / c.width);
@@ -2620,7 +2620,7 @@ function _savePdfFromCanvas(canvas, filename, orientation) {
 function downloadPDF(type) {
   const cfg = _pdfCfg[type];
   _renderPages(type).then(function (r) {
-    _savePdfFromCanvas(_compositePages(r.canvases, cfg && cfg.orientation), r.filename, cfg && cfg.orientation);
+    _savePdfFromCanvas(_compositePages(r.canvases, cfg && cfg.orientation, cfg && cfg.pageBg), r.filename, cfg && cfg.orientation);
   });
 }
 
@@ -2664,7 +2664,7 @@ function showDownloadPreview(type) {
   document.getElementById('dl-preview-modal').classList.add('open');
 
   _renderPages(type).then(function (r) {
-    _dlCanvas = _compositePages(r.canvases, _dlOrientation);
+    _dlCanvas = _compositePages(r.canvases, _dlOrientation, cfg && cfg.pageBg);
     _dlFilename = r.filename;
     // Sikring: skulle antallet avvike, bygg rammene på nytt
     if (r.canvases.length !== rammer.length) rammer = _byggSiderammer(wrap, r.canvases.length, _dlOrientation);
