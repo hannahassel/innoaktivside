@@ -2766,6 +2766,140 @@ const SHAPE_CANFILL = {
 
 const SHAPE_SIZE = { rect: [180, 180], triangle: [195, 165], ellipse: [180, 180], arrow: [235, 125], line: [305, 85], star: [180, 180], heart: [180, 165], thumb: [165, 180], bubble: [250, 180] };
 
+// Radius (i lerret-piksler) for viskelæret når det treffer en figur — samme
+// følelse som det vanlige viskelæret (linjebredde 26 der, altså ~13px radius).
+const SHAPE_ERASE_R = 14;
+
+// ── Geometri brukt av viskelæret til å "treffe" figurer ──
+// Punkt-samplere for streker/kurver/ellipser, som i plakat-verktøyets eget
+// viskelær (shapeOutlinePoints/_sampleSeg/_sampleCubic/_sampleEllipse), her
+// som frie funksjoner i stedet for klasse-metoder.
+function edSampleSeg(p0, p1, n) {
+  n = n || 14;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n;
+    pts.push({ x: p0.x + (p1.x - p0.x) * t, y: p0.y + (p1.y - p0.y) * t });
+  }
+  return pts;
+}
+function edSampleCubic(p0, c1, c2, p1, n) {
+  n = n || 18;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, mt = 1 - t;
+    const a = mt * mt * mt, b = 3 * mt * mt * t, c = 3 * mt * t * t, d = t * t * t;
+    pts.push({ x: a * p0.x + b * c1.x + c * c2.x + d * p1.x, y: a * p0.y + b * c1.y + c * c2.y + d * p1.y });
+  }
+  return pts;
+}
+function edSampleEllipse(cx, cy, rx, ry, n) {
+  n = n || 56;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    pts.push({ x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a) });
+  }
+  return pts;
+}
+// Punkter langs figurens omkrets, i absolutte lerret-koordinater — samme
+// figur-geometri som edShapePath/SHAPES, bare som punktlister i stedet for
+// canvas-tegnekommandoer. Brukes til å avgjøre om viskelæret er nære nok
+// streken/konturen til å "treffe" figuren.
+function edShapeOutlinePoints(kind, x0, y0, w, h) {
+  const sx = nx => x0 + (nx / 100) * w, sy = ny => y0 + (ny / 100) * h;
+  const P = (nx, ny) => ({ x: sx(nx), y: sy(ny) });
+  const seg = (a, b, n) => edSampleSeg(a, b, n);
+  const cub = (a, c1, c2, b, n) => edSampleCubic(a, c1, c2, b, n);
+  const poly = vs => { const pts = []; for (let i = 0; i < vs.length; i++) pts.push.apply(pts, seg(vs[i], vs[(i + 1) % vs.length])); return pts; };
+  if (kind === 'rect') return poly([P(6, 6), P(94, 6), P(94, 94), P(6, 94)]);
+  if (kind === 'triangle') return poly([P(50, 6), P(94, 94), P(6, 94)]);
+  if (kind === 'ellipse') return edSampleEllipse(sx(50), sy(50), Math.abs(sx(94) - sx(50)), Math.abs(sy(94) - sy(50)));
+  if (kind === 'arrow') return [].concat(seg(P(6, 50), P(82, 50)), seg(P(62, 30), P(88, 50)), seg(P(88, 50), P(62, 70)));
+  if (kind === 'line') return seg(P(6, 50), P(94, 50), 24);
+  if (kind === 'star') return poly([P(50, 6), P(61, 38), P(95, 38), P(68, 59), P(79, 93), P(50, 72), P(21, 93), P(32, 59), P(5, 38), P(39, 38)]);
+  if (kind === 'heart') return [].concat(
+    cub(P(50, 90), P(10, 60), P(10, 20), P(38, 20)),
+    cub(P(38, 20), P(46, 20), P(50, 28), P(50, 33)),
+    cub(P(50, 33), P(50, 28), P(54, 20), P(62, 20)),
+    cub(P(62, 20), P(90, 20), P(90, 60), P(50, 90)));
+  if (kind === 'thumb') return [].concat(
+    poly([P(20, 44), P(10, 44), P(6, 48), P(6, 88), P(10, 92), P(20, 92)]),
+    seg(P(20, 44), P(40, 12)),
+    cub(P(40, 12), P(42, 8), P(50, 8), P(52, 14)),
+    cub(P(52, 14), P(54, 20), P(50, 34), P(48, 40)),
+    seg(P(48, 40), P(82, 40)), seg(P(82, 40), P(89, 51)), seg(P(89, 51), P(83, 84)),
+    seg(P(83, 84), P(75, 92)), seg(P(75, 92), P(20, 92)));
+  if (kind === 'bubble') return poly([P(14, 14), P(86, 14), P(94, 22), P(94, 62), P(86, 70), P(42, 70), P(24, 90), P(28, 70), P(14, 70), P(6, 62), P(6, 22)]);
+  return poly([P(6, 6), P(94, 6), P(94, 94), P(6, 94)]);
+}
+// Standard "ray casting" punkt-i-polygon-test, brukt til å avgjøre om
+// viskelæret er inni en FYLT figur (ikke bare nær konturen).
+function edPointInPolygon(px, py, pts) {
+  let inside = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const xi = pts[i].x, yi = pts[i].y;
+    const xj = pts[j].x, yj = pts[j].y;
+    const intersect = ((yi > py) !== (yj > py)) &&
+      (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+// Legger til ett "viskehull" (en ellipse) på figuren, i figurens eget
+// 0–100-koordinatsystem (samme som SHAPES-figurene selv bruker), slik at
+// hullet flytter/skalerer med figuren om den senere dras eller endres i
+// størrelse. Dropper nye hull som ligger for tett på det forrige (samme
+// figur) for å unngå at listen vokser ukontrollert under et langt visk-drag.
+function edAddErasure(el, px, py) {
+  if (!el.erasures) el.erasures = [];
+  const lx = ((px - el.x) / el.w) * 100;
+  const ly = ((py - el.y) / el.h) * 100;
+  const last = el.erasures[el.erasures.length - 1];
+  if (last && Math.hypot(last.cx - lx, last.cy - ly) < 2) return false;
+  if (el.erasures.length >= 300) return false;
+  el.erasures.push({ cx: lx, cy: ly, rx: (SHAPE_ERASE_R / el.w) * 100, ry: (SHAPE_ERASE_R / el.h) * 100 });
+  return true;
+}
+// Visker på alle figurer som viskelæret er over akkurat nå (ett punkt) —
+// både fyll og kontur kan viskes bort, i motsetning til i plakat, der en
+// figur med fyll mister fyllet og blir til løse streker med det samme
+// viskelæret rører den. Her forblir figuren én figur, bare med et hull i.
+function edEraseShapesAt(px, py) {
+  let changed = false;
+  ed.elements.forEach(el => {
+    if (el.type !== 'shape') return;
+    const outline = edShapeOutlinePoints(el.kind, el.x, el.y, el.w, el.h);
+    const th = 12 + (el.strokeWidth || 4);
+    const filled = SHAPE_CANFILL[el.kind] && el.fillMode === 'fill';
+    const hit = outline.some(p => Math.hypot(p.x - px, p.y - py) < th) ||
+      (filled && edPointInPolygon(px, py, outline));
+    if (hit && edAddErasure(el, px, py)) changed = true;
+  });
+  return changed;
+}
+// Samme som over, men samplet langs hele strekket fra forrige til nåværende
+// pekerposisjon, slik at et raskt visk-drag ikke lager hull med glipper i.
+function edEraseShapesAlong(a, b) {
+  const dist = Math.hypot(b.x - a.x, b.y - a.y);
+  const steps = Math.max(1, Math.ceil(dist / 6));
+  let changed = false;
+  ed.elements.forEach(el => {
+    if (el.type !== 'shape') return;
+    const outline = edShapeOutlinePoints(el.kind, el.x, el.y, el.w, el.h);
+    const th = 12 + (el.strokeWidth || 4);
+    const filled = SHAPE_CANFILL[el.kind] && el.fillMode === 'fill';
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const px = a.x + (b.x - a.x) * t, py = a.y + (b.y - a.y) * t;
+      const hit = outline.some(p => Math.hypot(p.x - px, p.y - py) < th) ||
+        (filled && edPointInPolygon(px, py, outline));
+      if (hit && edAddErasure(el, px, py)) changed = true;
+    }
+  });
+  return changed;
+}
+
 const ed = {
   canvas: null, ctx: null,
   box: null, imgArea: null,
@@ -2868,6 +3002,7 @@ function edDown(e) {
   ed.ctx.moveTo(p.x, p.y);
   ed.ctx.lineTo(p.x + 0.1, p.y + 0.1);
   ed.ctx.stroke();
+  if (ed.tool === 'erase' && edEraseShapesAt(p.x, p.y)) renderElements();
   ed.last = p;
 }
 
@@ -2876,6 +3011,7 @@ function edMove(e) {
   const p = edPos(e);
   ed.ctx.lineTo(p.x, p.y);
   ed.ctx.stroke();
+  if (ed.tool === 'erase' && edEraseShapesAlong(ed.last, p)) renderElements();
   ed.last = p;
 }
 
@@ -3184,7 +3320,8 @@ function setShape(s) {
     w: w, h: h,
     color: ed.color,
     strokeWidth: 4,
-    fillMode: 'stroke'
+    fillMode: 'stroke',
+    erasures: []
   };
   ed.elements.push(el);
   ed.selectedId = el.id;
@@ -3234,8 +3371,23 @@ function edShapeObjSvg(so) {
     ? 'fill="' + so.color + '" stroke="none"'
     : ('fill="none" stroke="' + so.color + '" stroke-width="' + Math.max(0.5, so.strokeWidth * k) +
        '" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"');
+  const markup = SHAPES[so.kind](attr);
+  const erasures = so.erasures || [];
+  if (!erasures.length) {
+    return '<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible;pointer-events:none">' +
+      markup + '</svg>';
+  }
+  // Viskede hull vises som et SVG-mask over figuren — figuren er fortsatt
+  // ÉN figur (fillMode uendret), bare med "gjennomsiktige" hull der
+  // viskelæret har vært, enten det er i fyllet eller i konturen.
+  const maskId = 'em-' + so.id;
+  const holes = erasures.map(er =>
+    '<ellipse cx="' + er.cx + '" cy="' + er.cy + '" rx="' + er.rx + '" ry="' + er.ry + '" fill="black"/>').join('');
   return '<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible;pointer-events:none">' +
-    SHAPES[so.kind](attr) + '</svg>';
+    '<defs><mask id="' + maskId + '" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140">' +
+      '<rect x="-20" y="-20" width="140" height="140" fill="white"/>' + holes +
+    '</mask></defs>' +
+    '<g mask="url(#' + maskId + ')">' + markup + '</g></svg>';
 }
 
 // Tegner alle figurer/bilder som egne, flyttbare/endre-størrelse-lag oppå
@@ -3390,19 +3542,52 @@ async function edFlattenToDataURL() {
 
   for (const el of ed.elements) {
     if (el.type === 'shape') {
-      octx.save();
-      octx.lineJoin = 'round';
-      octx.lineCap = 'round';
-      edShapePath(octx, el.kind, el.x, el.y, el.w, el.h);
-      if (SHAPE_CANFILL[el.kind] && el.fillMode === 'fill') {
-        octx.fillStyle = el.color;
-        octx.fill();
+      const erasures = el.erasures || [];
+      const filled = SHAPE_CANFILL[el.kind] && el.fillMode === 'fill';
+      if (!erasures.length) {
+        octx.save();
+        octx.lineJoin = 'round';
+        octx.lineCap = 'round';
+        edShapePath(octx, el.kind, el.x, el.y, el.w, el.h);
+        if (filled) {
+          octx.fillStyle = el.color;
+          octx.fill();
+        } else {
+          octx.strokeStyle = el.color;
+          octx.lineWidth = el.strokeWidth;
+          octx.stroke();
+        }
+        octx.restore();
       } else {
-        octx.strokeStyle = el.color;
-        octx.lineWidth = el.strokeWidth;
-        octx.stroke();
+        // Tegn figuren i et eget lag og "stans ut" viskehullene der (fyll og
+        // kontur) før laget legges oppå det ferdige bildet — samme resultat
+        // som forhåndsvisningens SVG-mask, bakt inn i PNG-en som lagres.
+        const buf = document.createElement('canvas');
+        buf.width = w; buf.height = h;
+        const bctx = buf.getContext('2d');
+        bctx.lineJoin = 'round';
+        bctx.lineCap = 'round';
+        edShapePath(bctx, el.kind, el.x, el.y, el.w, el.h);
+        if (filled) {
+          bctx.fillStyle = el.color;
+          bctx.fill();
+        } else {
+          bctx.strokeStyle = el.color;
+          bctx.lineWidth = el.strokeWidth;
+          bctx.stroke();
+        }
+        bctx.globalCompositeOperation = 'destination-out';
+        erasures.forEach(er => {
+          const cx = el.x + (er.cx / 100) * el.w;
+          const cy = el.y + (er.cy / 100) * el.h;
+          const rx = Math.max(0.5, (er.rx / 100) * el.w);
+          const ry = Math.max(0.5, (er.ry / 100) * el.h);
+          bctx.beginPath();
+          bctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+          bctx.fill();
+        });
+        octx.drawImage(buf, 0, 0);
       }
-      octx.restore();
     } else if (el.type === 'image') {
       await new Promise(res => {
         const img = new Image();
