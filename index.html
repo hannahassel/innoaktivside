@@ -970,6 +970,8 @@
       background: #fff; color: #200505; cursor: pointer; font-size: 13px; font-family: inherit;
     }
     .pb-chip:hover { background: #f4f4f4; }
+    .pb-chip.active { background: #004281; border-color: transparent; color: #fff; }
+    .pb-chip.active:hover { background: #004281; }
     .pb-step-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(0,0,0,.16); background: #fff; cursor: pointer; font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; color: #200505; font-family: inherit; }
     .pb-step-btn:hover { background: #f4f4f4; }
     .pb-step-val { min-width: 26px; text-align: center; font-size: 14px; color: #200505; }
@@ -2726,6 +2728,12 @@ const SHAPE_LABELS = {
   rect: 'Firkant', triangle: 'Trekant', ellipse: 'Sirkel', arrow: 'Pil', line: 'Strek',
   star: 'Stjerne', heart: 'Hjerte', thumb: 'Tommel opp', bubble: 'Snakkeboble'
 };
+// Hvilke figurer som kan ha fyll — samme oppslag som SHAPES[...].canFill i plakat
+// (pil og strek er rene streker og kan ikke fylles).
+const SHAPE_CANFILL = {
+  rect: true, triangle: true, ellipse: true, arrow: false, line: false,
+  star: true, heart: true, thumb: true, bubble: true
+};
 
 const SHAPE_SIZE = { rect: [180, 180], triangle: [195, 165], ellipse: [180, 180], arrow: [235, 125], line: [305, 85], star: [180, 180], heart: [180, 165], thumb: [165, 180], bubble: [250, 180] };
 
@@ -2918,15 +2926,26 @@ function updatePropsBar() {
         '<span class="pb-hint">Velg en figur i menyen for å legge den til.</span>';
     } else {
       const so = ed.shapeObj;
+      const canFill = SHAPE_CANFILL[so.kind];
+      const filled = canFill && so.fillMode === 'fill';
       const swatches = DRAW_COLORS.map(c =>
         '<button class="pb-swatch' + (so.color.toLowerCase() === c ? ' active' : '') + '" style="background:' + c + '" title="' + c + '" onclick="setShapeColor(\'' + c + '\')"></button>').join('');
+      const fillChips = canFill
+        ? '<span class="pb-grp">' +
+            '<button class="pb-chip' + (!filled ? ' active' : '') + '" onclick="setShapeFillMode(\'stroke\')">Kontur</button>' +
+            '<button class="pb-chip' + (filled ? ' active' : '') + '" onclick="setShapeFillMode(\'fill\')">Fyll</button>' +
+          '</span><span class="pb-sep"></span>'
+        : '<span class="pb-hint">Kun kontur</span><span class="pb-sep"></span>';
+      const strokeGrp = !filled
+        ? '<span class="pb-grp"><span class="pb-grp-label">Tykkelse</span>' +
+            '<button class="pb-step-btn" onclick="setShapeStroke(-1)">−</button>' +
+            '<span class="pb-step-val">' + so.strokeWidth + '</span>' +
+            '<button class="pb-step-btn" onclick="setShapeStroke(1)">+</button>' +
+          '</span><span class="pb-sep"></span>'
+        : '';
       bar.innerHTML =
         '<span class="pb-label">Form</span><span class="pb-sep"></span>' +
-        '<span class="pb-grp"><span class="pb-grp-label">Tykkelse</span>' +
-          '<button class="pb-step-btn" onclick="setShapeStroke(-1)">−</button>' +
-          '<span class="pb-step-val">' + so.strokeWidth + '</span>' +
-          '<button class="pb-step-btn" onclick="setShapeStroke(1)">+</button>' +
-        '</span><span class="pb-sep"></span>' +
+        fillChips + strokeGrp +
         '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
         '<button class="pb-chip" onclick="openColorPanel()">Flere farger</button>';
     }
@@ -3068,7 +3087,8 @@ function setShape(s) {
     y: (ed.canvas.height - h) / 2,
     w: w, h: h,
     color: ed.color,
-    strokeWidth: 4
+    strokeWidth: 4,
+    fillMode: 'stroke'
   };
   highlightTool();
   updateShapeGridActive();
@@ -3092,6 +3112,15 @@ function setShapeStroke(delta) {
   updatePropsBar();
 }
 
+// Bytt mellom "Kontur" og "Fyll" for gjeldende form — som Kontur/Fyll-valget i plakat
+function setShapeFillMode(mode) {
+  if (!ed.shapeObj) return;
+  if (!SHAPE_CANFILL[ed.shapeObj.kind]) return;
+  ed.shapeObj.fillMode = mode;
+  renderShapeObj();
+  updatePropsBar();
+}
+
 // ── Form-figuren settes inn i fast standardstørrelse og kan flyttes/endre
 // størrelse med et håndtak i hjørnet — akkurat som elementene i
 // plakat-verktøyet — helt til den forpliktes ("bakes") inn i lerretet.
@@ -3103,9 +3132,11 @@ function edCanvasScale() {
 function edShapeObjSvg() {
   const so = ed.shapeObj;
   const k = edCanvasScale();
-  const strokeCss = Math.max(0.5, so.strokeWidth * k);
-  const attr = 'fill="none" stroke="' + so.color + '" stroke-width="' + strokeCss +
-    '" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"';
+  const filled = SHAPE_CANFILL[so.kind] && so.fillMode === 'fill';
+  const attr = filled
+    ? 'fill="' + so.color + '" stroke="none"'
+    : ('fill="none" stroke="' + so.color + '" stroke-width="' + Math.max(0.5, so.strokeWidth * k) +
+       '" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"');
   return '<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible;pointer-events:none">' +
     SHAPES[so.kind](attr) + '</svg>';
 }
@@ -3166,10 +3197,15 @@ function edCommitShapeObj() {
   ctx.globalCompositeOperation = 'source-over';
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
-  ctx.strokeStyle = so.color;
-  ctx.lineWidth = so.strokeWidth;
   edShapePath(so.kind, so.x, so.y, so.w, so.h);
-  ctx.stroke();
+  if (SHAPE_CANFILL[so.kind] && so.fillMode === 'fill') {
+    ctx.fillStyle = so.color;
+    ctx.fill();
+  } else {
+    ctx.strokeStyle = so.color;
+    ctx.lineWidth = so.strokeWidth;
+    ctx.stroke();
+  }
   ed.dirty = true;
   ed.shapeObj = null;
   renderShapeObj();
