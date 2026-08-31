@@ -2967,7 +2967,25 @@ function edUndo() {
 
 function initEditor() {
   ed.canvas = document.getElementById('ed-canvas');
+  // "Pikslete/hakkete" frihåndsstreker skyldtes at lerretet tegner i faste
+  // 1000x640 "lerret-piksler" som så strekkes opp til hvor stort kortet
+  // faktisk vises (og enda mer på Retina-skjermer, der hver CSS-piksel er
+  // flere fysiske piksler) - streker som egentlig var skarpe blir dermed
+  // visket ut/forstørret ved visning, akkurat som et lite bilde forstørret
+  // for mye. Plakat-verktøyet unngår dette fordi det tegner med SVG (skarpt
+  // i enhver oppløsning). Her løses det ved å gjøre selve tegne-overflaten
+  // (ed.canvas) fysisk større - proporsjonalt med skjermens piksel-tetthet
+  // (devicePixelRatio) - og så skalere tegnekonteksten tilbake med samme
+  // faktor, slik at ALT annet i koden (figur-posisjoner, treffsoner,
+  // strektykkelser m.m.) fortsatt kan regne i de samme, uendrede 1000x640
+  // "logiske" koordinatene som før (se ed.logicalW/ed.logicalH under).
+  ed.logicalW = ed.canvas.width;
+  ed.logicalH = ed.canvas.height;
+  ed.dpr = window.devicePixelRatio || 1;
+  ed.canvas.width = ed.logicalW * ed.dpr;
+  ed.canvas.height = ed.logicalH * ed.dpr;
   ed.ctx = ed.canvas.getContext('2d');
+  ed.ctx.scale(ed.dpr, ed.dpr);
 
   const c = ed.canvas;
   c.addEventListener('pointerdown', edDown);
@@ -2995,8 +3013,8 @@ function initEditor() {
 function edPos(e) {
   const r = ed.canvas.getBoundingClientRect();
   return {
-    x: (e.clientX - r.left) * (ed.canvas.width / r.width),
-    y: (e.clientY - r.top) * (ed.canvas.height / r.height)
+    x: (e.clientX - r.left) * (ed.logicalW / r.width),
+    y: (e.clientY - r.top) * (ed.logicalH / r.height)
   };
 }
 
@@ -3343,8 +3361,8 @@ function setShape(s) {
     id: 'el' + (ed.seq++),
     type: 'shape',
     kind: s,
-    x: (ed.canvas.width - w) / 2,
-    y: (ed.canvas.height - h) / 2,
+    x: (ed.logicalW - w) / 2,
+    y: (ed.logicalH - h) / 2,
     w: w, h: h,
     color: ed.color,
     strokeWidth: 4,
@@ -3389,7 +3407,7 @@ function setShapeFillMode(mode) {
 
 function edCanvasScale() {
   const r = ed.canvas.getBoundingClientRect();
-  return r.width / ed.canvas.width || 1;
+  return r.width / ed.logicalW || 1;
 }
 
 function edShapeObjSvg(so) {
@@ -3457,10 +3475,10 @@ function renderElements() {
   layer.classList.toggle('draw-mode', ed.tool === 'draw' || ed.tool === 'erase');
   layer.innerHTML = '';
   ed.elements.forEach(el => {
-    const leftPct = (el.x / ed.canvas.width) * 100;
-    const topPct = (el.y / ed.canvas.height) * 100;
-    const wPct = (el.w / ed.canvas.width) * 100;
-    const hPct = (el.h / ed.canvas.height) * 100;
+    const leftPct = (el.x / ed.logicalW) * 100;
+    const topPct = (el.y / ed.logicalH) * 100;
+    const wPct = (el.w / ed.logicalW) * 100;
+    const hPct = (el.h / ed.logicalH) * 100;
     const wrap = document.createElement('div');
     wrap.className = 'shape-obj' + (el.id === ed.selectedId ? ' selected' : '');
     wrap.style.left = leftPct + '%';
@@ -3550,7 +3568,7 @@ function deleteSelectedElement() {
 
 function deleteAllInBox() {
   edPushUndo();
-  ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
+  ed.ctx.clearRect(0, 0, ed.logicalW, ed.logicalH);
   ed.dirty = true;
   ed.elements = [];
   ed.selectedId = null;
@@ -3567,7 +3585,7 @@ function edInsertImage(e) {
   reader.onload = ev => {
     const img = new Image();
     img.onload = () => {
-      const cw = ed.canvas.width, ch = ed.canvas.height;
+      const cw = ed.logicalW, ch = ed.logicalH;
       const scale = Math.min(cw / img.width, ch / img.height);
       const w = img.width * scale, h = img.height * scale;
       const el = {
@@ -3596,6 +3614,12 @@ async function edFlattenToDataURL() {
   out.width = w; out.height = h;
   const octx = out.getContext('2d');
   octx.drawImage(ed.canvas, 0, 0);
+  // Figurer/bilder ligger i de samme "logiske" 1000x640-koordinatene som
+  // resten av appen (se initEditor), mens dette eksport-lerretet er i fulle
+  // (Retina-oppskalerte) piksler akkurat som ed.canvas selv - derfor skaleres
+  // hver figur/bilde-tegning med samme faktor, akkurat som ed.ctx allerede
+  // gjør live under tegning.
+  const S = ed.dpr || 1;
 
   for (const el of ed.elements) {
     if (el.type === 'shape') {
@@ -3603,6 +3627,7 @@ async function edFlattenToDataURL() {
       const filled = SHAPE_CANFILL[el.kind] && el.fillMode === 'fill';
       if (!erasures.length) {
         octx.save();
+        octx.scale(S, S);
         octx.lineJoin = 'round';
         octx.lineCap = 'round';
         edShapePath(octx, el.kind, el.x, el.y, el.w, el.h);
@@ -3626,6 +3651,7 @@ async function edFlattenToDataURL() {
         const buf = document.createElement('canvas');
         buf.width = w; buf.height = h;
         const bctx = buf.getContext('2d');
+        bctx.scale(S, S);
         bctx.lineJoin = 'round';
         bctx.lineCap = 'round';
         edShapePath(bctx, el.kind, el.x, el.y, el.w, el.h);
@@ -3676,7 +3702,10 @@ async function edFlattenToDataURL() {
           const s = Math.min(el.w / img.width, el.h / img.height);
           const dw = img.width * s, dh = img.height * s;
           const dx = el.x + (el.w - dw) / 2, dy = el.y + (el.h - dh) / 2;
+          octx.save();
+          octx.scale(S, S);
           octx.drawImage(img, dx, dy, dw, dh);
+          octx.restore();
           res();
         };
         img.onerror = res;
@@ -3726,7 +3755,7 @@ function openEditor(box, num) {
   // adskilt fra det flatede miniatyrbildet (dataset.drawing) som brukes på
   // oversikten - ellers ville figurene vist seg BÅDE som redigerbare
   // objekter OG bakt inn i bakgrunnsbildet.
-  ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
+  ed.ctx.clearRect(0, 0, ed.logicalW, ed.logicalH);
   ed.dirty = false;
   ed.undoStack = [];
   let restoredElements = [];
@@ -3740,7 +3769,7 @@ function openEditor(box, num) {
   closeDeletePanel();
   if (box.dataset.freehand) {
     const img = new Image();
-    img.onload = () => ed.ctx.drawImage(img, 0, 0, ed.canvas.width, ed.canvas.height);
+    img.onload = () => ed.ctx.drawImage(img, 0, 0, ed.logicalW, ed.logicalH);
     img.src = box.dataset.freehand;
   }
 
