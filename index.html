@@ -2475,6 +2475,12 @@ function _renderCanvas(type, hideSel) {
   if (navbar) navbar.style.display = 'none';
   if (footer) footer.style.display = 'none';
   pageEl.classList.add('pdf-mode');
+  // Var scrollet ned (f.eks. etter å ha skrevet i Måltall) da "Last ned" ble trykket,
+  // brukte html2canvas denne scroll-posisjonen som utgangspunkt for beskjæringen og
+  // klippet toppen av siden vekk / la til tomrom over innholdet. Nullstill scroll
+  // eksplisitt før rendring, og sett den tilbake etterpå.
+  const prevScrollX = window.pageXOffset, prevScrollY = window.pageYOffset;
+  window.scrollTo(0, 0);
 
   // Skjul den delen som hører til en annen PDF-side
   const hiddenEls = [];
@@ -2556,8 +2562,9 @@ function _renderCanvas(type, hideSel) {
     pageEl.style.width = prevWidth;
     if (navbar) navbar.style.display = '';
     if (footer) footer.style.display = '';
+    window.scrollTo(prevScrollX, prevScrollY);
   }
-  return window.html2canvas(pageEl, { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollX: 0, scrollY: 0, x: 0, backgroundColor: cfg.pageBg || '#FFF9F0' })
+  return window.html2canvas(pageEl, { scale: 2, useCORS: true, logging: false, windowWidth: w, width: w, windowHeight: h, height: h, scrollX: 0, scrollY: 0, x: 0, y: 0, backgroundColor: cfg.pageBg || '#FFF9F0' })
     .then(function (canvas) { restore(); return { canvas: canvas, filename: filename }; },
           function (err) { restore(); throw err; });
 }
