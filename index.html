@@ -848,9 +848,14 @@
       touch-action: none; cursor: crosshair; background: white;
     }
     .shape-obj-layer { position: absolute; inset: 0; pointer-events: none; }
-    .shape-obj { position: absolute; box-sizing: border-box; cursor: move; pointer-events: auto; box-shadow: 0 0 0 2px #820A12; }
+    .shape-obj { position: absolute; box-sizing: border-box; cursor: move; pointer-events: auto; }
+    .shape-obj.selected { box-shadow: 0 0 0 2px #820A12; }
     .shape-obj svg { width: 100%; height: 100%; display: block; overflow: visible; pointer-events: none; }
-    .shape-obj-handle { position: absolute; right: -7px; bottom: -7px; width: 14px; height: 14px; background: #fff; border: 2px solid #820A12; border-radius: 3px; cursor: nwse-resize; pointer-events: auto; z-index: 2; }
+    .shape-obj-handle { position: absolute; right: -7px; bottom: -7px; width: 14px; height: 14px; background: #fff; border: 2px solid #820A12; border-radius: 3px; cursor: nwse-resize; pointer-events: auto; z-index: 2; display: none; }
+    .shape-obj.selected .shape-obj-handle { display: block; }
+    /* Mens man tegner/visker skal figurer/bilder ikke fange klikk, slik at
+       pennen/viskelæret virker overalt på lerretet — som "select"-modus i plakat. */
+    .shape-obj-layer.draw-mode .shape-obj { pointer-events: none; }
     .editor-desc {
       background: var(--bg-blue); padding: 12px;
       font-size: 12px; color: #444; min-height: 48px;
@@ -881,6 +886,24 @@
        verktøyet: tittel + 3x3 rutenett med figur-kort. Funksjonen er som før
        (dra på lerretet for å tegne valgt form), bare presentasjonen matcher plakat. */
     .etool-shape { position: relative; }
+    /* "Slett"-panel — Slett valgt element / Slett alt i ruten, som i plakat-verktøyet */
+    .delete-panel {
+      display: none; position: absolute; left: calc(100% + 6px); top: 0;
+      z-index: 3; background: white; border-radius: 12px; padding: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.22); width: 220px;
+    }
+    .delete-panel.open { display: block; }
+    .delete-panel-btn {
+      display: block; width: 100%; box-sizing: border-box; text-align: left;
+      padding: 10px 12px; margin-bottom: 8px; border-radius: 8px;
+      border: 1px solid rgba(0,0,0,.16); background: #fff; color: #200505;
+      cursor: pointer; font-size: 14px; font-family: inherit;
+    }
+    .delete-panel-btn:hover { background: #f4f4f4; }
+    .delete-panel-btn.danger { border: none; background: #ff2130; color: #fff; }
+    .delete-panel-btn.danger:hover { background: #d4141f; }
+    .delete-panel-empty { font-size: 13px; color: #7b7b7b; margin-bottom: 8px; }
+    .delete-panel-hint { font-size: 12px; color: #7b7b7b; margin-top: 2px; }
     .shape-menu {
       display: none; position: absolute; left: calc(100% + 6px); top: 0;
       z-index: 3; background: white; border-radius: 12px; padding: 14px;
@@ -1912,14 +1935,20 @@
           <div class="shape-menu-grid" id="shape-menu-grid"></div>
         </div>
       </div>
-      <button class="etool" id="t-image" title="Bilde" onclick="edCommitShapeObj();document.getElementById('ed-file').click()">
+      <button class="etool" id="t-image" title="Bilde" onclick="document.getElementById('ed-file').click()">
         <svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm2 12l4-5 3 4 2-2 3 3V6H6z" fill="currentColor"/></svg>
         Bilde
       </button>
-      <button class="etool" id="t-clear" title="Slett" onclick="clearCanvas()">
-        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M7 4V3h6v1h4v2H3V4h4zM5 7h12l-1 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 7z" fill="currentColor"/></svg>
-        Slett
-      </button>
+      <div class="etool-shape">
+        <button class="etool" id="t-clear" title="Slett" onclick="toggleDeletePanel()">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M7 4V3h6v1h4v2H3V4h4zM5 7h12l-1 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 7z" fill="currentColor"/></svg>
+          Slett
+        </button>
+        <div class="delete-panel" id="delete-panel">
+          <div class="shape-menu-title">Slette</div>
+          <div id="delete-panel-body"></div>
+        </div>
+      </div>
       <button class="etool" id="t-undo" title="Angre" onclick="edUndo()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 7 4 12 9 17"/><path d="M4 12h11a4 4 0 0 1 0 8h-3"/></svg>
         Angre
@@ -2744,8 +2773,21 @@ const ed = {
   drawing: false, dirty: false,
   snapshot: null, start: null, last: null,
   undoStack: [],
-  shapeObj: null
+  // Figurer og bilder ligger nå som egne, valgbare elementer (samme modell som
+  // plakat-verktøyets "elements") i stedet for å bli tegnet rett inn i lerretet
+  // med én gang. Det gjør at man kan klikke på en figur/et bilde for å velge
+  // det, og slette kun det valgte elementet — i stedet for at "Slett" fjerner
+  // alt som er tegnet i ruten. Selve pennen/viskelæret jobber fortsatt direkte
+  // mot lerretet (rastergrafikk), som før.
+  elements: [],
+  selectedId: null,
+  seq: 1
 };
+
+// Elementet (figur/bilde) som er valgt akkurat nå, om noe
+function edSelectedEl() {
+  return ed.elements.find(el => el.id === ed.selectedId) || null;
+}
 
 // Save the canvas state before an action so it can be undone
 function edPushUndo() {
@@ -2755,7 +2797,6 @@ function edPushUndo() {
   } catch (e) {}
 }
 function edUndo() {
-  if (ed.shapeObj) { edDiscardShapeObj(); return; }
   if (!ed.undoStack.length) return;
   ed.ctx.globalCompositeOperation = 'source-over';
   ed.ctx.putImageData(ed.undoStack.pop(), 0, 0);
@@ -2774,6 +2815,19 @@ function initEditor() {
   document.getElementById('ed-file').addEventListener('change', edInsertImage);
   ensureColorInput();
   renderShapeGrid();
+
+  // "Delete"/"Backspace" sletter valgt element — som i plakat-verktøyet —
+  // så lenge man ikke står og skriver i en tekstboks (tittel/beskrivelse).
+  document.addEventListener('keydown', e => {
+    const overlay = document.getElementById('editor');
+    if (!overlay || !overlay.classList.contains('open')) return;
+    if (e.key !== 'Delete' && e.key !== 'Backspace') return;
+    if (!ed.selectedId) return;
+    const t = e.target;
+    if (t && (t.isContentEditable || /input|textarea/i.test(t.tagName))) return;
+    e.preventDefault();
+    deleteSelectedElement();
+  });
 }
 
 function edPos(e) {
@@ -2795,12 +2849,16 @@ function edStrokeStyle() {
     ctx.globalCompositeOperation = 'source-over';
     ctx.strokeStyle = ed.color;
     ctx.fillStyle = ed.color;
-    ctx.lineWidth = ed.tool === 'shape' ? 3 : ed.width;
+    ctx.lineWidth = ed.width;
   }
 }
 
 function edDown(e) {
-  if (ed.tool === 'shape') return; // form-figurer plasseres via "Legg til form"-panelet, ikke ved å dra på lerretet
+  if (ed.tool !== 'draw' && ed.tool !== 'erase') {
+    // Klikk på tomt lerret (utenfor et element) fjerner valget, som i plakat
+    selectElement(null);
+    return;
+  }
   e.preventDefault();
   edPushUndo();
   ed.drawing = true; ed.dirty = true;
@@ -2828,8 +2886,10 @@ function edUp() { ed.drawing = false; }
 // linjer/kurver — ikke som et rastrert/strekket bilde. Det gir en konstant,
 // tynn strektykkelse uansett hvor stor figuren dras ut, akkurat som Tegn/
 // Viskelær — i stedet for streken som ble stadig tykkere ved store figurer.
-function edShapePath(kind, x0, y0, w, h) {
-  const ctx = ed.ctx;
+// Tar imot canvas-konteksten som parameter (ctx) slik at den også kan brukes
+// til å tegne det ferdige resultatet inn i en frittstående eksport-canvas
+// (se edFlattenToDataURL), ikke bare lerretet i redigeringsvisningen.
+function edShapePath(ctx, kind, x0, y0, w, h) {
   const sx = nx => x0 + (nx / 100) * w;
   const sy = ny => y0 + (ny / 100) * h;
   const line = pts => pts.forEach(([px, py], i) => (i === 0 ? ctx.moveTo : ctx.lineTo).call(ctx, sx(px), sy(py)));
@@ -2870,6 +2930,8 @@ function edShapePath(kind, x0, y0, w, h) {
   }
 }
 
+// Udbrukt i dag (figurer legges til via "Legg til form"-panelet, ikke ved å
+// dra på lerretet), men beholdt for samme geometri-referanse som før.
 function edDrawShape(a, b) {
   const x0 = Math.min(a.x, b.x), y0 = Math.min(a.y, b.y);
   const w = Math.abs(b.x - a.x), h = Math.abs(b.y - a.y);
@@ -2879,30 +2941,70 @@ function edDrawShape(a, b) {
   ctx.lineCap = 'round';
   ctx.strokeStyle = ed.color;
   ctx.lineWidth = 3;
-  edShapePath(ed.shape, x0, y0, w, h);
+  edShapePath(ctx, ed.shape, x0, y0, w, h);
   ctx.stroke();
 }
 
 function setTool(t) {
-  if (t !== 'shape') edCommitShapeObj();
   ed.tool = t;
+  selectElement(null);
   document.getElementById('shape-menu').classList.remove('open');
   closeColorPanel();
+  closeDeletePanel();
   highlightTool();
   updatePropsBar();
+  renderElements();
 }
 
 function highlightTool() {
   ['draw', 'erase', 'shape', 'image', 'clear'].forEach(id => {
     document.getElementById('t-' + id).classList.remove('active');
   });
-  const map = { draw: 't-draw', erase: 't-erase', shape: 't-shape' };
+  const sel = edSelectedEl();
+  if (sel) {
+    document.getElementById(sel.type === 'image' ? 't-image' : 't-shape').classList.add('active');
+    return;
+  }
+  const map = { draw: 't-draw', erase: 't-erase' };
   if (map[ed.tool]) document.getElementById(map[ed.tool]).classList.add('active');
 }
 
 // ── Kontekstlinje over lerretet (samme oppsett som "propsBar" i plakat) ──
 function updatePropsBar() {
   const bar = document.getElementById('props-bar');
+  const sel = edSelectedEl();
+  if (sel && sel.type === 'shape') {
+    const so = sel;
+    const canFill = SHAPE_CANFILL[so.kind];
+    const filled = canFill && so.fillMode === 'fill';
+    const swatches = DRAW_COLORS.map(c =>
+      '<button class="pb-swatch' + (so.color.toLowerCase() === c ? ' active' : '') + '" style="background:' + c + '" title="' + c + '" onclick="setShapeColor(\'' + c + '\')"></button>').join('');
+    const fillChips = canFill
+      ? '<span class="pb-grp">' +
+          '<button class="pb-chip' + (!filled ? ' active' : '') + '" onclick="setShapeFillMode(\'stroke\')">Kontur</button>' +
+          '<button class="pb-chip' + (filled ? ' active' : '') + '" onclick="setShapeFillMode(\'fill\')">Fyll</button>' +
+        '</span><span class="pb-sep"></span>'
+      : '<span class="pb-hint">Kun kontur</span><span class="pb-sep"></span>';
+    const strokeGrp = !filled
+      ? '<span class="pb-grp"><span class="pb-grp-label">Tykkelse</span>' +
+          '<button class="pb-step-btn" onclick="setShapeStroke(-1)">−</button>' +
+          '<span class="pb-step-val">' + so.strokeWidth + '</span>' +
+          '<button class="pb-step-btn" onclick="setShapeStroke(1)">+</button>' +
+        '</span><span class="pb-sep"></span>'
+      : '';
+    bar.innerHTML =
+      '<span class="pb-label">Form</span><span class="pb-sep"></span>' +
+      fillChips + strokeGrp +
+      '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
+      '<button class="pb-chip" onclick="openColorPanel()">Flere farger</button>';
+    return;
+  }
+  if (sel && sel.type === 'image') {
+    bar.innerHTML =
+      '<span class="pb-label">Bilde</span><span class="pb-sep"></span>' +
+      '<span class="pb-hint">Dra i hjørnet for å endre størrelse. Trykk Delete for å slette valgt bilde.</span>';
+    return;
+  }
   if (ed.tool === 'draw') {
     const widths = DRAW_WIDTHS.map(w =>
       '<button class="pb-width-btn' + (ed.width === w ? ' active' : '') + '" title="' + w + ' px" onclick="setDrawWidth(' + w + ')">' +
@@ -2920,35 +3022,9 @@ function updatePropsBar() {
       '<span class="pb-label">Viskelær</span><span class="pb-sep"></span>' +
       '<span class="pb-hint">Klikk og dra over strekene for å viske dem ut.</span>';
   } else if (ed.tool === 'shape') {
-    if (!ed.shapeObj) {
-      bar.innerHTML =
-        '<span class="pb-label">Form</span><span class="pb-sep"></span>' +
-        '<span class="pb-hint">Velg en figur i menyen for å legge den til.</span>';
-    } else {
-      const so = ed.shapeObj;
-      const canFill = SHAPE_CANFILL[so.kind];
-      const filled = canFill && so.fillMode === 'fill';
-      const swatches = DRAW_COLORS.map(c =>
-        '<button class="pb-swatch' + (so.color.toLowerCase() === c ? ' active' : '') + '" style="background:' + c + '" title="' + c + '" onclick="setShapeColor(\'' + c + '\')"></button>').join('');
-      const fillChips = canFill
-        ? '<span class="pb-grp">' +
-            '<button class="pb-chip' + (!filled ? ' active' : '') + '" onclick="setShapeFillMode(\'stroke\')">Kontur</button>' +
-            '<button class="pb-chip' + (filled ? ' active' : '') + '" onclick="setShapeFillMode(\'fill\')">Fyll</button>' +
-          '</span><span class="pb-sep"></span>'
-        : '<span class="pb-hint">Kun kontur</span><span class="pb-sep"></span>';
-      const strokeGrp = !filled
-        ? '<span class="pb-grp"><span class="pb-grp-label">Tykkelse</span>' +
-            '<button class="pb-step-btn" onclick="setShapeStroke(-1)">−</button>' +
-            '<span class="pb-step-val">' + so.strokeWidth + '</span>' +
-            '<button class="pb-step-btn" onclick="setShapeStroke(1)">+</button>' +
-          '</span><span class="pb-sep"></span>'
-        : '';
-      bar.innerHTML =
-        '<span class="pb-label">Form</span><span class="pb-sep"></span>' +
-        fillChips + strokeGrp +
-        '<span class="pb-grp"><span class="pb-grp-label">Farge</span>' + swatches + '</span>' +
-        '<button class="pb-chip" onclick="openColorPanel()">Flere farger</button>';
-    }
+    bar.innerHTML =
+      '<span class="pb-label">Form</span><span class="pb-sep"></span>' +
+      '<span class="pb-hint">Velg en figur i menyen for å legge den til.</span>';
   } else {
     bar.innerHTML = '';
   }
@@ -2987,14 +3063,16 @@ function ensureColorInput() {
 // rett til den innebygde fargevelgeren — akkurat som i plakat-verktøyet, der
 // "Fargehjul"-sirkelen er ett ekstra klikk unna selve OS-fargevelgeren.
 function currentPickerColor() {
-  return (ed.tool === 'shape' && ed.shapeObj) ? ed.shapeObj.color : ed.color;
+  const sel = edSelectedEl();
+  return (sel && sel.type === 'shape') ? sel.color : ed.color;
 }
 
 function applyPickedColor(c) {
-  if (ed.tool === 'shape' && ed.shapeObj) {
-    ed.shapeObj.color = c;
+  const sel = edSelectedEl();
+  if (sel && sel.type === 'shape') {
+    sel.color = c;
     ed.color = c;
-    renderShapeObj();
+    renderElements();
     updatePropsBar();
   } else {
     ed.color = c;
@@ -3029,6 +3107,7 @@ function updateColorPanelPreview() {
 
 function openColorPanel() {
   document.getElementById('shape-menu').classList.remove('open');
+  closeDeletePanel();
   const inp = ensureColorInput();
   const wheel = document.getElementById('cp-wheel');
   inp.classList.add('cp-wheel-input');
@@ -3069,19 +3148,36 @@ function updateShapeGridActive() {
 
 function toggleShapeMenu() {
   closeColorPanel();
+  closeDeletePanel();
   ed.tool = 'shape';
   highlightTool();
   updatePropsBar();
   document.getElementById('shape-menu').classList.toggle('open');
 }
 
+// ── Figurer og bilder er egne, valgbare elementer (samme modell som i
+// plakat) helt til ruten lagres/lukkes — se edFlattenToDataURL/closeEditor. ──
+function selectElement(id) {
+  ed.selectedId = id;
+  const el = id ? edSelectedEl() : null;
+  if (el && el.type === 'shape') ed.shape = el.kind;
+  document.getElementById('shape-menu').classList.remove('open');
+  closeColorPanel();
+  closeDeletePanel();
+  highlightTool();
+  updateShapeGridActive();
+  updatePropsBar();
+  renderElements();
+}
+
 function setShape(s) {
-  edCommitShapeObj();
   const sz = SHAPE_SIZE[s] || [180, 180];
   const w = sz[0], h = sz[1];
   ed.shape = s;
   ed.tool = 'shape';
-  ed.shapeObj = {
+  const el = {
+    id: 'el' + (ed.seq++),
+    type: 'shape',
     kind: s,
     x: (ed.canvas.width - w) / 2,
     y: (ed.canvas.height - h) / 2,
@@ -3090,47 +3186,48 @@ function setShape(s) {
     strokeWidth: 4,
     fillMode: 'stroke'
   };
+  ed.elements.push(el);
+  ed.selectedId = el.id;
   highlightTool();
   updateShapeGridActive();
   updatePropsBar();
   document.getElementById('shape-menu').classList.remove('open');
-  renderShapeObj();
+  renderElements();
 }
 
 function setShapeColor(c) {
-  if (!ed.shapeObj) return;
-  ed.shapeObj.color = c;
+  const so = edSelectedEl();
+  if (!so || so.type !== 'shape') return;
+  so.color = c;
   ed.color = c;
-  renderShapeObj();
+  renderElements();
   updatePropsBar();
 }
 
 function setShapeStroke(delta) {
-  if (!ed.shapeObj) return;
-  ed.shapeObj.strokeWidth = Math.max(1, Math.min(24, ed.shapeObj.strokeWidth + delta));
-  renderShapeObj();
+  const so = edSelectedEl();
+  if (!so || so.type !== 'shape') return;
+  so.strokeWidth = Math.max(1, Math.min(24, so.strokeWidth + delta));
+  renderElements();
   updatePropsBar();
 }
 
 // Bytt mellom "Kontur" og "Fyll" for gjeldende form — som Kontur/Fyll-valget i plakat
 function setShapeFillMode(mode) {
-  if (!ed.shapeObj) return;
-  if (!SHAPE_CANFILL[ed.shapeObj.kind]) return;
-  ed.shapeObj.fillMode = mode;
-  renderShapeObj();
+  const so = edSelectedEl();
+  if (!so || so.type !== 'shape') return;
+  if (!SHAPE_CANFILL[so.kind]) return;
+  so.fillMode = mode;
+  renderElements();
   updatePropsBar();
 }
 
-// ── Form-figuren settes inn i fast standardstørrelse og kan flyttes/endre
-// størrelse med et håndtak i hjørnet — akkurat som elementene i
-// plakat-verktøyet — helt til den forpliktes ("bakes") inn i lerretet.
 function edCanvasScale() {
   const r = ed.canvas.getBoundingClientRect();
   return r.width / ed.canvas.width || 1;
 }
 
-function edShapeObjSvg() {
-  const so = ed.shapeObj;
+function edShapeObjSvg(so) {
   const k = edCanvasScale();
   const filled = SHAPE_CANFILL[so.kind] && so.fillMode === 'fill';
   const attr = filled
@@ -3141,87 +3238,117 @@ function edShapeObjSvg() {
     SHAPES[so.kind](attr) + '</svg>';
 }
 
-function renderShapeObj() {
+// Tegner alle figurer/bilder som egne, flyttbare/endre-størrelse-lag oppå
+// lerretet. Uvalgte elementer er ikke klikkbare mens man tegner/visker
+// (samme som "pointerEvents: mode === select" i plakat), slik at penn og
+// viskelær fortsatt virker overalt på lerretet, også der en figur ligger.
+function renderElements() {
   const layer = document.getElementById('shape-obj-layer');
   if (!layer) return;
-  if (!ed.shapeObj) { layer.innerHTML = ''; return; }
-  const so = ed.shapeObj;
-  const leftPct = (so.x / ed.canvas.width) * 100;
-  const topPct = (so.y / ed.canvas.height) * 100;
-  const wPct = (so.w / ed.canvas.width) * 100;
-  const hPct = (so.h / ed.canvas.height) * 100;
-  layer.innerHTML =
-    '<div class="shape-obj" id="shape-obj-el" style="left:' + leftPct + '%;top:' + topPct + '%;width:' + wPct + '%;height:' + hPct + '%;">' +
-      edShapeObjSvg() +
-      '<div class="shape-obj-handle" id="shape-obj-handle"></div>' +
-    '</div>';
-  document.getElementById('shape-obj-el').addEventListener('pointerdown', startShapeDrag);
-  document.getElementById('shape-obj-handle').addEventListener('pointerdown', startShapeResize);
+  layer.classList.toggle('draw-mode', ed.tool === 'draw' || ed.tool === 'erase');
+  layer.innerHTML = '';
+  ed.elements.forEach(el => {
+    const leftPct = (el.x / ed.canvas.width) * 100;
+    const topPct = (el.y / ed.canvas.height) * 100;
+    const wPct = (el.w / ed.canvas.width) * 100;
+    const hPct = (el.h / ed.canvas.height) * 100;
+    const wrap = document.createElement('div');
+    wrap.className = 'shape-obj' + (el.id === ed.selectedId ? ' selected' : '');
+    wrap.style.left = leftPct + '%';
+    wrap.style.top = topPct + '%';
+    wrap.style.width = wPct + '%';
+    wrap.style.height = hPct + '%';
+    wrap.innerHTML = el.type === 'image'
+      ? '<img src="' + el.src + '" draggable="false" alt="" style="width:100%;height:100%;display:block;object-fit:contain;pointer-events:none">'
+      : edShapeObjSvg(el);
+    const handle = document.createElement('div');
+    handle.className = 'shape-obj-handle';
+    wrap.appendChild(handle);
+    wrap.addEventListener('pointerdown', e => startElementDrag(e, el.id));
+    handle.addEventListener('pointerdown', e => startElementResize(e, el.id));
+    layer.appendChild(wrap);
+  });
 }
 
-function startShapeDrag(e) {
-  if (!ed.shapeObj) return;
+function startElementDrag(e, id) {
   e.preventDefault(); e.stopPropagation();
-  const so = ed.shapeObj, k = edCanvasScale();
+  selectElement(id);
+  const so = edSelectedEl();
+  if (!so) return;
+  const k = edCanvasScale();
   const sx = e.clientX, sy = e.clientY, ox = so.x, oy = so.y;
   const move = ev => {
     so.x = ox + (ev.clientX - sx) / k;
     so.y = oy + (ev.clientY - sy) / k;
-    renderShapeObj();
+    renderElements();
   };
   const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); };
   document.addEventListener('pointermove', move);
   document.addEventListener('pointerup', up);
 }
 
-function startShapeResize(e) {
-  if (!ed.shapeObj) return;
+function startElementResize(e, id) {
   e.preventDefault(); e.stopPropagation();
-  const so = ed.shapeObj, k = edCanvasScale();
+  selectElement(id);
+  const so = edSelectedEl();
+  if (!so) return;
+  const k = edCanvasScale();
   const sx = e.clientX, sy = e.clientY, ow = so.w, oh = so.h;
   const move = ev => {
     so.w = Math.max(20, ow + (ev.clientX - sx) / k);
     so.h = Math.max(20, oh + (ev.clientY - sy) / k);
-    renderShapeObj();
+    renderElements();
   };
   const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); };
   document.addEventListener('pointermove', move);
   document.addEventListener('pointerup', up);
 }
 
-function edCommitShapeObj() {
-  if (!ed.shapeObj) return;
-  const so = ed.shapeObj;
-  edPushUndo();
-  const ctx = ed.ctx;
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
-  edShapePath(so.kind, so.x, so.y, so.w, so.h);
-  if (SHAPE_CANFILL[so.kind] && so.fillMode === 'fill') {
-    ctx.fillStyle = so.color;
-    ctx.fill();
-  } else {
-    ctx.strokeStyle = so.color;
-    ctx.lineWidth = so.strokeWidth;
-    ctx.stroke();
-  }
-  ed.dirty = true;
-  ed.shapeObj = null;
-  renderShapeObj();
+// ── Slett: samme oppsett som i plakat — "Slett valgt element" eller
+// "Slett alt i ruten", pluss Delete/Backspace på tastaturet for valgt element. ──
+function renderDeletePanel() {
+  const body = document.getElementById('delete-panel-body');
+  if (!body) return;
+  body.innerHTML =
+    (ed.selectedId
+      ? '<button class="delete-panel-btn" onclick="deleteSelectedElement()">Slett valgt element</button>'
+      : '<div class="delete-panel-empty">Ingen element er valgt.</div>') +
+    '<button class="delete-panel-btn danger" onclick="deleteAllInBox()">Slett alt i ruten</button>' +
+    '<div class="delete-panel-hint">Tips: trykk Delete for å slette et valgt element.</div>';
 }
 
-function edDiscardShapeObj() {
-  ed.shapeObj = null;
-  renderShapeObj();
+function toggleDeletePanel() {
+  closeColorPanel();
+  document.getElementById('shape-menu').classList.remove('open');
+  renderDeletePanel();
+  document.getElementById('delete-panel').classList.toggle('open');
 }
 
-function clearCanvas() {
+function closeDeletePanel() {
+  const p = document.getElementById('delete-panel');
+  if (p) p.classList.remove('open');
+}
+
+function deleteSelectedElement() {
+  if (!ed.selectedId) return;
+  ed.elements = ed.elements.filter(el => el.id !== ed.selectedId);
+  ed.selectedId = null;
+  closeDeletePanel();
+  highlightTool();
+  updatePropsBar();
+  renderElements();
+}
+
+function deleteAllInBox() {
   edPushUndo();
   ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
   ed.dirty = true;
-  ed.shapeObj = null;
-  renderShapeObj();
+  ed.elements = [];
+  ed.selectedId = null;
+  closeDeletePanel();
+  highlightTool();
+  updatePropsBar();
+  renderElements();
 }
 
 function edInsertImage(e) {
@@ -3234,15 +3361,64 @@ function edInsertImage(e) {
       const cw = ed.canvas.width, ch = ed.canvas.height;
       const scale = Math.min(cw / img.width, ch / img.height);
       const w = img.width * scale, h = img.height * scale;
-      edPushUndo();
-      ed.ctx.globalCompositeOperation = 'source-over';
-      ed.ctx.drawImage(img, (cw - w) / 2, (ch - h) / 2, w, h);
-      ed.dirty = true;
+      const el = {
+        id: 'el' + (ed.seq++),
+        type: 'image',
+        src: ev.target.result,
+        x: (cw - w) / 2,
+        y: (ch - h) / 2,
+        w: w, h: h
+      };
+      ed.elements.push(el);
+      selectElement(el.id);
     };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
   e.target.value = '';
+}
+
+// Flater lerretet (frihåndstegning) og alle figur-/bilde-elementene sammen til
+// ett ferdig PNG-bilde, i samme rekkefølge som de ble lagt til — brukes når
+// ruten lagres/lukkes, se closeEditor().
+async function edFlattenToDataURL() {
+  const w = ed.canvas.width, h = ed.canvas.height;
+  const out = document.createElement('canvas');
+  out.width = w; out.height = h;
+  const octx = out.getContext('2d');
+  octx.drawImage(ed.canvas, 0, 0);
+
+  for (const el of ed.elements) {
+    if (el.type === 'shape') {
+      octx.save();
+      octx.lineJoin = 'round';
+      octx.lineCap = 'round';
+      edShapePath(octx, el.kind, el.x, el.y, el.w, el.h);
+      if (SHAPE_CANFILL[el.kind] && el.fillMode === 'fill') {
+        octx.fillStyle = el.color;
+        octx.fill();
+      } else {
+        octx.strokeStyle = el.color;
+        octx.lineWidth = el.strokeWidth;
+        octx.stroke();
+      }
+      octx.restore();
+    } else if (el.type === 'image') {
+      await new Promise(res => {
+        const img = new Image();
+        img.onload = () => {
+          const s = Math.min(el.w / img.width, el.h / img.height);
+          const dw = img.width * s, dh = img.height * s;
+          const dx = el.x + (el.w - dw) / 2, dy = el.y + (el.h - dh) / 2;
+          octx.drawImage(img, dx, dy, dw, dh);
+          res();
+        };
+        img.onerror = res;
+        img.src = el.src;
+      });
+    }
+  }
+  return out.toDataURL('image/png');
 }
 
 // ── Open / close ─────────────────────────────────────────────
@@ -3280,9 +3456,11 @@ function openEditor(box, num) {
   ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
   ed.dirty = false;
   ed.undoStack = [];
-  ed.shapeObj = null;
-  renderShapeObj();
+  ed.elements = [];
+  ed.selectedId = null;
+  renderElements();
   closeColorPanel();
+  closeDeletePanel();
   if (box.dataset.drawing) {
     const img = new Image();
     img.onload = () => ed.ctx.drawImage(img, 0, 0, ed.canvas.width, ed.canvas.height);
@@ -3293,16 +3471,18 @@ function openEditor(box, num) {
   document.getElementById('editor').classList.add('open');
 }
 
-function closeEditor() {
+async function closeEditor() {
   if (!ed.box) return;
-  edCommitShapeObj();
-  const title = ed.box.querySelector('.cbox-title');
-  const desc = ed.box.querySelector('.cbox-desc');
-  const placeholder = ed.box.dataset.ph || 'Forklar ideen bak illustrasjonen';
+  const boxEl = ed.box;
+  const hadElements = ed.elements.length > 0;
+  selectElement(null);
+  const title = boxEl.querySelector('.cbox-title');
+  const desc = boxEl.querySelector('.cbox-desc');
+  const placeholder = boxEl.dataset.ph || 'Forklar ideen bak illustrasjonen';
 
   // Save title back to the box (empty -> placeholder reappears via CSS).
   // Faste titler røres ikke.
-  if (ed.box.dataset.lockTitle !== '1') {
+  if (boxEl.dataset.lockTitle !== '1') {
     title.textContent = document.getElementById('ed-hd-title').textContent.trim();
   }
 
@@ -3316,10 +3496,10 @@ function closeEditor() {
     desc.style.color = '#aaa';
   }
 
-  // Save drawing as the box image
-  if (ed.dirty || ed.box.dataset.drawing) {
-    const url = ed.canvas.toDataURL('image/png');
-    ed.box.dataset.drawing = url;
+  // Save drawing (lerret + figurer/bilder flatet sammen) as the box image
+  if (ed.dirty || hadElements || boxEl.dataset.drawing) {
+    const url = await edFlattenToDataURL();
+    boxEl.dataset.drawing = url;
     const num = ed.imgArea.querySelector('.placeholder-num');
     if (num) num.remove();
     let img = ed.imgArea.querySelector('img');
