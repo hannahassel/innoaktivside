@@ -2853,12 +2853,21 @@ function edPointInPolygon(px, py, pts) {
 // figur) for å unngå at listen vokser ukontrollert under et langt visk-drag.
 function edAddErasure(el, px, py) {
   if (!el.erasures) el.erasures = [];
+  const rx = (SHAPE_ERASE_R / el.w) * 100;
+  const ry = (SHAPE_ERASE_R / el.h) * 100;
   const lx = ((px - el.x) / el.w) * 100;
   const ly = ((py - el.y) / el.h) * 100;
   const last = el.erasures[el.erasures.length - 1];
-  if (last && Math.hypot(last.cx - lx, last.cy - ly) < 2) return false;
-  if (el.erasures.length >= 300) return false;
-  el.erasures.push({ cx: lx, cy: ly, rx: (SHAPE_ERASE_R / el.w) * 100, ry: (SHAPE_ERASE_R / el.h) * 100 });
+  // Minste avstand til forrige hull skaleres med selve viskestørrelsen (i
+  // stedet for et fast tall), slik at hvert hull dekker nytt areal i stedet
+  // for å ligge oppå det forrige — det gjør at man faktisk rekker å viske
+  // bort HELE figuren før taket under nås, uansett hvor stor figuren er.
+  const minGap = Math.min(rx, ry) * 0.5;
+  if (last && Math.hypot(last.cx - lx, last.cy - ly) < minGap) return false;
+  // Høyt tak — bare en sikring mot en uendelig voksende liste, ikke noe man
+  // skal nå ved å viske en figur helt bort i normal bruk.
+  if (el.erasures.length >= 4000) return false;
+  el.erasures.push({ cx: lx, cy: ly, rx: rx, ry: ry });
   return true;
 }
 // Visker på alle figurer som viskelæret er over akkurat nå (ett punkt) —
