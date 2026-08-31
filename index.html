@@ -473,6 +473,12 @@
     .lc-boble p { margin: 0 0 10px; }
     .lc-boble p:last-child { margin-bottom: 0; }
     .lc-boble.venstre { left: auto; right: calc(100% + 12px); }
+    /* Måltall-boksen er full bredde, så boblen har ikke plass verken til
+       høyre eller venstre for boksen - da havner den utenfor skjermen og
+       blir uleselig. Vis den i stedet rett under spørsmålstegnet. */
+    .lc-maltall-box .lc-boble, .lc-maltall-box .lc-boble.venstre {
+      left: auto; right: 14px; top: 48px; max-width: calc(100% - 28px);
+    }
     .pdf-mode .lc-boble { display: none !important; }
     /* Lean Canvas download button is the strong red (matches the design) */
     .lc-download { background: var(--red); }
