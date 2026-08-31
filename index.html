@@ -712,6 +712,8 @@
     .dl-x { background: none; border: none; font-size: 24px; line-height: 1; color: #8a8078; cursor: pointer; padding: 0 4px; }
     .dl-body { flex: 1; overflow: auto; padding: 26px; background: #faf6ef; display: flex; justify-content: center; align-items: flex-start; }
     .dl-page { background: #fff; width: 100%; max-width: 840px; aspect-ratio: 297 / 210; box-shadow: 0 6px 24px rgba(0,0,0,0.14); border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    /* Stående A4 (f.eks. Lean Canvas) - motsatt sideforhold av standard-boksen over */
+    .dl-page.dl-portrait { aspect-ratio: 210 / 297; max-width: 594px; }
     .dl-page img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
     /* Siderammene vises med spinner med én gang, så boksen ikke hopper når bildet er klart */
     .dl-spinner { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #ece2d2; border-top-color: var(--red); animation: dl-spin 0.8s linear infinite; }
@@ -1855,7 +1857,7 @@
 <div class="modal-overlay" id="dl-preview-modal" onclick="if(event.target===this)closeDlPreview()">
   <div class="dl-box">
     <div class="dl-head">
-      <span>Forhåndsvisning &#8211; A4 liggende</span>
+      <span id="dl-preview-title">Forhåndsvisning &#8211; A4 liggende</span>
       <button class="dl-x" title="Lukk" onclick="closeDlPreview()">&times;</button>
     </div>
     <div class="dl-body">
@@ -2447,9 +2449,13 @@ function buildStoryboardLosning() {
 
 // ── PDF-eksport (A4 stående) + forhåndsvisning ────────────────
 const _pdfCfg = {
-  // parts: én PDF-side per element – verdien er det som SKJULES i den passeringen.
-  // Lean Canvas: side 1 = header + rutenett, side 2 = header + Måltall (så Måltall aldri deles).
-  lc:    { page: 'page-lean-canvas',         title: 'lc-title',    name: 'Lean Canvas',             rw: 1500, parts: ['.lc-maltall', '.lc-canvas'] },
+  // orientation: 'portrait' (A4 stående, 210x297mm) eller 'landscape' (A4 liggende,
+  // 297x210mm - standard når feltet er utelatt). Lean Canvas sitt innhold (rutenett
+  // + Måltall) er naturlig høyere enn bredt, så den er nå stående, i ÉN sammenhengende
+  // side i stedet for å bli delt i to liggende sider.
+  // rw 1140: smal nok til at siden blir stående (høyere enn bred), men fremdeles bredere
+  // enn 1100px-grensa der rutenettet ellers hopper over til det smale mobiloppsettet.
+  lc:    { page: 'page-lean-canvas',         title: 'lc-title',    name: 'Lean Canvas',             rw: 1140, orientation: 'portrait' },
   sp:    { page: 'page-sprikende',           title: 'sp-title',    name: 'Sprikende Lerret',        rw: 1700 },
   // rw 1700: bred nok render til at hele lerretet får plass på ÉN A4-side liggende
   sb:    { page: 'page-storyboard',          title: 'sb-title',    name: 'Samlende Lerret',         rw: 1700 },
@@ -2579,13 +2585,15 @@ function _renderPages(type) {
 
 // Setter sidene sammen til ett canvas der hver del starter nøyaktig på sin egen A4-side.
 // html2pdf deler bildet i like høye skiver: pageH = bredde * (innerH / innerW).
-// A4 liggende med 8 mm marg  ->  inner 281 x 194 mm.
-function _compositePages(canvases) {
+// A4 liggende med 8 mm marg  ->  inner 281 x 194 mm (ratio 194/281).
+// A4 stående  med 8 mm marg  ->  inner 194 x 281 mm (ratio 281/194 - motsatt vei).
+function _compositePages(canvases, orientation) {
+  const innerRatio = orientation === 'portrait' ? (281 / 194) : (194 / 281);
   const W0 = Math.max.apply(null, canvases.map(function (c) { return c.width; }));
   // Én del som allerede får plass på siden brukes uendret
-  if (canvases.length === 1 && canvases[0].height <= Math.floor(W0 * 194 / 281)) return canvases[0];
+  if (canvases.length === 1 && canvases[0].height <= Math.floor(W0 * innerRatio)) return canvases[0];
   const W = W0;
-  const pageH = Math.floor(W * 194 / 281);
+  const pageH = Math.floor(W * innerRatio);
   const out = document.createElement('canvas');
   out.width = W;
   out.height = pageH * canvases.length;
@@ -2600,25 +2608,26 @@ function _compositePages(canvases) {
   return out;
 }
 
-function _savePdfFromCanvas(canvas, filename) {
+function _savePdfFromCanvas(canvas, filename, orientation) {
   return html2pdf().set({
     margin: 8,
     filename: filename + '.pdf',
     image: { type: 'jpeg', quality: 0.98 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: orientation || 'landscape' },
     pagebreak: { mode: ['avoid-all'] }
   }).from(canvas, 'canvas').save();
 }
 function downloadPDF(type) {
+  const cfg = _pdfCfg[type];
   _renderPages(type).then(function (r) {
-    _savePdfFromCanvas(_compositePages(r.canvases), r.filename);
+    _savePdfFromCanvas(_compositePages(r.canvases, cfg && cfg.orientation), r.filename, cfg && cfg.orientation);
   });
 }
 
 // Forhåndsvisning (A4 stående) som popper opp når man trykker "Last ned"
-let _dlCanvas = null, _dlFilename = null;
+let _dlCanvas = null, _dlFilename = null, _dlOrientation = 'landscape';
 // Bygger tomme A4-rammer (med spinner) som skal fylles med sidebilder
-function _byggSiderammer(wrap, antall) {
+function _byggSiderammer(wrap, antall, orientation) {
   wrap.innerHTML = '';
   const rammer = [];
   for (let i = 0; i < antall; i++) {
@@ -2631,7 +2640,7 @@ function _byggSiderammer(wrap, antall) {
       pw.appendChild(lbl);
     }
     const pg = document.createElement('div');
-    pg.className = 'dl-page' + (antall > 1 ? ' dl-top' : '');
+    pg.className = 'dl-page' + (antall > 1 ? ' dl-top' : '') + (orientation === 'portrait' ? ' dl-portrait' : '');
     pg.appendChild(document.createElement('span')).className = 'dl-spinner';
     pw.appendChild(pg);
     wrap.appendChild(pw);
@@ -2647,15 +2656,18 @@ function showDownloadPreview(type) {
   // Vi vet antall sider på forhånd, så rammene bygges FØR renderingen.
   // Da har boksen endelig størrelse med én gang og hopper ikke når bildet er klart.
   const cfg = _pdfCfg[type];
+  _dlOrientation = (cfg && cfg.orientation) || 'landscape';
+  const titleEl = document.getElementById('dl-preview-title');
+  if (titleEl) titleEl.textContent = 'Forhåndsvisning – A4 ' + (_dlOrientation === 'portrait' ? 'stående' : 'liggende');
   const antall = (cfg && cfg.parts) ? cfg.parts.length : 1;
-  let rammer = _byggSiderammer(wrap, antall);
+  let rammer = _byggSiderammer(wrap, antall, _dlOrientation);
   document.getElementById('dl-preview-modal').classList.add('open');
 
   _renderPages(type).then(function (r) {
-    _dlCanvas = _compositePages(r.canvases);
+    _dlCanvas = _compositePages(r.canvases, _dlOrientation);
     _dlFilename = r.filename;
     // Sikring: skulle antallet avvike, bygg rammene på nytt
-    if (r.canvases.length !== rammer.length) rammer = _byggSiderammer(wrap, r.canvases.length);
+    if (r.canvases.length !== rammer.length) rammer = _byggSiderammer(wrap, r.canvases.length, _dlOrientation);
     r.canvases.forEach(function (c, i) {
       const pg = rammer[i];
       if (!pg) return;
@@ -2672,7 +2684,7 @@ function showDownloadPreview(type) {
 }
 function confirmDownload() {
   if (!_dlCanvas) return;
-  _savePdfFromCanvas(_dlCanvas, _dlFilename);
+  _savePdfFromCanvas(_dlCanvas, _dlFilename, _dlOrientation);
   closeDlPreview();
 }
 function closeDlPreview() {
