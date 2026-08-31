@@ -963,7 +963,15 @@
        viser tykkelse + fargevalg når du tegner, hint-tekst når du visker ut. */
     .props-bar {
       position: absolute; bottom: calc(100% + 12px); left: 50%;
-      transform: translateX(-50%); max-width: 92%;
+      /* Bredden var låst til 92% av selve kortet (bare 720px bredt), så
+         verktøylinjen for former (Kontur/Fyll/Tykkelse/Farge/Fremover/
+         Bakover/Dupliser) brakk over på to rader lenge før den trengte
+         det. Den flyter fritt over kortet uansett, så den kan trygt få
+         låne bredde fra hele redigerings-vinduet i stedet - da havner
+         alt på én rad, som i plakat-verktøyet. flex-wrap blir stående
+         som sikkerhetsnett for svært smale vinduer.
+      */
+      transform: translateX(-50%); max-width: min(1100px, 94vw);
       display: flex; align-items: center; justify-content: center;
       gap: 16px; row-gap: 10px; flex-wrap: wrap;
       background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 10px;
