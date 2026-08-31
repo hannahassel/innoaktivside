@@ -2849,24 +2849,30 @@ function edPointInPolygon(px, py, pts) {
 // Legger til ett "viskehull" (en ellipse) på figuren, i figurens eget
 // 0–100-koordinatsystem (samme som SHAPES-figurene selv bruker), slik at
 // hullet flytter/skalerer med figuren om den senere dras eller endres i
-// størrelse. Dropper nye hull som ligger for tett på det forrige (samme
-// figur) for å unngå at listen vokser ukontrollert under et langt visk-drag.
+// størrelse. Dropper nye hull som allerede er FULLT DEKKET av et eksisterende
+// hull — ikke bare tett på det forrige. Et vanlig visk-drag går fram og
+// tilbake over samme område flere ganger (f.eks. én vannrett omgang og én
+// loddrett), og da vil de fleste nye punktene falle inni hull som allerede
+// ble lagt til av en tidligere omgang, ikke bare rett ved siden av det aller
+// siste hullet. Ved å sjekke mot ALLE eksisterende hull (ikke bare det siste)
+// holder antallet hull seg proporsjonalt med hvor mye NYTT areal som faktisk
+// er visket bort, slik at man rekker å viske bort HELE figuren — uansett
+// hvor lenge eller hvor "fram og tilbake" man visker — før taket nedenfor
+// noensinne blir aktuelt.
 function edAddErasure(el, px, py) {
   if (!el.erasures) el.erasures = [];
   const rx = (SHAPE_ERASE_R / el.w) * 100;
   const ry = (SHAPE_ERASE_R / el.h) * 100;
   const lx = ((px - el.x) / el.w) * 100;
   const ly = ((py - el.y) / el.h) * 100;
-  const last = el.erasures[el.erasures.length - 1];
-  // Minste avstand til forrige hull skaleres med selve viskestørrelsen (i
-  // stedet for et fast tall), slik at hvert hull dekker nytt areal i stedet
-  // for å ligge oppå det forrige — det gjør at man faktisk rekker å viske
-  // bort HELE figuren før taket under nås, uansett hvor stor figuren er.
-  const minGap = Math.min(rx, ry) * 0.5;
-  if (last && Math.hypot(last.cx - lx, last.cy - ly) < minGap) return false;
+  const alreadyErased = el.erasures.some(er => {
+    const dx = (lx - er.cx) / er.rx, dy = (ly - er.cy) / er.ry;
+    return dx * dx + dy * dy <= 1;
+  });
+  if (alreadyErased) return false;
   // Høyt tak — bare en sikring mot en uendelig voksende liste, ikke noe man
   // skal nå ved å viske en figur helt bort i normal bruk.
-  if (el.erasures.length >= 4000) return false;
+  if (el.erasures.length >= 20000) return false;
   el.erasures.push({ cx: lx, cy: ly, rx: rx, ry: ry });
   return true;
 }
