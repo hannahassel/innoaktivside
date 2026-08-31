@@ -3395,12 +3395,31 @@ function edShapeObjSvg(so) {
   // Viskede hull vises som et SVG-mask over figuren — figuren er fortsatt
   // ÉN figur (fillMode uendret), bare med "gjennomsiktige" hull der
   // viskelæret har vært, enten det er i fyllet eller i konturen.
+  // Nærliggende hull kobles sammen med en avrundet strek i stedet for å bare
+  // stå som separate sirkler, slik at et sammenhengende visk-drag ser ut som
+  // ett jevnt strøk og ikke en kjede av kuler. Fordi dette SVG-elementet kan
+  // strekkes ujevnt (bredde og høyde skaleres ulikt til slutt), tegnes streken
+  // i et midlertidig avvridd koordinatsystem (<g transform="scale(...)">)
+  // som kompenserer nøyaktig for det, slik at streken faktisk blir rund og
+  // ikke oval etter strekkingen.
   const maskId = 'em-' + so.id;
-  const holes = erasures.map(er =>
-    '<ellipse cx="' + er.cx + '" cy="' + er.cy + '" rx="' + er.rx + '" ry="' + er.ry + '" fill="black"/>').join('');
+  const aspect = so.h / so.w;
+  let holes = '';
+  let prev = null;
+  erasures.forEach(er => {
+    const y = er.cy * aspect;
+    if (prev && Math.hypot(er.cx - prev.x, y - prev.y) < er.rx * 6) {
+      holes += '<line x1="' + prev.x + '" y1="' + prev.y + '" x2="' + er.cx + '" y2="' + y +
+        '" stroke="black" stroke-width="' + (er.rx * 2) + '" stroke-linecap="round"/>';
+    } else {
+      holes += '<circle cx="' + er.cx + '" cy="' + y + '" r="' + er.rx + '" fill="black"/>';
+    }
+    prev = { x: er.cx, y: y };
+  });
   return '<svg viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%;height:100%;display:block;overflow:visible;pointer-events:none">' +
     '<defs><mask id="' + maskId + '" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="140">' +
-      '<rect x="-20" y="-20" width="140" height="140" fill="white"/>' + holes +
+      '<rect x="-20" y="-20" width="140" height="140" fill="white"/>' +
+      '<g transform="scale(1,' + (1 / aspect) + ')">' + holes + '</g>' +
     '</mask></defs>' +
     '<g mask="url(#' + maskId + ')">' + markup + '</g></svg>';
 }
@@ -3577,6 +3596,10 @@ async function edFlattenToDataURL() {
         // Tegn figuren i et eget lag og "stans ut" viskehullene der (fyll og
         // kontur) før laget legges oppå det ferdige bildet — samme resultat
         // som forhåndsvisningens SVG-mask, bakt inn i PNG-en som lagres.
+        // Her jobbes det i ekte lerret-piksler (ikke et strukket 0–100-rom),
+        // så nærliggende hull kan kobles sammen med en helt vanlig avrundet
+        // strek for at et sammenhengende visk-drag skal se ut som ett jevnt
+        // strøk i stedet for en kjede av kuler.
         const buf = document.createElement('canvas');
         buf.width = w; buf.height = h;
         const bctx = buf.getContext('2d');
@@ -3592,14 +3615,26 @@ async function edFlattenToDataURL() {
           bctx.stroke();
         }
         bctx.globalCompositeOperation = 'destination-out';
+        let prevHole = null;
         erasures.forEach(er => {
           const cx = el.x + (er.cx / 100) * el.w;
           const cy = el.y + (er.cy / 100) * el.h;
           const rx = Math.max(0.5, (er.rx / 100) * el.w);
           const ry = Math.max(0.5, (er.ry / 100) * el.h);
-          bctx.beginPath();
-          bctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-          bctx.fill();
+          const r = (rx + ry) / 2;
+          if (prevHole && Math.hypot(cx - prevHole.x, cy - prevHole.y) < r * 6) {
+            bctx.beginPath();
+            bctx.lineWidth = r * 2;
+            bctx.lineCap = 'round';
+            bctx.moveTo(prevHole.x, prevHole.y);
+            bctx.lineTo(cx, cy);
+            bctx.stroke();
+          } else {
+            bctx.beginPath();
+            bctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            bctx.fill();
+          }
+          prevHole = { x: cx, y: cy };
         });
         octx.drawImage(buf, 0, 0);
       }
