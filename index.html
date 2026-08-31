@@ -3710,19 +3710,30 @@ function openEditor(box, num) {
   edDesc.dataset.placeholder = placeholder;
   edDesc.textContent = (desc.textContent.trim() === placeholder) ? '' : desc.textContent;
 
-  // Load any existing drawing
+  // Gjenopprett en tidligere tegning. Figurer/bilder gjenopprettes som EGNE,
+  // redigerbare elementer (kan flyttes, endre størrelse, bytte farge, viskes
+  // videre på osv.) - ikke bare et flatt bilde man må tegne oppå. Selve
+  // fristrek-laget (penn/viskelær) er fremdeles et rastret lag, siden det
+  // ikke finnes som egne objekter, og lagres derfor for seg (dataset.freehand)
+  // adskilt fra det flatede miniatyrbildet (dataset.drawing) som brukes på
+  // oversikten - ellers ville figurene vist seg BÅDE som redigerbare
+  // objekter OG bakt inn i bakgrunnsbildet.
   ed.ctx.clearRect(0, 0, ed.canvas.width, ed.canvas.height);
   ed.dirty = false;
   ed.undoStack = [];
-  ed.elements = [];
+  let restoredElements = [];
+  if (box.dataset.elements) {
+    try { restoredElements = JSON.parse(box.dataset.elements); } catch (e) { restoredElements = []; }
+  }
+  ed.elements = restoredElements;
   ed.selectedId = null;
   renderElements();
   closeColorPanel();
   closeDeletePanel();
-  if (box.dataset.drawing) {
+  if (box.dataset.freehand) {
     const img = new Image();
     img.onload = () => ed.ctx.drawImage(img, 0, 0, ed.canvas.width, ed.canvas.height);
-    img.src = box.dataset.drawing;
+    img.src = box.dataset.freehand;
   }
 
   setTool('draw');
@@ -3758,6 +3769,11 @@ async function closeEditor() {
   if (ed.dirty || hadElements || boxEl.dataset.drawing) {
     const url = await edFlattenToDataURL();
     boxEl.dataset.drawing = url;
+    // Lagre fristrek-laget for seg (uten figurene bakt inn) og figurene/
+    // bildene som egen data, slik at openEditor kan gjenopprette dem som
+    // redigerbare objekter neste gang boksen åpnes - se openEditor.
+    boxEl.dataset.freehand = ed.canvas.toDataURL('image/png');
+    boxEl.dataset.elements = JSON.stringify(ed.elements);
     const num = ed.imgArea.querySelector('.placeholder-num');
     if (num) num.remove();
     let img = ed.imgArea.querySelector('img');
