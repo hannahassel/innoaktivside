@@ -326,7 +326,7 @@
       max-width: 1500px; margin: 0 auto; width: 80%; padding: 30px 40px 4px;
     }
     #page-lean-canvas .crumbbar, #page-sprikende .crumbbar, #page-storyboard .crumbbar,
-    #page-samlende-losning .crumbbar, #page-innov101-storyboard .crumbbar, #page-plakat .crumbbar {
+    #page-samlende-losning .crumbbar, #page-innov101-storyboard .crumbbar {
       padding-bottom: 12px;
     }
     #page-lean-canvas .sp-header, #page-sprikende .sp-header, #page-storyboard .sp-header,
