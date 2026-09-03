@@ -415,22 +415,30 @@ document.addEventListener('DOMContentLoaded', async function() {
     return [].slice.call(sis.querySelectorAll('button')).filter(function (b) { return !b.textContent.trim(); })[0];
   }
   /* Innoaktiv: verktoylinjen som dukker opp over arket (f.eks. Skrift/Storrelse-raden
-     nar man redigerer tekst) kan bli bredere enn selve arket, og da vokser hele
-     midt-kolonnen (verktoylinje + ark) i bredde. Siden sidepanelet til venstre og denne
-     kolonnen sentreres som ett par, dytter det sidepanelet ut av sin faste plass hver
-     gang en bredere verktoylinje vises. Losningen: begrens verktoylinjens bredde til
-     samme bredde som arket, slik at den bryter om til flere linjer (den har allerede
-     flex-wrap) i stedet for a gjore kolonnen bredere - da star sidepanelet alltid stilt. */
-  function jevnBredde() {
+     nar man redigerer tekst) skal alltid fa vaere naturlig bred og pa en linje - den
+     skal IKKE tvinges til a brekke om (det ga et rotete, 3 linjer hoyt utseende).
+     I stedet flyttes sidepanelet til venstre ned slik at det alltid starter i samme
+     hoyde som selve arket (som allerede forskyves riktig nar verktoylinjen over er
+     hoy) - da havner sidepanelet aldri i veien for verktoylinjen, uansett hvor bred
+     eller hoy den er. Bruker "position:relative;top" (ren visuell forskyvning) slik
+     at sidepanelets plass i layouten - og dermed arket sin posisjon - ikke paavirkes. */
+  function finnSidepanel() {
+    var merket = document.querySelector('[data-pk-sidepanel]');
+    if (merket) return merket;
+    var all = [].slice.call(document.querySelectorAll('*'));
+    var tegnLeaf = all.filter(function (e) { return e.textContent.trim() === 'Tegn' && e.children.length === 0; })[0];
+    if (!tegnLeaf) return null;
+    var sidebar = tegnLeaf;
+    for (var i = 0; i < 8 && sidebar; i++) {
+      if (getComputedStyle(sidebar).position === 'sticky') break;
+      sidebar = sidebar.parentElement;
+    }
+    if (sidebar) sidebar.setAttribute('data-pk-sidepanel', '1');
+    return sidebar;
+  }
+  function flyttSidepanelNed() {
     try {
-      var all = [].slice.call(document.querySelectorAll('*'));
-      var tegnLeaf = all.filter(function (e) { return e.textContent.trim() === 'Tegn' && e.children.length === 0; })[0];
-      if (!tegnLeaf) return;
-      var sidebar = tegnLeaf;
-      for (var i = 0; i < 8 && sidebar; i++) {
-        if (getComputedStyle(sidebar).position === 'sticky') break;
-        sidebar = sidebar.parentElement;
-      }
+      var sidebar = finnSidepanel();
       if (!sidebar) return;
       var editorRow = sidebar.parentElement;
       if (!editorRow || editorRow.children.length < 2) return;
@@ -442,20 +450,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         var h = c.getBoundingClientRect().height;
         if (h > canvasH) { canvasH = h; canvasEl = c; }
       });
-      var canvasW = canvasEl.getBoundingClientRect().width;
-      kids.forEach(function (c) {
-        if (c === canvasEl) return;
-        var cs = getComputedStyle(c);
-        if (cs.boxShadow && cs.boxShadow !== 'none') {
-          c.style.boxSizing = 'border-box';
-          c.style.maxWidth = canvasW + 'px';
-        }
-      });
+      if (!canvasEl) return;
+      sidebar.style.position = 'relative';
+      sidebar.style.top = '0px';
+      var naturalTop = sidebar.getBoundingClientRect().top;
+      var canvasTop = canvasEl.getBoundingClientRect().top;
+      var GAP = 32; // samme klaring som sidepanelet naturlig hadde over arket i utgangspunktet
+      var delta = (canvasTop + GAP) - naturalTop;
+      sidebar.style.top = (delta > 0 ? delta : 0) + 'px';
     } catch (e) {}
   }
   function rydd() {
     sikreStil();
-    jevnBredde();
+    flyttSidepanelNed();
     var r = rad();
     try { parent.postMessage({ pkSteg: r ? 'editor' : 'start' }, '*'); } catch (e) {}
     var red = kn().filter(function (b) { return b.textContent.trim() === 'Rediger igjen'; })[0];
