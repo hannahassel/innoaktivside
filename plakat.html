@@ -414,8 +414,48 @@ document.addEventListener('DOMContentLoaded', async function() {
     var k = r.rad.children, sis = k[k.length - 1];
     return [].slice.call(sis.querySelectorAll('button')).filter(function (b) { return !b.textContent.trim(); })[0];
   }
+  /* Innoaktiv: verktoylinjen som dukker opp over arket (f.eks. Skrift/Storrelse-raden
+     nar man redigerer tekst) kan bli bredere enn selve arket, og da vokser hele
+     midt-kolonnen (verktoylinje + ark) i bredde. Siden sidepanelet til venstre og denne
+     kolonnen sentreres som ett par, dytter det sidepanelet ut av sin faste plass hver
+     gang en bredere verktoylinje vises. Losningen: begrens verktoylinjens bredde til
+     samme bredde som arket, slik at den bryter om til flere linjer (den har allerede
+     flex-wrap) i stedet for a gjore kolonnen bredere - da star sidepanelet alltid stilt. */
+  function jevnBredde() {
+    try {
+      var all = [].slice.call(document.querySelectorAll('*'));
+      var tegnLeaf = all.filter(function (e) { return e.textContent.trim() === 'Tegn' && e.children.length === 0; })[0];
+      if (!tegnLeaf) return;
+      var sidebar = tegnLeaf;
+      for (var i = 0; i < 8 && sidebar; i++) {
+        if (getComputedStyle(sidebar).position === 'sticky') break;
+        sidebar = sidebar.parentElement;
+      }
+      if (!sidebar) return;
+      var editorRow = sidebar.parentElement;
+      if (!editorRow || editorRow.children.length < 2) return;
+      var mainCol = editorRow.children[1];
+      var kids = [].slice.call(mainCol.children);
+      if (!kids.length) return;
+      var canvasEl = null, canvasH = -1;
+      kids.forEach(function (c) {
+        var h = c.getBoundingClientRect().height;
+        if (h > canvasH) { canvasH = h; canvasEl = c; }
+      });
+      var canvasW = canvasEl.getBoundingClientRect().width;
+      kids.forEach(function (c) {
+        if (c === canvasEl) return;
+        var cs = getComputedStyle(c);
+        if (cs.boxShadow && cs.boxShadow !== 'none') {
+          c.style.boxSizing = 'border-box';
+          c.style.maxWidth = canvasW + 'px';
+        }
+      });
+    } catch (e) {}
+  }
   function rydd() {
     sikreStil();
+    jevnBredde();
     var r = rad();
     try { parent.postMessage({ pkSteg: r ? 'editor' : 'start' }, '*'); } catch (e) {}
     var red = kn().filter(function (b) { return b.textContent.trim() === 'Rediger igjen'; })[0];
