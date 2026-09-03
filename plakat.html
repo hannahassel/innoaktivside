@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', async function() {
    ytre dokumentet: intervallet lever videre i JS-konteksten etter byttet, og
    CSS-en re-injiseres om <style> blir vasket bort. */
 (function () {
-  var STIL = '.pk-etikett{display:flex;align-items:center;gap:9px}.pk-etikett strong{color:#FF2130;font-weight:700;font-size:18px;letter-spacing:.3px}.pk-hjelp{width:26px;height:26px;border-radius:50%;background:transparent;color:#FF2130;border:2px solid #FF2130;cursor:pointer;padding:0;font-size:14px;font-weight:bold;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit}.pk-hjelp:hover{background:rgba(255,33,48,.10)}';
+  var STIL = '.pk-etikett{display:flex;align-items:center;gap:9px}.pk-etikett strong{color:#FF2130;font-weight:700;font-size:22px;letter-spacing:.3px}.pk-hjelp{width:26px;height:26px;border-radius:50%;background:transparent;color:#FF2130;border:2px solid #FF2130;cursor:pointer;padding:0;font-size:14px;font-weight:bold;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit}.pk-hjelp:hover{background:rgba(255,33,48,.10)}';
   function sikreStil() {
     if (document.getElementById('pk-stil')) return;
     var st = document.createElement('style');
