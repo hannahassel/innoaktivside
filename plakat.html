@@ -442,18 +442,38 @@ document.addEventListener('DOMContentLoaded', async function() {
       if (!sidebar) return;
       var r = rad();
       if (!r) return;
-      /* Innoaktiv: gir sidepanelet en FAST, raus klaring under overskriften - ikke en
-         klaring som regnes ut på nytt hver gang (det fikk sidepanelet til å hoppe opp
-         og ned når man byttet mellom verktøy med ulik verktøylinje-høyde). Denne faste
-         klaringen er stor nok til å dekke selv en verktøylinje som bryter om til to
-         linjer, så sidepanelet ligger alltid i ro på samme sted uansett hvilket
-         verktøy som er valgt. */
       var headerBottom = r.rad.getBoundingClientRect().bottom;
+
+      var editorRow = sidebar.parentElement;
+      var canvasEl = null;
+      if (editorRow && editorRow.children.length >= 2) {
+        var mainCol = editorRow.children[1];
+        var kids = [].slice.call(mainCol.children);
+        var canvasH = -1;
+        kids.forEach(function (c) {
+          var h = c.getBoundingClientRect().height;
+          if (h > canvasH) { canvasH = h; canvasEl = c; }
+        });
+      }
+
+      /* Innoaktiv: sidepanelet skal ligge i ro - ikke hoppe opp/ned når man bytter
+         mellom verktøy med ulik verktøylinje-høyde over arket. I stedet for en
+         fast, gjettet klaring (som ble unødvendig stor for de vanligste, korte
+         verktøylinjene) beholder vi den STØRSTE klaringen sidepanelet noen gang
+         har trengt så langt i denne økten - den vokser bare når et bredere/høyere
+         verktøy faktisk trenger det, og krymper aldri tilbake. Da blir avstanden
+         alltid minst mulig for det verktøyet man vanligvis bruker, men fortsatt
+         trygg for de sjeldnere, høyere verktøylinjene. */
+      var LITEN_LUFT = 32; // samme luft som sidepanelet naturlig hadde over arket i utgangspunktet
+      var trengerKlaring = canvasEl ? (canvasEl.getBoundingClientRect().top + LITEN_LUFT - headerBottom) : 0;
+      var forrigeMax = parseFloat(sidebar.getAttribute('data-pk-min-klaring')) || 0;
+      var klaring = Math.max(trengerKlaring, forrigeMax);
+      sidebar.setAttribute('data-pk-min-klaring', klaring);
+
       sidebar.style.position = 'relative';
       sidebar.style.top = '0px';
       var naturalTop = sidebar.getBoundingClientRect().top;
-      var FAST_KLARING = 210;
-      var deltaTop = (headerBottom + FAST_KLARING) - naturalTop;
+      var deltaTop = (headerBottom + klaring) - naturalTop;
       sidebar.style.top = (deltaTop > 0 ? deltaTop : 0) + 'px';
 
       /* Innoaktiv: sidepanelet skal ligge i ro vannrett også - ikke flytte seg
@@ -465,25 +485,15 @@ document.addEventListener('DOMContentLoaded', async function() {
          påvirkes av verktøylinjens bredde. Siden sidepanelet nå uansett ligger
          godt under verktøylinjen (se over), er det ingen fare for at dette
          skal krysse/overlappe en bred verktøylinje. */
-      var editorRow = sidebar.parentElement;
-      if (editorRow && editorRow.children.length >= 2) {
-        var mainCol = editorRow.children[1];
-        var kids = [].slice.call(mainCol.children);
-        var canvasEl = null, canvasH = -1;
-        kids.forEach(function (c) {
-          var h = c.getBoundingClientRect().height;
-          if (h > canvasH) { canvasH = h; canvasEl = c; }
-        });
-        if (canvasEl) {
-          sidebar.style.left = '0px';
-          var naturalLeft = sidebar.getBoundingClientRect().left;
-          var sidebarWidth = sidebar.getBoundingClientRect().width;
-          var canvasLeft = canvasEl.getBoundingClientRect().left;
-          var gap = parseFloat(getComputedStyle(editorRow).columnGap);
-          if (!gap) gap = 36;
-          var idealLeft = canvasLeft - gap - sidebarWidth;
-          sidebar.style.left = (idealLeft - naturalLeft) + 'px';
-        }
+      if (editorRow && canvasEl) {
+        sidebar.style.left = '0px';
+        var naturalLeft = sidebar.getBoundingClientRect().left;
+        var sidebarWidth = sidebar.getBoundingClientRect().width;
+        var canvasLeft = canvasEl.getBoundingClientRect().left;
+        var gap = parseFloat(getComputedStyle(editorRow).columnGap);
+        if (!gap) gap = 36;
+        var idealLeft = canvasLeft - gap - sidebarWidth;
+        sidebar.style.left = (idealLeft - naturalLeft) + 'px';
       }
     } catch (e) {}
   }
