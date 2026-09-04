@@ -463,18 +463,28 @@ document.addEventListener('DOMContentLoaded', async function() {
          har trengt så langt i denne økten - den vokser bare når et bredere/høyere
          verktøy faktisk trenger det, og krymper aldri tilbake. Da blir avstanden
          alltid minst mulig for det verktøyet man vanligvis bruker, men fortsatt
-         trygg for de sjeldnere, høyere verktøylinjene. */
+         trygg for de sjeldnere, høyere verktøylinjene.
+
+         VIKTIG: forskyvningen gjøres med "transform: translate(...)", IKKE med
+         "top"/"left" på et posisjonert element - "transform" flytter elementet
+         rent visuelt uten i det hele tatt å kunne bidra til sidens scrollbare
+         areal (i motsetning til top/left på position:relative, som i teorien
+         kan gjøre det). Selve dobbel-scrollbar-problemet som ble oppdaget
+         skyldtes noe annet (se index.html: body:has(.embed-page.active)),
+         men dette er en ekstra sikkerhet. */
+      sidebar.style.position = 'relative';
+      sidebar.style.transform = 'none';
+      var naturalTop = sidebar.getBoundingClientRect().top;
+      var naturalLeft = sidebar.getBoundingClientRect().left;
+      var sidebarWidth = sidebar.getBoundingClientRect().width;
+
       var LITEN_LUFT = 32; // samme luft som sidepanelet naturlig hadde over arket i utgangspunktet
       var trengerKlaring = canvasEl ? (canvasEl.getBoundingClientRect().top + LITEN_LUFT - headerBottom) : 0;
       var forrigeMax = parseFloat(sidebar.getAttribute('data-pk-min-klaring')) || 0;
       var klaring = Math.max(trengerKlaring, forrigeMax);
       sidebar.setAttribute('data-pk-min-klaring', klaring);
-
-      sidebar.style.position = 'relative';
-      sidebar.style.top = '0px';
-      var naturalTop = sidebar.getBoundingClientRect().top;
       var deltaTop = (headerBottom + klaring) - naturalTop;
-      sidebar.style.top = (deltaTop > 0 ? deltaTop : 0) + 'px';
+      if (deltaTop < 0) deltaTop = 0;
 
       /* Innoaktiv: sidepanelet skal ligge i ro vannrett også - ikke flytte seg
          sidelengs når verktøylinjen over arket er bredere enn selve arket
@@ -485,16 +495,16 @@ document.addEventListener('DOMContentLoaded', async function() {
          påvirkes av verktøylinjens bredde. Siden sidepanelet nå uansett ligger
          godt under verktøylinjen (se over), er det ingen fare for at dette
          skal krysse/overlappe en bred verktøylinje. */
+      var deltaLeft = 0;
       if (editorRow && canvasEl) {
-        sidebar.style.left = '0px';
-        var naturalLeft = sidebar.getBoundingClientRect().left;
-        var sidebarWidth = sidebar.getBoundingClientRect().width;
         var canvasLeft = canvasEl.getBoundingClientRect().left;
         var gap = parseFloat(getComputedStyle(editorRow).columnGap);
         if (!gap) gap = 36;
         var idealLeft = canvasLeft - gap - sidebarWidth;
-        sidebar.style.left = (idealLeft - naturalLeft) + 'px';
+        deltaLeft = idealLeft - naturalLeft;
       }
+
+      sidebar.style.transform = 'translate(' + deltaLeft + 'px, ' + deltaTop + 'px)';
     } catch (e) {}
   }
   function rydd() {
