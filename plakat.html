@@ -453,8 +453,38 @@ document.addEventListener('DOMContentLoaded', async function() {
       sidebar.style.top = '0px';
       var naturalTop = sidebar.getBoundingClientRect().top;
       var FAST_KLARING = 210;
-      var delta = (headerBottom + FAST_KLARING) - naturalTop;
-      sidebar.style.top = (delta > 0 ? delta : 0) + 'px';
+      var deltaTop = (headerBottom + FAST_KLARING) - naturalTop;
+      sidebar.style.top = (deltaTop > 0 ? deltaTop : 0) + 'px';
+
+      /* Innoaktiv: sidepanelet skal ligge i ro vannrett også - ikke flytte seg
+         sidelengs når verktøylinjen over arket er bredere enn selve arket
+         (sidepanelet og «verktøylinje + ark»-kolonnen sentreres som ett par av
+         den innebygde komponenten, så en bred verktøylinje ellers dytter
+         sidepanelet mot venstre). Løsningen: la sidepanelet alltid holde samme
+         avstand til ARKET (som selv ikke flytter seg), i stedet for å la det
+         påvirkes av verktøylinjens bredde. Siden sidepanelet nå uansett ligger
+         godt under verktøylinjen (se over), er det ingen fare for at dette
+         skal krysse/overlappe en bred verktøylinje. */
+      var editorRow = sidebar.parentElement;
+      if (editorRow && editorRow.children.length >= 2) {
+        var mainCol = editorRow.children[1];
+        var kids = [].slice.call(mainCol.children);
+        var canvasEl = null, canvasH = -1;
+        kids.forEach(function (c) {
+          var h = c.getBoundingClientRect().height;
+          if (h > canvasH) { canvasH = h; canvasEl = c; }
+        });
+        if (canvasEl) {
+          sidebar.style.left = '0px';
+          var naturalLeft = sidebar.getBoundingClientRect().left;
+          var sidebarWidth = sidebar.getBoundingClientRect().width;
+          var canvasLeft = canvasEl.getBoundingClientRect().left;
+          var gap = parseFloat(getComputedStyle(editorRow).columnGap);
+          if (!gap) gap = 36;
+          var idealLeft = canvasLeft - gap - sidebarWidth;
+          sidebar.style.left = (idealLeft - naturalLeft) + 'px';
+        }
+      }
     } catch (e) {}
   }
   function rydd() {
