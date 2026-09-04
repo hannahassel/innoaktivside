@@ -556,6 +556,25 @@ document.addEventListener('DOMContentLoaded', async function() {
       rr.insertBefore(e, rr.firstChild);
     }
   }
+  /* Innoaktiv: den ferdigbygde tredjeparts-appen (verktøybunten) nullstiller
+     av og til sidepanelets egne stil-attributter helt på egen hånd (f.eks.
+     idet man bytter til et nytt verktøy som «Tekst») - da faller sidepanelet
+     et lite øyeblikk tilbake til sin naturlige (feil) plassering helt til
+     neste faste 400ms-sjekk retter det opp igjen, noe som var synlig som et
+     lite "hopp"/glitch. En MutationObserver oppdager en slik tilbakestilling
+     med det samme (innen én skjermoppdatering) og retter opp umiddelbart, i
+     stedet for å vente på neste faste intervall-sjekk. Selve intervallet
+     (under) beholdes som en sikkerhet i tillegg. */
+  var pkRettOppPlanlagt = false;
+  new MutationObserver(function () {
+    if (pkRettOppPlanlagt) return;
+    pkRettOppPlanlagt = true;
+    requestAnimationFrame(function () {
+      pkRettOppPlanlagt = false;
+      rydd();
+    });
+  }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+
   setInterval(rydd, 400);
   window.addEventListener('message', function (ev) {
     if (ev.data && ev.data.pkKommando === 'tilStart') { var r = rad(); if (r) r.tilbake.click(); }
