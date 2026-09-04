@@ -574,6 +574,27 @@ document.addEventListener('DOMContentLoaded', async function() {
       var ekstraMargin = maxGap - naturalGap;
       if (ekstraMargin < 0) ekstraMargin = 0;
       if (ekstraMargin !== pkTidligereMargin) canvasEl.style.marginTop = ekstraMargin + 'px';
+
+      /* Innoaktiv: Angre/Gjor om-knappene (og eventuell rad under dem) la
+         naturlig altfor tett inntil selve arket sammenlignet med luften
+         venstre verktoylinje har til arket. Gir dem samme avstand ned fra
+         arket som verktoylinja til venstre har til arket, ved a legge en
+         margin-top pa raden rett under arket - regnet ut pa samme
+         "aldri skriv en midlertidig mindre verdi"-mate som over, sa dette
+         heller ikke kan trigge scroll-hopp. */
+      var underArk = canvasIdx < kids.length - 1 ? kids[canvasIdx + 1] : null;
+      if (underArk) {
+        var onsketAvstandUnder = parseFloat(getComputedStyle(editorRow).columnGap);
+        if (!onsketAvstandUnder) onsketAvstandUnder = 36;
+        var pkTidligereUnderMargin = parseFloat(underArk.style.marginTop) || 0;
+        var naaverendeUnderGap = underArk.getBoundingClientRect().top - canvasEl.getBoundingClientRect().bottom;
+        var naturligUnderGap = naaverendeUnderGap - pkTidligereUnderMargin;
+        var onsketUnderMargin = onsketAvstandUnder - naturligUnderGap;
+        if (onsketUnderMargin < 0) onsketUnderMargin = 0;
+        if (Math.abs(onsketUnderMargin - pkTidligereUnderMargin) > 0.5) {
+          underArk.style.marginTop = onsketUnderMargin + 'px';
+        }
+      }
     } catch (e) {}
   }
   function rydd() {
