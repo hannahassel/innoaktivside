@@ -598,10 +598,41 @@ document.addEventListener('DOMContentLoaded', async function() {
     rr.style.paddingRight = '40px';
     rr.style.paddingTop = '36px';
     r.tilbake.style.display = 'none';
-    var h = hjelp(r); if (h) h.style.display = 'none';
+    /* Innoaktiv: appens egen, ekte "Hjelp"-knapp (som viser "Slik lager du
+       plakaten"-popupen) erstattes visuelt av vart eget, mindre "?" ved
+       siden av "Plakat"-tittelen (se pk-hjelp under) - selve klikket sendes
+       videre til den ekte knappen med .click(). Den ekte knappen ma derfor
+       IKKE skjules med "display:none": appens klikk-logikk sjekker om
+       knappen faktisk har en offsetParent (dvs. er en del av layouten), og
+       "display:none" gjor offsetParent lik null - da skjer ingenting nar vi
+       klikker den programatisk. "position:absolute" + "visibility:hidden"
+       gjor den usynlig og tar den ut av den vanlige radens plass (uten a
+       etterlate et tomrom), men beholder en gyldig offsetParent, sa det ekte
+       klikket - og dermed popupen - faktisk fungerer. */
+    var h = hjelp(r);
+    if (h) { h.style.position = 'absolute'; h.style.visibility = 'hidden'; h.style.display = ''; }
     var k = rr.children, midt = k.length > 2 ? k[k.length - 2] : null;
     if (midt) midt.style.margin = '0 auto';
-    if (!rr.querySelector('.pk-etikett')) {
+    var pkEtikett = rr.querySelector('.pk-etikett');
+    if (pkEtikett) {
+      /* Innoaktiv: rett etter at man napper opp redigeringsvisningen, hender
+         det at den ferdigbygde tredjeparts-appen "overtar" var egen "?"-
+         hjelpeknapp som en del av sin egen forste opptegning - den merker den
+         med et data-dc-tpl-attributt (appens egen merking av elementer den
+         styrer selv), og etter det slutter var klikk-lytter a virke (knappen
+         ser fortsatt riktig ut, men "Slik lager du plakaten"-hjelpeboksen
+         apnes ikke lenger nar man trykker pa den). En knapp som lages litt
+         senere (etter dette forste opptegnings-oyeblikket) blir aldri
+         overtatt pa denne maten og fungerer fint. Losningen: oppdager vi at
+         den er blitt overtatt (data-dc-tpl er satt), lager vi den rett og
+         slett pa nytt. */
+      var pkGammelKnapp = pkEtikett.querySelector('.pk-hjelp');
+      if (pkGammelKnapp && pkGammelKnapp.hasAttribute('data-dc-tpl')) {
+        pkEtikett.remove();
+        pkEtikett = null;
+      }
+    }
+    if (!pkEtikett) {
       var e = document.createElement('div');
       e.className = 'pk-etikett';
       var st = document.createElement('strong');
