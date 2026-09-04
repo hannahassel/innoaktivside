@@ -543,13 +543,24 @@ document.addEventListener('DOMContentLoaded', async function() {
       if (!canvasEl) return;
       var toolbar = canvasIdx > 0 ? kids[canvasIdx - 1] : null;
 
-      // nullstill for a male den ekte, uforstyrrede naturlige plasseringen
-      canvasEl.style.marginTop = '0px';
-      if (toolbar) toolbar.style.minHeight = '';
+      /* Innoaktiv: mal ALDRI den naturlige plasseringen ved a nullstille
+         margen/hoyden vi selv har satt forst - det gjorde siden midlertidig
+         lavere et lite oyeblikk (helt til vi satte den tilbake rett
+         etterpa), og hvis man da hadde scrollet helt ned, klemte
+         nettleseren scrollposisjonen ned sammen med det - og siden hoppet
+         synlig opp igjen hvert 400. millisekund (eller enda oftere), noe
+         som gjorde det vanskelig a treffe riktig knapp helt nederst pa
+         siden. Vi regner i stedet ut den naturlige (uforstyrrede)
+         plasseringen matematisk, ut fra det vi selv sist satte, uten a
+         noensinne sette en midlertidig mindre verdi underveis. */
+      var pkTidligereMargin = parseFloat(canvasEl.style.marginTop) || 0;
+      var pkTidligereMinHoyde = toolbar ? (parseFloat(toolbar.style.minHeight) || 0) : 0;
 
       var mainColTop = mainCol.getBoundingClientRect().top;
-      var naturalGap = canvasEl.getBoundingClientRect().top - mainColTop;
-      var mellomrom = toolbar ? (naturalGap - toolbar.getBoundingClientRect().height) : naturalGap;
+      var naaverendeGap = canvasEl.getBoundingClientRect().top - mainColTop;
+      var naaverendeToolbarHoyde = toolbar ? toolbar.getBoundingClientRect().height : 0;
+      var naturalGap = naaverendeGap - pkTidligereMargin;
+      var mellomrom = toolbar ? (naaverendeGap - naaverendeToolbarHoyde - pkTidligereMargin) : naturalGap;
 
       var forrigeMax = parseFloat(mainCol.getAttribute('data-pk-min-ark-gap')) || 0;
       var maxGap = Math.max(naturalGap, forrigeMax);
@@ -557,13 +568,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
       if (toolbar) {
         var onsketHoyde = maxGap - mellomrom;
-        if (onsketHoyde > 0) toolbar.style.minHeight = onsketHoyde + 'px';
+        if (onsketHoyde > pkTidligereMinHoyde) toolbar.style.minHeight = onsketHoyde + 'px';
       }
 
-      var faktiskGap = canvasEl.getBoundingClientRect().top - mainColTop;
-      var ekstraMargin = maxGap - faktiskGap;
+      var ekstraMargin = maxGap - naturalGap;
       if (ekstraMargin < 0) ekstraMargin = 0;
-      canvasEl.style.marginTop = ekstraMargin + 'px';
+      if (ekstraMargin !== pkTidligereMargin) canvasEl.style.marginTop = ekstraMargin + 'px';
     } catch (e) {}
   }
   function rydd() {
