@@ -507,8 +507,68 @@ document.addEventListener('DOMContentLoaded', async function() {
       sidebar.style.transform = 'translate(' + deltaLeft + 'px, ' + deltaTop + 'px)';
     } catch (e) {}
   }
+  /* Innoaktiv: ikke bare sidepanelet, men selve ARKET flytter seg opp/ned
+     avhengig av hvor hoy verktoylinja over arket naturlig er for det
+     verktoyet som er valgt (ingen verktoylinje, Viskelaers lave linje,
+     Tekst/Tegn sine hoyere linjer, osv). Det ga en synlig, litt urolig
+     forflytning av selve arket hver gang man byttet verktoy - i tillegg til
+     at ulike verktoylinjer hadde ulik hoyde, som sa uryddig/inkonsekvent ut.
+
+     Losningen gjor to ting samtidig, med samme "vokser bare, krymper aldri"-
+     prinsipp som sidepanelets klaring (se flyttSidepanelNed):
+     1) Verktoylinja over arket far alltid samme (den storste noensinne
+        pavkrevde) hoyde denne okten, sa alle verktoylinjer ser like hoye og
+        konsekvente ut i stedet for ulik hoyde per verktoy.
+     2) Arket selv star alltid i ro pa samme plass - om verktoylinja denne
+        gangen skulle vaere lavere enn den storste (eller mangle helt, som for
+        Bakgrunn/Bilde), dekkes resten av den nodvendige avstanden med en
+        marg over arket i stedet for at arket flytter seg. */
+  function fikserArkPosisjon() {
+    try {
+      var sidebar = finnSidepanel();
+      if (!sidebar) return;
+      var editorRow = sidebar.parentElement;
+      if (!editorRow) return;
+      var mainCol = null;
+      for (var i = 0; i < editorRow.children.length; i++) {
+        if (editorRow.children[i] !== sidebar) { mainCol = editorRow.children[i]; break; }
+      }
+      if (!mainCol) return;
+      var kids = [].slice.call(mainCol.children);
+      var canvasEl = null, canvasH = -1, canvasIdx = -1;
+      kids.forEach(function (c, idx) {
+        var h = c.getBoundingClientRect().height;
+        if (h > canvasH) { canvasH = h; canvasEl = c; canvasIdx = idx; }
+      });
+      if (!canvasEl) return;
+      var toolbar = canvasIdx > 0 ? kids[canvasIdx - 1] : null;
+
+      // nullstill for a male den ekte, uforstyrrede naturlige plasseringen
+      canvasEl.style.marginTop = '0px';
+      if (toolbar) toolbar.style.minHeight = '';
+
+      var mainColTop = mainCol.getBoundingClientRect().top;
+      var naturalGap = canvasEl.getBoundingClientRect().top - mainColTop;
+      var mellomrom = toolbar ? (naturalGap - toolbar.getBoundingClientRect().height) : naturalGap;
+
+      var forrigeMax = parseFloat(mainCol.getAttribute('data-pk-min-ark-gap')) || 0;
+      var maxGap = Math.max(naturalGap, forrigeMax);
+      mainCol.setAttribute('data-pk-min-ark-gap', maxGap);
+
+      if (toolbar) {
+        var onsketHoyde = maxGap - mellomrom;
+        if (onsketHoyde > 0) toolbar.style.minHeight = onsketHoyde + 'px';
+      }
+
+      var faktiskGap = canvasEl.getBoundingClientRect().top - mainColTop;
+      var ekstraMargin = maxGap - faktiskGap;
+      if (ekstraMargin < 0) ekstraMargin = 0;
+      canvasEl.style.marginTop = ekstraMargin + 'px';
+    } catch (e) {}
+  }
   function rydd() {
     sikreStil();
+    fikserArkPosisjon();
     flyttSidepanelNed();
     var r = rad();
     try { parent.postMessage({ pkSteg: r ? 'editor' : 'start' }, '*'); } catch (e) {}
