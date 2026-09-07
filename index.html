@@ -329,11 +329,6 @@
     #page-samlende-losning .crumbbar, #page-innov101-storyboard .crumbbar, #page-plakat .crumbbar {
       padding-bottom: 12px;
     }
-    /* Plakat-verktoyet har na sin egen brodsmulesti inne i iframen (plakat.html),
-       som scroller sammen med resten av verktoyet. Den ytre brodsmulestien her
-       skal derfor ikke vises for denne siden - kun logo/INNOAKTIV/hjelp-headeren
-       forblir fast plassert ovenfor. */
-    #page-plakat .crumbbar { display: none; }
     #page-lean-canvas .sp-header, #page-sprikende .sp-header, #page-storyboard .sp-header,
     #page-samlende-losning .sp-header, #page-innov101-storyboard .sp-header {
       padding-top: 36px;
@@ -433,10 +428,12 @@
        so give them a visible outline in the PDF so the boxes show up. */
     .pdf-mode .lc-box, .pdf-mode .lc-maltall-box { border: 1px solid #cdbfab !important; box-shadow: none; }
 
-    /* Embedded design pages (Plakat) shown in an iframe */
-    .embed-page { height: 100vh; }
-    body:has(.embed-page.active) { overflow: hidden; }
-    .embed-frame { flex: 1 1 auto; width: 100%; min-height: 0; border: 0; display: block; background: var(--bg); }
+    /* Embedded design page (Plakat) shown in an iframe - scrolls with the whole
+       page now (header included), same as the native tool pages, instead of
+       being locked to the viewport height. The iframe is sized in JS
+       (pkAutoHeight) to match its own content, so there is one page scroll
+       instead of a separate scrollbar inside the iframe. */
+    .embed-frame { flex: none; width: 100%; border: 0; display: block; background: var(--bg); }
 
     /* ── Lean Canvas (native) ── */
     .lc-canvas { max-width: 1500px; width: 100%; align-self: center; padding: 6px 40px 44px; }
@@ -1820,7 +1817,7 @@
     <span class="crumb-sep" id="pk-crumb-sep" style="display:none">&#8250;</span>
     <span class="crumb-current" id="pk-crumb-steg" style="display:none">REDIGER</span>
   </div>
-  <iframe class="embed-frame" src="plakat.html?v=7" title="Fra idé til plakat" onload="try{this.contentDocument.head.insertAdjacentHTML('beforeend','&lt;style&gt;footer{display:none!important}&lt;/style&gt;')}catch(e){}"></iframe>
+  <iframe class="embed-frame" src="plakat.html?v=7" title="Fra idé til plakat" onload="pkAutoHeight(this)"></iframe>
 
 </div>
 
@@ -2713,6 +2710,62 @@ function closeDlPreview() {
 // Selve oppryddingen i verktøyet (skjuler "Tilbake til start", beige stripe,
 // "Plakat (?)"-etiketten) ligger nå inne i plakat.html. Verktøyet melder hvilket
 // steg det er på via postMessage – det virker også når filen åpnes lokalt.
+// Innoaktiv: Plakat-iframen skal ikke ha sin egen indre scrollbar - hele
+// siden (med header og brodsmulesti) skal scrolle som en enhet, akkurat som
+// pa Storyboard/Lean Canvas. pkAutoHeight setter derfor iframens hoyde i JS
+// til a matche innholdet i plakat.html, og oppdaterer igjen nar innholdet
+// endrer seg (nytt format, tekst/figurer lagt til, osv).
+//
+// I tillegg ser flerstegs-veiviseren (velg format -> velg mal/start blankt)
+// ut til a flytte fokus til det nye steget nar man trykker Neste/Start
+// blankt, noe som - na som hele siden faktisk kan scrolle - scroller siden
+// nedover uten at brukeren selv har bedt om det. pkBrukerHarScrollet-sjekken
+// under retter opp i det helt til brukeren faktisk har scrollet selv (med
+// mus/museplate/tastatur, i det ytre dokumentet ELLER inne i selve
+// verktoyet), og lar scrollingen vaere helt i fred etter det.
+var pkBrukerHarScrollet = false;
+function pkMerkBrukerScroll() { pkBrukerHarScrollet = true; }
+function pkKobleTilScrollvakt(target) {
+  target.addEventListener('wheel', pkMerkBrukerScroll, { passive: true, capture: true });
+  target.addEventListener('touchstart', pkMerkBrukerScroll, { passive: true, capture: true });
+  target.addEventListener('keydown', function (e) {
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].indexOf(e.key) !== -1) pkMerkBrukerScroll();
+  }, { capture: true });
+}
+pkKobleTilScrollvakt(window);
+window.addEventListener('scroll', function () {
+  var page = document.getElementById('page-plakat');
+  if (!page || !page.classList.contains('active')) return;
+  if (!pkBrukerHarScrollet && window.scrollY > 0) {
+    window.scrollTo(window.scrollX, 0);
+  }
+}, { passive: true });
+
+function pkAutoHeight(frame) {
+  try {
+    frame.contentDocument.head.insertAdjacentHTML('beforeend', '<style>footer{display:none!important}</style>');
+  } catch (e) {}
+  try {
+    pkKobleTilScrollvakt(frame.contentWindow);
+  } catch (e) {}
+  try {
+    var doc = frame.contentDocument;
+    var body = doc.body;
+    var settHoyde = function () {
+      var h = Math.max(body.scrollHeight, doc.documentElement.scrollHeight);
+      frame.style.height = h + 'px';
+    };
+    settHoyde();
+    if (window.ResizeObserver) {
+      new ResizeObserver(settHoyde).observe(body);
+    } else {
+      setInterval(settHoyde, 500);
+    }
+    setTimeout(settHoyde, 300);
+    setTimeout(settHoyde, 1000);
+  } catch (e) {}
+}
+
 function pkTilStart() {
   const f = document.querySelector('#page-plakat .embed-frame');
   if (f && f.contentWindow) f.contentWindow.postMessage({ pkKommando: 'tilStart' }, '*');
