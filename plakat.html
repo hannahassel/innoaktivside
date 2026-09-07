@@ -425,7 +425,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     var all = [].slice.call(document.querySelectorAll('div'));
     for (var i = 0; i < all.length; i++) {
       var s = all[i].getAttribute('style') || '';
-      if (/position:\s*fixed/.test(s) && /inset:\s*0/.test(s)) return true;
+      if (!/position:\s*fixed/.test(s) || !/inset:\s*0/.test(s)) continue;
+      // sc-if fjerner ikke det "inaktive" steget fra DOM-en - det ligger igjen
+      // med samme inline style, bare skjult via en foreldre-sc-if. Sjekk derfor
+      // at elementet faktisk har en synlig, maalbar storrelse (skjulte
+      // elementer maaler 0x0), ikke bare at style-teksten matcher.
+      var r = all[i].getBoundingClientRect();
+      if (r.width > 0 && r.height > 0) return true;
     }
     return false;
   }

@@ -2728,6 +2728,11 @@ function closeDlPreview() {
 // under retter opp i det helt til brukeren faktisk har scrollet selv (med
 // mus/museplate/tastatur, i det ytre dokumentet ELLER inne i selve
 // verktoyet), og lar scrollingen vaere helt i fred etter det.
+// Holder styr paa om plakat-verktoyet har en egen dialog aapen (forhaandsvisning,
+// hjelp-panel) - brukes baade til aa tegne den graa header-flaten (se
+// pkOppdaterModalDim) og, i pkAutoHeight under, til aa midlertidig krympe
+// iframen til synlig vindushoyde mens dialogen er oppe.
+var pkModalApenNaa = false;
 var pkBrukerHarScrollet = false;
 function pkMerkBrukerScroll() { pkBrukerHarScrollet = true; }
 function pkKobleTilScrollvakt(target) {
@@ -2756,7 +2761,33 @@ function pkAutoHeight(frame) {
   try {
     var doc = frame.contentDocument;
     var body = doc.body;
+    var modalVarSist = false;
+    var scrollFoerModal = 0;
     var settHoyde = function () {
+      // Dialogene i plakat.html (forhaandsvisning foer nedlasting, hjelp-panelet)
+      // sentreres med position:fixed;inset:0 INNE i iframen. Siden iframen ikke
+      // lenger har sin egen indre scrollbar (se lenger ned), er den vanligvis
+      // mye hoeyere enn det som faktisk er synlig i nettleservinduet - dialogen
+      // blir da sentrert et sted langt nedover siden, og man maa scrolle for aa
+      // se hele. Mens en dialog er aapen krymper vi derfor iframen til akkurat
+      // den synlige hoeyden under headeren (og hopper til toppen av siden, hvis
+      // vi ikke allerede staar der), slik at dialogen sentreres i det man
+      // faktisk ser - helt til dialogen lukkes igjen, da gaar vi tilbake dit
+      // brukeren stod og lar den vanlige maalingen (under) overta igjen.
+      if (pkModalApenNaa) {
+        if (!modalVarSist) {
+          scrollFoerModal = window.scrollY;
+          window.scrollTo(window.scrollX, 0);
+        }
+        modalVarSist = true;
+        var top = frame.getBoundingClientRect().top;
+        frame.style.height = Math.max(200, window.innerHeight - top) + 'px';
+        return;
+      }
+      if (modalVarSist) {
+        modalVarSist = false;
+        window.scrollTo(window.scrollX, scrollFoerModal);
+      }
       // Innholdet i plakat.html bruker min-height:100vh paa hvert steg (velg
       // format, velg mal/blankt, selve rediger-steget, eksport), og "100vh" der
       // regnes ut fra IFRAMENS EGEN hoyde - altsaa nettopp det vi setter her.
@@ -2828,7 +2859,8 @@ window.addEventListener('message', function (ev) {
   const plakat = document.getElementById('pk-crumb-plakat');
   const sep = document.getElementById('pk-crumb-sep');
   const steg = document.getElementById('pk-crumb-steg');
-  pkOppdaterModalDim(!!ev.data.pkModalApen);
+  pkModalApenNaa = !!ev.data.pkModalApen;
+  pkOppdaterModalDim(pkModalApenNaa);
   if (!plakat) return;
   if (ev.data.pkSteg === 'editor') {
     plakat.className = 'crumb-link';
