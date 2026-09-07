@@ -410,69 +410,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     var t = kn().filter(function (b) { return b.textContent.trim() === 'Tilbake til start'; })[0];
     return t ? { rad: t.parentElement, tilbake: t } : null;
   }
-
-  /* Innoaktiv: intern brodsmulesti (HJEM > INNOV101 > PLAKAT > REDIGER) satt inn
-     ovest i selve verktoyet, slik at den scroller sammen med resten av
-     verktoyet-innholdet - kun den ytre headeren (logo/INNOAKTIV/hjelp) i
-     index.html skal sta i ro nar man scroller. Bygges/vedlikeholdes her av
-     samme grunn som resten av rydd(): bundleren bytter ut hele dokumentet, sa
-     dette ma leve i det ytre, alltid-kjorende scriptet. */
-  var PK_CRUMB_STIL = 'html,body{overflow-anchor:none}.pk-crumbbar{display:flex;align-items:center;gap:11px;padding:14px 52px 10px;font-size:15.5px;letter-spacing:.3px;background:var(--uib-bakgrunn-beige)}.pk-crumb-back{display:inline-flex;align-items:center;justify-content:center;background:none;border:none;padding:4px;margin-right:-3px;border-radius:6px;cursor:pointer;color:#000;font:inherit}.pk-crumb-back svg{width:23px;height:23px}.pk-crumb-back:hover{background:rgba(130,10,18,.08);color:var(--uib-morkerod)}.pk-crumb-link{display:inline-flex;align-items:center;gap:5px;color:var(--uib-morkerod);text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:600;background:none;border:none;padding:0;font:inherit}.pk-crumb-link:hover{color:var(--uib-sterk-rod)}.pk-crumb-ico{width:18px;height:18px;fill:currentColor}.pk-crumb-sep{color:#b9ab97}.pk-crumb-current{color:#8a8078;font-weight:400}';
-  function sikreCrumbBar() {
-    if (!document.getElementById('pk-crumb-stil')) {
-      var st = document.createElement('style');
-      st.id = 'pk-crumb-stil';
-      st.textContent = PK_CRUMB_STIL;
-      (document.head || document.documentElement).appendChild(st);
-    }
-    var bar = document.getElementById('pk-crumbbar');
-    if (bar) return bar;
-    bar = document.createElement('div');
-    bar.className = 'pk-crumbbar';
-    bar.id = 'pk-crumbbar';
-    bar.innerHTML =
-      '<button class="pk-crumb-back" type="button" title="Tilbake" aria-label="Tilbake" id="pk-crumb-chevron">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>' +
-      '</button>' +
-      '<button class="pk-crumb-link" type="button" id="pk-crumb-home">' +
-      '<svg class="pk-crumb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L21 10.2 L21 21 L14.4 21 L14.4 14 L9.6 14 L9.6 21 L3 21 L3 10.2 Z"></path></svg>HJEM' +
-      '</button>' +
-      '<span class="pk-crumb-sep">&#8250;</span>' +
-      '<button class="pk-crumb-link" type="button" id="pk-crumb-innov">INNOV101</button>' +
-      '<span class="pk-crumb-sep">&#8250;</span>' +
-      '<span class="pk-crumb-current" id="pk-crumb-plakat2">PLAKAT</span>' +
-      '<span class="pk-crumb-sep" id="pk-crumb-sep2" style="display:none">&#8250;</span>' +
-      '<span class="pk-crumb-current" id="pk-crumb-steg2" style="display:none">REDIGER</span>';
-    if (document.body.firstChild) {
-      document.body.insertBefore(bar, document.body.firstChild);
-    } else {
-      document.body.appendChild(bar);
-    }
-    var chevron = document.getElementById('pk-crumb-chevron');
-    var home = document.getElementById('pk-crumb-home');
-    var innov = document.getElementById('pk-crumb-innov');
-    if (chevron) chevron.onclick = function () { try { parent.courseBack(); } catch (e) {} };
-    if (home) home.onclick = function () { try { parent.goHome(); } catch (e) {} };
-    if (innov) innov.onclick = function () { try { parent.courseBack(); } catch (e) {} };
-    return bar;
-  }
-  function oppdaterCrumbBar(r) {
-    var plakatEl = document.getElementById('pk-crumb-plakat2');
-    var sepEl = document.getElementById('pk-crumb-sep2');
-    var stegEl = document.getElementById('pk-crumb-steg2');
-    if (!plakatEl) return;
-    if (r) {
-      plakatEl.className = 'pk-crumb-link';
-      plakatEl.onclick = function () { var rr = rad(); if (rr) rr.tilbake.click(); };
-      if (sepEl) sepEl.style.display = '';
-      if (stegEl) stegEl.style.display = '';
-    } else {
-      plakatEl.className = 'pk-crumb-current';
-      plakatEl.onclick = null;
-      if (sepEl) sepEl.style.display = 'none';
-      if (stegEl) stegEl.style.display = 'none';
-    }
-  }
   function hjelp(r) {
     var k = r.rad.children, sis = k[k.length - 1];
     return [].slice.call(sis.querySelectorAll('button')).filter(function (b) { return !b.textContent.trim(); })[0];
@@ -660,33 +597,11 @@ document.addEventListener('DOMContentLoaded', async function() {
       }
     } catch (e) {}
   }
-  var pkForrigeErEditor = false;
   function rydd() {
     sikreStil();
-    sikreCrumbBar();
     fikserArkPosisjon();
     flyttSidepanelNed();
     var r = rad();
-    oppdaterCrumbBar(r);
-    /* Innoaktiv: nar man akkurat har gatt fra start-skjermen til selve
-       redigeringen, dytter var nye brodsmulesti (satt inn ovest i
-       dokumentet) verktoylinjens getBoundingClientRect() lengre ned enn
-       fikserArkPosisjon()/flyttSidepanelNed() forventer, som far dem til a
-       (kortvarig) trenge mer plass enn arket egentlig gjor - og siden vi
-       aldri krymper margene igjen (med vilje, se fikserArkPosisjon), sitter
-       siden igjen scrollet ned present nok til a skjule brodsmulestien. Vi
-       retter opp igjen med en enkelt korrigerende scroll til toppen, en gang,
-       rett etter overgangen - ikke hver runde, sa det ikke overstyrer en
-       bruker som faktisk har scrollet nedover selv underveis i redigeringen. */
-    var erEditor = !!r;
-    if (erEditor && !pkForrigeErEditor) {
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          if (window.scrollY > 0) window.scrollTo(window.scrollX, 0);
-        });
-      });
-    }
-    pkForrigeErEditor = erEditor;
     try { parent.postMessage({ pkSteg: r ? 'editor' : 'start' }, '*'); } catch (e) {}
     var red = kn().filter(function (b) { return b.textContent.trim() === 'Rediger igjen'; })[0];
     if (red && !red.dataset.pkStil) {

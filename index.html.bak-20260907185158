@@ -329,11 +329,6 @@
     #page-samlende-losning .crumbbar, #page-innov101-storyboard .crumbbar, #page-plakat .crumbbar {
       padding-bottom: 12px;
     }
-    /* Plakat-verktoyet har na sin egen brodsmulesti inne i iframen (plakat.html),
-       som scroller sammen med resten av verktoyet. Den ytre brodsmulestien her
-       skal derfor ikke vises for denne siden - kun logo/INNOAKTIV/hjelp-headeren
-       forblir fast plassert ovenfor. */
-    #page-plakat .crumbbar { display: none; }
     #page-lean-canvas .sp-header, #page-sprikende .sp-header, #page-storyboard .sp-header,
     #page-samlende-losning .sp-header, #page-innov101-storyboard .sp-header {
       padding-top: 36px;
