@@ -2752,15 +2752,34 @@ function pkAutoHeight(frame) {
     var doc = frame.contentDocument;
     var body = doc.body;
     var settHoyde = function () {
+      // Innholdet i plakat.html bruker min-height:100vh paa hvert steg (velg
+      // format, velg mal/blankt, selve rediger-steget, eksport), og "100vh" der
+      // regnes ut fra IFRAMENS EGEN hoyde - altsaa nettopp det vi setter her.
+      // Uten aa nullstille hoyden foer vi maaler, blir maalingen "smittet" av
+      // forrige hoyde: iframen kan vokse, men aldri krympe igjen naar man f.eks.
+      // gaar fra det hoye rediger-steget tilbake til det korte velg-format-steget
+      // (den henger igjen paa den hoyeste hoyden noensinne, og resten blir en
+      // tom/beige flate nederst - aarsaken til at siden kunne bli unoedvendig
+      // lang aa scrolle). Krymper derfor iframen helt ned foerst, slik at
+      // 100vh-innholdet faar falle tilbake til sin naturlige stoerrelse, foer vi
+      // leser scrollHeight. Skjer synkront (ingen render mellom de to
+      // hoyde-endringene), saa det gir ikke noe synlig glimt.
+      frame.style.height = '0px';
       var h = Math.max(body.scrollHeight, doc.documentElement.scrollHeight);
       frame.style.height = h + 'px';
     };
     settHoyde();
     if (window.ResizeObserver) {
       new ResizeObserver(settHoyde).observe(body);
-    } else {
-      setInterval(settHoyde, 500);
     }
+    // ResizeObserver alene er ikke nok: naar man f.eks. gaar fra rediger-steget
+    // tilbake til velg-format-steget, er begge stegene (feilaktig) like hoeye
+    // som iframen allerede er satt til (pga. min-height:100vh, se over) - saa
+    // body sin stoerrelse endrer seg faktisk IKKE, og ResizeObserver fyres
+    // aldri. Et jevnlig intervall (samme moenster som rydd() i plakat.html)
+    // fanger opp dette uansett, siden settHoyde() nullstiller og maaler paa nytt
+    // hver gang - uavhengig av om noen har meldt fra om en stoerrelsesendring.
+    setInterval(settHoyde, 400);
     setTimeout(settHoyde, 300);
     setTimeout(settHoyde, 1000);
   } catch (e) {}
