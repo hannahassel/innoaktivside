@@ -2763,10 +2763,21 @@ function pkAutoHeight(frame) {
       // lang aa scrolle). Krymper derfor iframen helt ned foerst, slik at
       // 100vh-innholdet faar falle tilbake til sin naturlige stoerrelse, foer vi
       // leser scrollHeight. Skjer synkront (ingen render mellom de to
-      // hoyde-endringene), saa det gir ikke noe synlig glimt.
+      // hoyde-endringene), saa det gir ikke noe synlig glimt - MEN naar
+      // dokumentet midlertidig krymper mens man staar nederst paa siden, tvinger
+      // nettleseren scrollposisjonen til aa klemmes ned til det nye (midlertidig
+      // lave) maks-scroll, og den flytter seg ikke tilbake av seg selv naar
+      // hoyden vokser igjen. Det ga et lite "hopp" oppover hver gang
+      // intervallet/ResizeObserver koerte mens man var scrollet helt ned.
+      // Loesning: husk scrollposisjonen til det ytre vinduet foer krympingen,
+      // og sett den tilbake etterpaa (da er hoeyden allerede korrekt igjen).
+      var scrollX = window.scrollX, scrollY = window.scrollY;
       frame.style.height = '0px';
       var h = Math.max(body.scrollHeight, doc.documentElement.scrollHeight);
       frame.style.height = h + 'px';
+      if (window.scrollY !== scrollY || window.scrollX !== scrollX) {
+        window.scrollTo(scrollX, scrollY);
+      }
     };
     settHoyde();
     if (window.ResizeObserver) {
