@@ -414,6 +414,21 @@ document.addEventListener('DOMContentLoaded', async function() {
     var k = r.rad.children, sis = k[k.length - 1];
     return [].slice.call(sis.querySelectorAll('button')).filter(function (b) { return !b.textContent.trim(); })[0];
   }
+
+  /* Innoaktiv: dialoger inne i verktoyet (f.eks. "Forhaandsvisning" foer nedlasting,
+     eller hjelp-panelet) tegnes som en helskjerms bakgrunn med
+     position:fixed;inset:0 (se malen i plakat.html). Header/broedsmulesti ligger
+     UTENFOR denne iframen (i index.html), saa de blir ikke dekket av det - derfor
+     melder vi fra her, slik at index.html kan tegne en tilsvarende nedtonet,
+     uklikkbar flate over sin egen header mens dialogen er aapen. */
+  function modalApen() {
+    var all = [].slice.call(document.querySelectorAll('div'));
+    for (var i = 0; i < all.length; i++) {
+      var s = all[i].getAttribute('style') || '';
+      if (/position:\s*fixed/.test(s) && /inset:\s*0/.test(s)) return true;
+    }
+    return false;
+  }
   /* Innoaktiv: verktoylinjen som dukker opp over arket (f.eks. Skrift/Storrelse-raden
      nar man redigerer tekst) skal alltid fa vaere naturlig bred og pa en linje - den
      skal IKKE tvinges til a brekke om (det ga et rotete, 3 linjer hoyt utseende).
@@ -602,7 +617,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     fikserArkPosisjon();
     flyttSidepanelNed();
     var r = rad();
-    try { parent.postMessage({ pkSteg: r ? 'editor' : 'start' }, '*'); } catch (e) {}
+    try { parent.postMessage({ pkSteg: r ? 'editor' : 'start', pkModalApen: modalApen() }, '*'); } catch (e) {}
     var red = kn().filter(function (b) { return b.textContent.trim() === 'Rediger igjen'; })[0];
     if (red && !red.dataset.pkStil) {
       red.dataset.pkStil = '1';

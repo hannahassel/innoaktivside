@@ -1817,6 +1817,11 @@
     <span class="crumb-sep" id="pk-crumb-sep" style="display:none">&#8250;</span>
     <span class="crumb-current" id="pk-crumb-steg" style="display:none">REDIGER</span>
   </div>
+  <!-- Dekker logo/INNOAKTIV/hjelp-headeren og broedsmulestien naar plakat-verktoyet
+       har en egen dialog/forhaandsvisning aapen (f.eks. "Last ned som PDF"), slik at
+       headeren ser ut som resten av siden (nedtonet) og heller ikke kan trykkes paa
+       mens dialogen er oppe. Styres av pkOppdaterModalDim() nedenfor. -->
+  <div id="pk-header-dim" style="display:none;position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.35);z-index:50"></div>
   <iframe class="embed-frame" src="plakat.html?v=8" title="Fra idé til plakat" onload="pkAutoHeight(this)"></iframe>
 
 </div>
@@ -2800,11 +2805,30 @@ function pkTilStart() {
   const f = document.querySelector('#page-plakat .embed-frame');
   if (f && f.contentWindow) f.contentWindow.postMessage({ pkKommando: 'tilStart' }, '*');
 }
+// Dekker (og gjoer uklikkbar) logo/INNOAKTIV/hjelp-headeren og broedsmulestien naar
+// plakat-verktoyet melder fra at det har en egen dialog aapen (f.eks. forhaandsvisning
+// foer nedlasting) - ellers kan man trykke seg vekk fra siden mens dialogen staar der.
+function pkOppdaterModalDim(apen) {
+  var dim = document.getElementById('pk-header-dim');
+  if (!dim) return;
+  if (apen) {
+    var nav = document.querySelector('#page-plakat .navbar');
+    var crumb = document.querySelector('#page-plakat .crumbbar');
+    var bunn = 0;
+    if (nav) bunn = Math.max(bunn, nav.getBoundingClientRect().bottom);
+    if (crumb) bunn = Math.max(bunn, crumb.getBoundingClientRect().bottom);
+    dim.style.height = Math.max(0, bunn) + 'px';
+    dim.style.display = 'block';
+  } else {
+    dim.style.display = 'none';
+  }
+}
 window.addEventListener('message', function (ev) {
   if (!ev.data || !ev.data.pkSteg) return;
   const plakat = document.getElementById('pk-crumb-plakat');
   const sep = document.getElementById('pk-crumb-sep');
   const steg = document.getElementById('pk-crumb-steg');
+  pkOppdaterModalDim(!!ev.data.pkModalApen);
   if (!plakat) return;
   if (ev.data.pkSteg === 'editor') {
     plakat.className = 'crumb-link';
